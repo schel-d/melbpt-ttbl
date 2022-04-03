@@ -5,7 +5,13 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf docs/*",
+    "prebuild": "npm run clean",
+    "build": "npm run build:html & npm run build:sass & npm run build:ts",
+    "build:html": "copyfiles -u 1 \"html/**/*\" docs",
     "build:sass": "sass scss/main.scss docs/css/main.css --style compressed",
+    "build:ts": "make-dir docs/js && browserify ts/main.ts -p [ tsify -p tsconfig.json --noImplicitAny ] > docs/js/main.js",
+    "prestart": "npm run build",
+    "start": "serve docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,12 +25,21 @@
   },
   "homepage": "https://github.com/schel-d/melbpt-ttbl#readme",
   "devDependencies": {
+    "@types/jquery": "^3.5.14",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
     "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.5.0",
+    "prettier": "2.6.2"
+  },
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "copyfiles": "^2.4.1",
+    "jquery": "^3.6.0",
+    "make-dir-cli": "^3.0.0",
     "nodemon": "^2.0.15",
-    "prettier": "2.6.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "tsify": "^5.0.4",
+    "typescript": "^4.6.3"
   }
 }
