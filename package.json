@@ -9,7 +9,7 @@
     "build": "npm run build:html & npm run build:sass & npm run build:ts & npm run build:other",
     "build:html": "copyfiles -u 1 \"html/**/*\" docs",
     "build:sass": "sass scss/main.scss docs/css/main.css --style compressed",
-    "build:ts": "make-dir docs/js && browserify ts/main.ts -p [ tsify -p tsconfig.json --noImplicitAny ] > docs/js/main.js",
+    "build:ts": "make-dir docs/js && browserify -g uglifyify ts/main.ts -p [ tsify -p tsconfig.json --noImplicitAny ] | uglifyjs -c > docs/js/main.js",
     "build:other": "copyfiles -u 1 \"other/**/*\" docs",
     "dev": "npm run build & concurrently \"npm run watch:html\" \"npm run watch:sass\" \"npm run watch:ts\" \"npm run watch:other\" \"serve docs\"",
     "watch:html": "onchange \"html/**/*.html\" -- npm run build:html",
@@ -46,6 +46,8 @@
     "onchange": "^7.1.0",
     "rimraf": "^3.0.2",
     "tsify": "^5.0.4",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "uglify-js": "^3.15.3",
+    "uglifyify": "^5.0.2"
   }
 }
