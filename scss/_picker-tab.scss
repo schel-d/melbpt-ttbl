@@ -1,0 +1,65 @@
+@use "css-template/theme";
+
+label.picker-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .picker-tab-content {
+    // todo: use sass mixin (it's the same as .no-select)
+    -webkit-touch-callout: none; // iOS Safari
+    -webkit-user-select: none; // Safari
+    -khtml-user-select: none; // Konqueror HTML
+    -moz-user-select: none; // Old versions of Firefox
+    -ms-user-select: none; // Internet Explorer/Edge
+    user-select: none; // Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox
+  }
+  input[type="radio"] {
+    height: 0;
+    width: 0;
+  }
+}
+
+.light {
+  label.picker-tab input[type="radio"] {
+    + .picker-tab-content {
+      background-color: transparent;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+    }
+    &:hover + .picker-tab-content {
+      background-color: theme.$color-l-button-bg-hover;
+    }
+    &:active + .picker-tab-content {
+      background-color: theme.$color-l-button-bg-active;
+    }
+    &:disabled + .picker-tab-content {
+      opacity: 0.5;
+    }
+    &:checked + .picker-tab-content {
+      background-color: theme.$color-l-bg3;
+      border-top: 2px solid theme.$color-l-accent;
+    }
+  }
+}
+.dark {
+  label.picker-tab input[type="radio"] {
+    + .picker-tab-content {
+      background-color: transparent;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+    }
+    &:hover + .picker-tab-content {
+      background-color: theme.$color-d-button-bg-hover;
+    }
+    &:active + .picker-tab-content {
+      background-color: theme.$color-d-button-bg-active;
+    }
+    &:disabled + .picker-tab-content {
+      opacity: 0.5;
+    }
+    &:checked + .picker-tab-content {
+      background-color: theme.$color-d-bg3;
+      border-top: 2px solid theme.$color-d-accent;
+    }
+  }
+}

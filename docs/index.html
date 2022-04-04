@@ -4,11 +4,157 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Timetable Editor - Train Arrives In</title>
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <title>Timetable Editor</title>
   </head>
-  <body>
-    <p id="replace">JQuery didn't work :(</p>
+  <body class="light no-select">
+    <header id="header" class="level1">
+      <button>New Timetable</button>
+      <button>Import</button>
+      <div id="sections" class="border-left border-right horizontal-separators">
+        <div class="section-group">
+          <div class="section-group-header"><p>Down:</p></div>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content">
+              <p class="color-weak">Mon-Thu</p>
+            </div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Fri</p></div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Sat</p></div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Sun</p></div>
+          </label>
+        </div>
+        <div class="section-group">
+          <div class="section-group-header"><p>Up:</p></div>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content">
+              <p class="color-weak">Mon-Thu</p>
+            </div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Fri</p></div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Sat</p></div>
+          </label>
+          <label class="picker-tab">
+            <input type="radio" name="section" autocomplete="off" />
+            <div class="picker-tab-content"><p class="color-weak">Sun</p></div>
+          </label>
+        </div>
+      </div>
+      <button>Export</button>
+    </header>
+
+    <main id="editor">
+      <div id="corner" class="level3 border-bottom border-right"></div>
+      <div id="services" class="level3 border-bottom">
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+        <div class="service"><p>Hello?</p></div>
+      </div>
+      <div id="stops" class="level0 border-right">
+        <div class="stop"><p>Pakenham</p></div>
+        <div class="stop"><p>Cardinia Road</p></div>
+        <div class="stop"><p>Officer</p></div>
+        <div class="stop"><p>Beaconsfield</p></div>
+        <div class="stop"><p>Berwick</p></div>
+        <div class="stop"><p>Narre Warren</p></div>
+        <div class="stop"><p>Hallam</p></div>
+        <div class="stop"><p>Dandenong</p></div>
+        <div class="stop"><p>Yarraman</p></div>
+        <div class="stop"><p>Noble Park</p></div>
+        <div class="stop"><p>Sandown Park</p></div>
+        <div class="stop"><p>Springvale</p></div>
+        <div class="stop"><p>Westall</p></div>
+        <div class="stop"><p>Clayton</p></div>
+        <div class="stop"><p>Huntingdale</p></div>
+        <div class="stop"><p>Oakleigh</p></div>
+        <div class="stop"><p>Hughesdale</p></div>
+        <div class="stop"><p>Murrumbeena</p></div>
+        <div class="stop"><p>Carnegie</p></div>
+        <div class="stop"><p>Caulfield</p></div>
+        <div class="stop"><p>Malvern</p></div>
+        <div class="stop"><p>Armadale</p></div>
+        <div class="stop"><p>Toorak</p></div>
+        <div class="stop"><p>Hawksburn</p></div>
+        <div class="stop"><p>South Yarra</p></div>
+        <div class="stop"><p>Richmond</p></div>
+        <div class="stop"><p>Parliament</p></div>
+        <div class="stop"><p>Melbourne Central</p></div>
+        <div class="stop"><p>Flagstaff</p></div>
+        <div class="stop"><p>Southern Cross</p></div>
+        <div class="stop"><p>Flinders Street</p></div>
+      </div>
+
+      <div id="grid">
+        <canvas id="grid-canvas"></canvas>
+      </div>
+    </main>
+
+    <footer id="footer" class="level3">
+      <p>Valid timetable</p>
+    </footer>
     <script src="js/main.js"></script>
   </body>
 </html>

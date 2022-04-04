@@ -10887,10 +10887,272 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
+exports.css = void 0;
 var jquery_1 = __importDefault(require("jquery"));
-console.log('hello!');
-(0, jquery_1["default"])(function () {
-    (0, jquery_1["default"])("#replace").text("Wow neat!");
-});
+exports.css = (function () {
+    var light = (0, jquery_1["default"])("body").hasClass("light");
+    return {
+        text: light ? "#000000d0" : "#ffffffd0",
+        level1: light ? "#eef1f7" : "#17191c",
+        accent: light ? "#00B3DA" : "#19D6FF",
+        hoverHighlight: light
+            ? "rgba(54, 69, 99, 0.1)"
+            : "rgba(179, 196, 230, 0.08)"
+    };
+})();
 
-},{"jquery":1}]},{},[2]);
+},{"jquery":1}],3:[function(require,module,exports){
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+exports.editorDraw = exports.COL_SIZE = exports.ROW_SIZE = void 0;
+var css_1 = require("./css");
+var jquery_1 = __importDefault(require("jquery"));
+exports.ROW_SIZE = 20;
+exports.COL_SIZE = 48;
+var TEXT_OFFSET_X = 7;
+var TEXT_OFFSET_Y = 14;
+function editorDraw(editor) {
+    var canvas = editor.html.canvas;
+    var context = editor.html.context;
+    var content = editor.content;
+    var cols = content.length;
+    var rows = content[0].length;
+    if (content.some(function (c) { return c.length !== rows; })) {
+        throw "Grid is jagged (some columns have more rows than others)";
+    }
+    var dpiRatio = calculateDpiRatio(context);
+    var cells = getOnScreenCells(editor, rows, cols);
+    // Set the container holding the canvas to the full size (makes the scrollbar
+    // work properly)
+    (0, jquery_1["default"])(editor.html.grid).css("width", exports.COL_SIZE * cols + "px");
+    (0, jquery_1["default"])(editor.html.grid).css("height", exports.ROW_SIZE * rows + "px");
+    // Make the canvas big enough to fit only the cells actually on screen
+    // Shift the canvas within it's parent so when it's scrolled, it still appears
+    // on screen despite its smaller size
+    canvas.width = exports.COL_SIZE * cells.width * dpiRatio;
+    canvas.height = exports.ROW_SIZE * cells.height * dpiRatio;
+    canvas.style.width = exports.COL_SIZE * cells.width + "px";
+    canvas.style.height = exports.ROW_SIZE * cells.height + "px";
+    canvas.style.left = exports.COL_SIZE * cells.x1 + "px";
+    canvas.style.top = exports.ROW_SIZE * cells.y1 + "px";
+    // Clear the canvas, and transform the coordinate space to account for the
+    // scrolling
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.translate(-cells.x1 * exports.COL_SIZE * dpiRatio, -cells.y1 * exports.ROW_SIZE * dpiRatio);
+    context.scale(dpiRatio, dpiRatio);
+    // Render a lighter background for every second row
+    context.fillStyle = css_1.css.level1;
+    for (var y = cells.y1; y < cells.y2; y++) {
+        if (y % 2 != 0) {
+            continue;
+        }
+        context.fillRect(cells.x1 * exports.COL_SIZE, y * exports.ROW_SIZE, cells.width * exports.COL_SIZE, exports.ROW_SIZE);
+    }
+    // Render the text for each cell
+    context.font = "0.7rem 'Roboto Mono', monospace";
+    context.fillStyle = css_1.css.text;
+    for (var x = cells.x1; x < cells.x2; x++) {
+        for (var y = cells.y1; y < cells.y2; y++) {
+            var str = content[x][y];
+            context.fillText(str, x * exports.COL_SIZE + TEXT_OFFSET_X, y * exports.ROW_SIZE + TEXT_OFFSET_Y);
+        }
+    }
+    // Render a highlight on the cell that the mouse is over
+    context.fillStyle = css_1.css.hoverHighlight;
+    var mouseOver = editor.events.mouseOver;
+    if (mouseOver != null) {
+        context.fillRect(mouseOver.x * exports.COL_SIZE, mouseOver.y * exports.ROW_SIZE, exports.COL_SIZE, exports.ROW_SIZE);
+    }
+    // Render a border on the cell that is selected
+    context.lineWidth = Math.round(1.5 * dpiRatio) / dpiRatio;
+    context.strokeStyle = css_1.css.accent;
+    var selected = editor.events.selected;
+    if (selected != null) {
+        var x1 = Math.min(selected.startX, selected.endX);
+        var w = Math.max(selected.startX, selected.endX) - x1 + 1;
+        var y1 = Math.min(selected.startY, selected.endY);
+        var h = Math.max(selected.startY, selected.endY) - y1 + 1;
+        context.strokeRect(x1 * exports.COL_SIZE, y1 * exports.ROW_SIZE, w * exports.COL_SIZE, h * exports.ROW_SIZE);
+    }
+}
+exports.editorDraw = editorDraw;
+;
+function getOnScreenCells(editor, rows, cols) {
+    var editorSize = editor.html.editor.getBoundingClientRect();
+    var gridScreenX = editor.html.stops.getBoundingClientRect().width;
+    var gridScreenY = editor.html.services.getBoundingClientRect().height;
+    var gridWidth = editorSize.width - gridScreenX;
+    var gridHeight = editorSize.height - gridScreenY;
+    var editorJQuery = (0, jquery_1["default"])(editor.html.editor);
+    var scrollX = editorJQuery.scrollLeft();
+    var scrollY = editorJQuery.scrollTop();
+    var startRow = Math.max(0, Math.floor(scrollY / exports.ROW_SIZE));
+    var endRow = Math.min(rows, startRow + Math.ceil(gridHeight / exports.ROW_SIZE) + 1);
+    var rowsHigh = endRow - startRow;
+    var startCol = Math.max(0, Math.floor(scrollX / exports.COL_SIZE));
+    var endCol = Math.min(cols, startCol + Math.ceil(gridWidth / exports.COL_SIZE) + 1);
+    var colsWide = endCol - startCol;
+    return {
+        x1: startCol,
+        x2: endCol,
+        y1: startRow,
+        y2: endRow,
+        width: colsWide,
+        height: rowsHigh
+    };
+}
+;
+function calculateDpiRatio(gridCanvas2d) {
+    var dpr = window.devicePixelRatio || 1;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    var bsr = gridCanvas2d.backingStorePixelRatio || 1;
+    return dpr / bsr;
+}
+;
+
+},{"./css":2,"jquery":1}],4:[function(require,module,exports){
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+exports.editorInit = void 0;
+var editor_draw_1 = require("./editor-draw");
+var jquery_1 = __importDefault(require("jquery"));
+function editorInit(editor) {
+    editor.draw();
+    editor.html.canvas.addEventListener("mousedown", function (e) {
+        var m = relativeCoords(e, editor);
+        editor.events.selected = { startX: m.x, startY: m.y, endX: m.x, endY: m.y };
+        editor.events.dragging = true;
+        editor.draw();
+    });
+    editor.html.canvas.addEventListener("mouseup", function (e) {
+        var m = relativeCoords(e, editor);
+        editor.events.selected.endX = m.x;
+        editor.events.selected.endY = m.y;
+        editor.events.dragging = false;
+        editor.draw();
+    });
+    editor.html.canvas.addEventListener("mousemove", function (e) {
+        return canvasMouseMoveEvent(e, editor);
+    });
+    editor.html.canvas.addEventListener("mouseenter", function (e) {
+        return canvasMouseMoveEvent(e, editor);
+    });
+    editor.html.canvas.addEventListener("mouseleave", function () {
+        editor.events.mouseOver = null;
+        editor.draw();
+    });
+    (0, jquery_1["default"])(editor.html.editor).on("scroll", function () {
+        editor.events.mouseOver = null;
+        editor.draw();
+    });
+    // Make the scrollwheel cause horizontal scrolling in the editor, not vertical
+    // Firefox is 'DOMMouseScroll' and basically everything else is 'mousewheel'
+    editor.html.editor.addEventListener("mousewheel", function (e) { return editorScrollEvent(e, editor); }, false);
+    editor.html.editor.addEventListener("DOMMouseScroll", function (e) { return editorScrollEvent(e, editor); }, false);
+}
+exports.editorInit = editorInit;
+;
+function editorScrollEvent(e, editor) {
+    e = window.event || e;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    var wheelEvent = e;
+    var delta = Math.max(-1, Math.min(1, wheelEvent.wheelDelta || -wheelEvent.detail));
+    editor.html.editor.scrollLeft -= delta * 64;
+    e.preventDefault();
+}
+;
+function canvasMouseMoveEvent(e, editor) {
+    editor.events.mouseOver = relativeCoords(e, editor);
+    if (editor.events.dragging) {
+        if (e.buttons != 1) {
+            editor.events.dragging = false;
+        }
+        else {
+            editor.events.selected.endX = editor.events.mouseOver.x;
+            editor.events.selected.endY = editor.events.mouseOver.y;
+        }
+    }
+    editor.draw();
+}
+;
+function relativeCoords(e, editor) {
+    var bounds = editor.html.grid.getBoundingClientRect();
+    var x = e.clientX - bounds.left;
+    var y = e.clientY - bounds.top;
+    return {
+        x: Math.floor(x / editor_draw_1.COL_SIZE),
+        y: Math.floor(y / editor_draw_1.ROW_SIZE)
+    };
+}
+;
+
+},{"./editor-draw":3,"jquery":1}],5:[function(require,module,exports){
+"use strict";
+exports.__esModule = true;
+exports.Editor = void 0;
+var editor_draw_1 = require("./editor-draw");
+var editor_init_1 = require("./editor-init");
+var Editor = /** @class */ (function () {
+    function Editor(editorID, gridID, canvasID, stopsID, servicesID) {
+        var editor = document.getElementById(editorID);
+        var grid = document.getElementById(gridID);
+        var canvas = document.getElementById(canvasID);
+        var context = canvas.getContext("2d");
+        var stops = document.getElementById(stopsID);
+        var services = document.getElementById(servicesID);
+        this.html = {
+            editor: editor,
+            grid: grid,
+            canvas: canvas,
+            context: context,
+            stops: stops,
+            services: services
+        };
+        this.content = [];
+        this.events = {
+            mouseOver: null,
+            selected: null,
+            dragging: false
+        };
+    }
+    Editor.prototype.windowResized = function () {
+        this.events.mouseOver = null;
+        this.draw();
+    };
+    Editor.prototype.init = function () {
+        (0, editor_init_1.editorInit)(this);
+    };
+    Editor.prototype.draw = function () {
+        (0, editor_draw_1.editorDraw)(this);
+    };
+    return Editor;
+}());
+exports.Editor = Editor;
+
+},{"./editor-draw":3,"./editor-init":4}],6:[function(require,module,exports){
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+var editor_1 = require("./editor");
+var jquery_1 = __importDefault(require("jquery"));
+var editor = new editor_1.Editor("editor", "grid", "grid-canvas", "stops", "services");
+var content = [];
+for (var x = 0; x < 50; x++) {
+    content[x] = [];
+    for (var y = 0; y < 31; y++) {
+        content[x][y] = "".concat(x.toFixed().padStart(2, "0"), ":").concat(y.toFixed().padStart(2, "0"));
+    }
+}
+editor.content = content;
+editor.init();
+(0, jquery_1["default"])(window).on("resize", function () { return editor.windowResized(); });
+
+},{"./editor":5,"jquery":1}]},{},[6]);

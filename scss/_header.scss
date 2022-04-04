@@ -1,0 +1,54 @@
+@use "css-template/css-template";
+@use "picker-tab";
+
+$header-size: 40px;
+
+#header {
+  @include css-template.row();
+  height: $header-size;
+
+  > * {
+    margin-right: 8px;
+  }
+  > :first-child {
+    margin-left: 8px;
+  }
+  button {
+    flex-shrink: 0;
+    height: 24px;
+  }
+}
+#sections {
+  @include css-template.row();
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  align-items: stretch;
+  height: $header-size;
+
+  .section-group {
+    flex-shrink: 0;
+    @include css-template.row();
+    align-items: stretch;
+  }
+  .section-group-header {
+    @include css-template.row();
+    padding: 0px 8px;
+  }
+  .picker-tab {
+    align-items: stretch;
+  }
+  .picker-tab-content {
+    @include css-template.row();
+    padding: 0px 8px;
+  }
+}
+
+.light #header {
+  box-shadow: inset 0px -4px 4px 0px css-template.$color-l-surface-shadow;
+}
+.dark #header {
+  box-shadow: inset 0px -4px 4px 0px css-template.$color-d-surface-shadow;
+}
