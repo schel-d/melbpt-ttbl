@@ -10890,7 +10890,7 @@ exports.__esModule = true;
 var jquery_1 = __importDefault(require("jquery"));
 console.log('hello!');
 (0, jquery_1["default"])(function () {
-    (0, jquery_1["default"])("#replace").text("JQuery did work");
+    (0, jquery_1["default"])("#replace").text("Wow neat!");
 });
 
 },{"jquery":1}]},{},[2]);

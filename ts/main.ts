@@ -3,5 +3,5 @@ import $ from 'jquery';
 console.log('hello!');
 
 $(() => {
-  $("#replace").text("JQuery did work");
+  $("#replace").text("Wow neat!");
 })
