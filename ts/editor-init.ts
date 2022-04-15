@@ -46,6 +46,12 @@ export function editorInit(editor: Editor) {
     (e) => editorScrollEvent(e, editor),
     false
   );
+
+  document.addEventListener("paste", (e) => {
+    const clipboardText = e.clipboardData.getData('text');
+    console.log(clipboardText);
+    e.preventDefault();
+  });
 };
 
 function editorScrollEvent(e: Event, editor: Editor) {

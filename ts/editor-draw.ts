@@ -13,7 +13,7 @@ export function editorDraw(editor: Editor) {
   const content = editor.content;
 
   const cols = content.length;
-  const rows = content[0].length;
+  const rows = content[0]?.length ?? 0;
   if (content.some((c) => c.length !== rows)) {
     throw "Grid is jagged (some columns have more rows than others)";
   }

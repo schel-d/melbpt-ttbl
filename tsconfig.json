@@ -2,6 +2,7 @@
   "include": ["ts/**/*"],
   "compilerOptions": {
     "esModuleInterop": true,
+    "target": "ES2017",
     "lib": ["ES2017", "DOM"]
   }
 }

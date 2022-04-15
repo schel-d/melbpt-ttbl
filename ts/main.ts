@@ -11,6 +11,6 @@ for (let x = 0; x < 50; x++) {
   }
 }
 
-editor.content = content;
 editor.init();
+editor.content = content;
 $(window).on("resize", () => editor.windowResized());

@@ -11,7 +11,7 @@ export class Editor {
     services: HTMLElement
   }
 
-  content: string[][]
+  private _content: string[][]
 
   events: {
     mouseOver: {
@@ -42,7 +42,7 @@ export class Editor {
       stops: stops,
       services: services,
     };
-    this.content = [];
+    this._content = [];
     this.events = {
       mouseOver: null,
       selected: null,
@@ -60,5 +60,12 @@ export class Editor {
   }
   draw() {
     editorDraw(this);
+  }
+  set content(newContent: string[][]) {
+    this._content = newContent;
+    this.draw();
+  }
+  get content(): string[][] {
+    return this._content;
   }
 }
