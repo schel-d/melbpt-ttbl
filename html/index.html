@@ -8,30 +8,30 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>Timetable Editor</title>
   </head>
-  <body class="light no-select">
-    <header id="header" class="level1">
-      <button>New Timetable</button>
-      <button>Import</button>
-      <div id="sections" class="border-left border-right horizontal-separators">
+  <body class="no-select">
+    <header id="header">
+      <button><p>New Timetable</p></button>
+      <button><p>Import</p></button>
+      <div id="sections">
         <div class="section-group">
           <div class="section-group-header"><p>Down:</p></div>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
             <div class="picker-tab-content">
-              <p class="color-weak">Mon-Thu</p>
+              <p>Mon-Thu</p>
             </div>
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Fri</p></div>
+            <div class="picker-tab-content"><p>Fri</p></div>
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Sat</p></div>
+            <div class="picker-tab-content"><p>Sat</p></div>
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Sun</p></div>
+            <div class="picker-tab-content"><p>Sun</p></div>
           </label>
         </div>
         <div class="section-group">
@@ -44,24 +44,23 @@
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Fri</p></div>
+            <div class="picker-tab-content"><p>Fri</p></div>
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Sat</p></div>
+            <div class="picker-tab-content"><p>Sat</p></div>
           </label>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p class="color-weak">Sun</p></div>
+            <div class="picker-tab-content"><p>Sun</p></div>
           </label>
         </div>
       </div>
-      <button>Export</button>
+      <button><p>Export</p></button>
     </header>
-
     <main id="editor">
-      <div id="corner" class="level3 border-bottom border-right"></div>
-      <div id="services" class="level3 border-bottom">
+      <div id="corner"></div>
+      <div id="services">
         <div class="service"><p>Hello?</p></div>
         <div class="service"><p>Hello?</p></div>
         <div class="service"><p>Hello?</p></div>
@@ -113,7 +112,7 @@
         <div class="service"><p>Hello?</p></div>
         <div class="service"><p>Hello?</p></div>
       </div>
-      <div id="stops" class="level0 border-right">
+      <div id="stops">
         <div class="stop"><p>Pakenham</p></div>
         <div class="stop"><p>Cardinia Road</p></div>
         <div class="stop"><p>Officer</p></div>
@@ -146,13 +145,11 @@
         <div class="stop"><p>Southern Cross</p></div>
         <div class="stop"><p>Flinders Street</p></div>
       </div>
-
       <div id="grid">
         <canvas id="grid-canvas"></canvas>
       </div>
     </main>
-
-    <footer id="footer" class="level3">
+    <footer id="footer">
       <p>Valid timetable</p>
     </footer>
     <script src="js/main.js"></script>

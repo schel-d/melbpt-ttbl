@@ -46,7 +46,7 @@ export function editorDraw(editor: Editor) {
   context.scale(dpiRatio, dpiRatio);
 
   // Render a lighter background for every second row
-  context.fillStyle = css.level1;
+  context.fillStyle = css.paper10;
   for (let y = cells.y1; y < cells.y2; y++) {
     if (y % 2 != 0) {
       continue;

@@ -1,18 +1,26 @@
-@use "css-template/css-template";
+@use "css-template/import" as css-template;
 @use "header";
+@use "button";
 
 html,
 body {
+  @include css-template.no-select;
   height: 100%;
   overflow: hidden;
 }
 
-$editor-stops-col-size: max(100px, 10vw);
-$editor-services-row-size: 32px;
-$editor-row-height: 20px;
-$editor-column-width: 48px;
+:root {
+  --font-default: "Poppins", sans-serif;
+  --clr-light-accent: #00a5ca;
+}
+
+$editor-stops-col-size: max(6rem, 10vw);
+$editor-services-row-size: 2rem;
+$editor-row-height: 1.25rem;
+$editor-column-width: 3rem;
 
 #editor {
+  @include css-template.bg-paper-20;
   position: relative;
   display: grid;
   grid-template-columns: $editor-stops-col-size 1fr;
@@ -32,28 +40,34 @@ $editor-column-width: 48px;
 }
 
 #corner {
+  @include css-template.bg-paper-30;
   grid-row: 1;
   grid-column: 1;
   position: sticky;
   top: 0;
   left: 0;
   z-index: 3;
-}
-#stops {
-  grid-row: 2;
-  grid-column: 1;
-  position: sticky;
-  left: 0;
-  z-index: 1;
+  border-bottom: 1px solid var(--clr-ink-20);
 }
 #services {
+  @include css-template.bg-paper-30;
+  @include css-template.row;
   grid-row: 1;
   grid-column: 2;
   position: sticky;
   top: 0;
   z-index: 2;
-  @include css-template.row();
   align-items: stretch;
+  border-bottom: 1px solid var(--clr-ink-20);
+}
+#stops {
+  @include css-template.bg-paper-20;
+  grid-row: 2;
+  grid-column: 1;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  border-right: 1px solid var(--clr-ink-20);
 }
 #grid {
   position: relative;
@@ -68,29 +82,33 @@ $editor-column-width: 48px;
 }
 
 #stops .stop {
-  @include css-template.row();
+  @include css-template.one-line;
+  @include css-template.row;
   height: $editor-row-height;
   p {
-    @include css-template.one-line();
-    margin: 0px 8px;
+    margin: 0 0.5rem;
     font-weight: bold;
+    font-size: 0.7rem;
   }
 }
-.light #stops .stop:nth-child(2n + 1) {
-  background-color: css-template.$color-l-bg1;
-}
-.dark #stops .stop:nth-child(2n + 1) {
-  background-color: css-template.$color-d-bg1;
+#stops .stop:nth-child(2n + 1) {
+  @include css-template.bg-paper-10;
 }
 #services .service {
-  @include css-template.row();
+  @include css-template.row;
   width: $editor-column-width;
+  p {
+    font-size: 0.7rem;
+  }
 }
 
 #footer {
-  @include css-template.row();
-  height: 24px;
+  @include css-template.bg-paper-30;
+  @include css-template.row;
+  height: 1.5rem;
+  border-top: 1px solid var(--clr-ink-20);
   p {
-    margin-left: 8px;
+    margin-left: 0.5rem;
+    font-size: 0.7rem;
   }
 }

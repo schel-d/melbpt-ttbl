@@ -1,0 +1,18 @@
+@mixin header-button {
+  appearance: none;
+  background-color: var(--clr-ink-10);
+  border: none;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.05s;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--clr-ink-20);
+  }
+  &:active {
+    background-color: var(--clr-ink-30);
+  }
+}

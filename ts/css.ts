@@ -1,13 +1,8 @@
-import $ from "jquery";
-
 export const css = (() => {
-  const light = $("body").hasClass("light");
   return {
-    text: light ? "#000000d0" : "#ffffffd0",
-    level1: light ? "#eef1f7" : "#17191c",
-    accent: light ? "#00B3DA" : "#19D6FF",
-    hoverHighlight: light
-      ? "rgba(54, 69, 99, 0.1)"
-      : "rgba(179, 196, 230, 0.08)",
+    text: "hsla(220deg, 100%, 4%, 0.8)",
+    paper10: "hsl(220deg, 30%, 93.5%)",
+    accent: "#00a5ca",
+    hoverHighlight: "hsla(220deg, 100%, 18%, 0.1)",
   };
 })();
