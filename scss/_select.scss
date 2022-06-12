@@ -1,0 +1,51 @@
+// [SELECT STRUCTURE] Must have wrapper div and wrapper highlight as the
+// following sibling to work.
+//
+// <div class="select-wrapper">
+//   <select id="new-timetable-dialog-days" autocomplete="off">
+//     <option>Mon-Thu, Fri, Sat, Sun</option>
+//     <option>Mon-Fri, Sat, Sun</option>
+//     <option>Mon-Sun</option>
+//     <option>Mon, Tue-Thu, Fri, Sat, Sun</option>
+//     <option>Mon, Tue-Fri, Sat, Sun</option>
+//     <option>Mon, Tue, Wed, Thu, Fri, Sat, Sun</option>
+//   </select>
+//   <div class="select-wrapper-highlight"></div>
+// </div>
+
+@mixin dialog-select-wrapper {
+  position: relative;
+
+  select {
+    appearance: none;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    height: 2rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    color: var(--clr-ink-80);
+
+    font-family: var(--font-default);
+    font-size: 1rem;
+  }
+
+  .select-wrapper-highlight {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--clr-ink-10);
+    border-radius: 0.25rem;
+    transition: background-color 0.05s;
+  }
+
+  select:is(:hover, :focus-visible) + .select-wrapper-highlight {
+    background-color: var(--clr-ink-20);
+  }
+  select:active + .select-wrapper-highlight {
+    background-color: var(--clr-ink-30);
+  }
+}

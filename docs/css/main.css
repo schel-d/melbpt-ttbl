@@ -130,6 +130,7 @@ strong {
 }
 
 div,
+dialog,
 main,
 section,
 header,
@@ -139,6 +140,10 @@ button,
 body {
   display: flex;
   flex-direction: column;
+}
+
+dialog:not([open]) {
+  display: none;
 }
 
 @font-face {
@@ -214,6 +219,7 @@ label.picker-tab input[type=radio]:checked + .picker-tab-content {
 }
 #header button {
   appearance: none;
+  outline: none;
   background-color: var(--clr-ink-10);
   border: none;
   border-radius: 0.25rem;
@@ -279,6 +285,107 @@ label.picker-tab input[type=radio]:checked + .picker-tab-content {
 #sections .picker-tab-content p {
   color: var(--clr-ink-60);
   font-size: 0.7rem;
+}
+
+dialog {
+  --dialog-max-width: 25rem;
+  border: none;
+  border-radius: 0.5rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0.5rem 3rem var(--clr-ink-50);
+}
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+#new-timetable-dialog {
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 1rem;
+  width: min(90vw, var(--dialog-max-width));
+}
+#new-timetable-dialog h1 {
+  color: var(--clr-ink-100);
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.25rem;
+}
+#new-timetable-dialog h2 {
+  color: var(--clr-ink-100);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+#new-timetable-dialog > .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: -0.5rem;
+  justify-content: end;
+}
+#new-timetable-dialog button {
+  appearance: none;
+  outline: none;
+  background-color: var(--clr-ink-10);
+  border: none;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.05s;
+  height: 2rem;
+  margin-right: 0.5rem;
+}
+#new-timetable-dialog button:hover, #new-timetable-dialog button:focus-visible {
+  background-color: var(--clr-ink-20);
+}
+#new-timetable-dialog button:active {
+  background-color: var(--clr-ink-30);
+}
+#new-timetable-dialog button p {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  font-size: 0.85rem;
+}
+#new-timetable-dialog .select-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+#new-timetable-dialog .select-wrapper select {
+  appearance: none;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  height: 2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  color: var(--clr-ink-80);
+  font-family: var(--font-default);
+  font-size: 1rem;
+}
+#new-timetable-dialog .select-wrapper .select-wrapper-highlight {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--clr-ink-10);
+  border-radius: 0.25rem;
+  transition: background-color 0.05s;
+}
+#new-timetable-dialog .select-wrapper select:is(:hover, :focus-visible) + .select-wrapper-highlight {
+  background-color: var(--clr-ink-20);
+}
+#new-timetable-dialog .select-wrapper select:active + .select-wrapper-highlight {
+  background-color: var(--clr-ink-30);
+}
+#new-timetable-dialog .select-wrapper select {
+  font-size: 0.85rem;
 }
 
 html,

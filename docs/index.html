@@ -31,7 +31,7 @@
   </head>
   <body class="no-select">
     <header id="header">
-      <button><p>New Timetable</p></button>
+      <button id="new-timetable-button"><p>New Timetable</p></button>
       <button><p>Import</p></button>
       <div id="sections">
         <div class="section-group">
@@ -173,6 +173,34 @@
     <footer id="footer">
       <p>Valid timetable</p>
     </footer>
+    <dialog id="new-timetable-dialog">
+      <h1>New Timetable</h1>
+      <h2>Line</h2>
+      <div class="select-wrapper">
+        <select id="new-timetable-dialog-lines" autocomplete="off"></select>
+        <div class="select-wrapper-highlight"></div>
+      </div>
+      <h2>Days</h2>
+      <div class="select-wrapper">
+        <select id="new-timetable-dialog-days" autocomplete="off">
+          <option>Mon-Thu, Fri, Sat, Sun</option>
+          <option>Mon-Fri, Sat, Sun</option>
+          <option>Mon-Sun</option>
+          <option>Mon, Tue-Thu, Fri, Sat, Sun</option>
+          <option>Mon, Tue-Fri, Sat, Sun</option>
+          <option>Mon, Tue, Wed, Thu, Fri, Sat, Sun</option>
+        </select>
+        <div class="select-wrapper-highlight"></div>
+      </div>
+      <div class="row">
+        <button id="new-timetable-dialog-cancel">
+          <p>Cancel</p>
+        </button>
+        <button id="new-timetable-dialog-submit">
+          <p>Create New Timetable</p>
+        </button>
+      </div>
+    </dialog>
     <script src="js/main.js"></script>
   </body>
 </html>

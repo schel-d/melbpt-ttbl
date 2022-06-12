@@ -1,11 +1,13 @@
 @mixin header-button {
   appearance: none;
+  outline: none;
   background-color: var(--clr-ink-10);
   border: none;
   border-radius: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
+
   transition: background-color 0.05s;
 
   &:hover,
