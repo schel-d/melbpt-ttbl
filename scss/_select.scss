@@ -23,7 +23,7 @@
     border: none;
     height: 2rem;
     padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-right: 1.5rem;
     color: var(--clr-ink-80);
 
     font-family: var(--font-default);
@@ -40,6 +40,18 @@
     background-color: var(--clr-ink-10);
     border-radius: 0.25rem;
     transition: background-color 0.05s;
+  }
+  .select-wrapper-arrow {
+    pointer-events: none;
+    mask-image: url('data:image/svg+xml;utf8,<svg fill="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg fill="black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-color: var(--clr-ink-80);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   select:is(:hover, :focus-visible) + .select-wrapper-highlight {

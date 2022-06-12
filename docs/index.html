@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/main.css" />
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link
       rel="preload"
       href="/poppins-400.woff2"
@@ -27,7 +27,7 @@
       type="font/woff2"
       crossorigin
     />
-    <title>Timetable Editor</title>
+    <title>Timetable Editor - Train Arrives In</title>
   </head>
   <body class="no-select">
     <header id="header">
@@ -179,6 +179,7 @@
       <div class="select-wrapper">
         <select id="new-timetable-dialog-lines" autocomplete="off"></select>
         <div class="select-wrapper-highlight"></div>
+        <div class="select-wrapper-arrow"></div>
       </div>
       <h2>Days</h2>
       <div class="select-wrapper">
@@ -191,6 +192,7 @@
           <option>Mon, Tue, Wed, Thu, Fri, Sat, Sun</option>
         </select>
         <div class="select-wrapper-highlight"></div>
+        <div class="select-wrapper-arrow"></div>
       </div>
       <div class="row">
         <button id="new-timetable-dialog-cancel">
@@ -201,6 +203,6 @@
         </button>
       </div>
     </dialog>
-    <script src="js/main.js"></script>
+    <script src="/js/main.js"></script>
   </body>
 </html>
