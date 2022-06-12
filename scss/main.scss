@@ -48,6 +48,7 @@ $editor-column-width: 3rem;
   left: 0;
   z-index: 3;
   border-bottom: 1px solid var(--clr-ink-20);
+  border-right: 1px solid var(--clr-ink-20);
 }
 #services {
   @include css-template.bg-paper-30;

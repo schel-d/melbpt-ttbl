@@ -9,9 +9,9 @@ export class Editor {
     context: CanvasRenderingContext2D,
     stops: HTMLElement,
     services: HTMLElement
-  }
+  };
 
-  private _content: string[][]
+  private _content: string[][];
 
   events: {
     mouseOver: {
@@ -25,7 +25,7 @@ export class Editor {
       endY: number
     } | null,
     dragging: boolean
-  }
+  };
 
   constructor(editorID: string, gridID: string, canvasID: string, stopsID: string, servicesID: string) {
     const editor = document.getElementById(editorID);
