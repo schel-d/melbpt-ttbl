@@ -1,6 +1,7 @@
 @use "css-template/import" as css-template;
 @use "button";
 @use "select";
+@use "input";
 
 dialog {
   --dialog-max-width: 25rem;
@@ -11,6 +12,7 @@ dialog {
   top: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0.5rem 3rem var(--clr-ink-50);
+  background-color: var(--clr-paper-30);
   &::backdrop {
     background-color: rgba(0, 0, 0, 40%);
   }
@@ -54,5 +56,14 @@ dialog {
     select {
       font-size: 0.85rem;
     }
+  }
+  input {
+    @include input.dialog-input;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  > p {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
   }
 }
