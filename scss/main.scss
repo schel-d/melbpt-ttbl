@@ -13,12 +13,12 @@ body {
   overflow: hidden;
 }
 
+// Test dark mode styles (even though dark mode probably won't be used here):
+// @include css-template.dark;
+
 :root {
   --font-default: "Poppins", sans-serif;
   --clr-light-accent: #00a5ca;
-
-  // Test dark mode styles (even though dark mode probably won't be used here):
-  // @include css-template.dark;
 }
 
 $editor-stops-col-size: max(6rem, 10vw);

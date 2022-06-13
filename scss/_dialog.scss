@@ -11,10 +11,10 @@ dialog {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0.5rem 3rem var(--clr-ink-50);
+  box-shadow: 0 0.5rem 3rem var(--clr-shadow-20);
   background-color: var(--clr-paper-30);
   &::backdrop {
-    background-color: rgba(0, 0, 0, 40%);
+    background-color: var(--clr-shadow-20);
   }
 }
 
