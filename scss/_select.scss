@@ -29,6 +29,10 @@
 
     font-family: var(--font-default);
     font-size: 1rem;
+
+    option {
+      color: black;
+    }
   }
   @-moz-document url-prefix() {
     select {

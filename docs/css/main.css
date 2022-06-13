@@ -20,21 +20,7 @@ a {
   --clr-light-ink-30: hsla(220deg, 100%, 14%, 0.3);
   --clr-light-ink-20: hsla(220deg, 100%, 16%, 0.2);
   --clr-light-ink-10: hsla(220deg, 100%, 18%, 0.1);
-  --clr-light-shadow-100: black;
-  --clr-light-shadow-30: rgba(0, 0, 0, 70%);
-  --clr-light-shadow-20: rgba(0, 0, 0, 40%);
-  --clr-light-shadow-10: rgba(0, 0, 0, 10%);
   --clr-light-accent: hsl(220, 70%, 50%);
-}
-
-dialog::backdrop {
-  --clr-light-shadow-100: black;
-  --clr-light-shadow-30: rgba(0, 0, 0, 70%);
-  --clr-light-shadow-20: rgba(0, 0, 0, 40%);
-  --clr-light-shadow-10: rgba(0, 0, 0, 10%);
-}
-
-:root {
   --clr-dark-paper-0: hsl(220deg, 15%, 2%);
   --clr-dark-paper-10: hsl(220deg, 16%, 7%);
   --clr-dark-paper-20: hsl(220deg, 17%, 12%);
@@ -49,14 +35,15 @@ dialog::backdrop {
   --clr-dark-ink-30: hsla(220deg, 100%, 86%, 0.3);
   --clr-dark-ink-20: hsla(220deg, 100%, 84%, 0.2);
   --clr-dark-ink-10: hsla(220deg, 100%, 82%, 0.1);
-  --clr-dark-shadow-100: black;
-  --clr-dark-shadow-30: rgba(0, 0, 0, 80%);
-  --clr-dark-shadow-20: rgba(0, 0, 0, 60%);
-  --clr-dark-shadow-10: rgba(0, 0, 0, 20%);
   --clr-dark-accent: hsl(220, 100%, 70%);
 }
 
+:root,
 dialog::backdrop {
+  --clr-light-shadow-100: black;
+  --clr-light-shadow-30: rgba(0, 0, 0, 70%);
+  --clr-light-shadow-20: rgba(0, 0, 0, 40%);
+  --clr-light-shadow-10: rgba(0, 0, 0, 10%);
   --clr-dark-shadow-100: black;
   --clr-dark-shadow-30: rgba(0, 0, 0, 80%);
   --clr-dark-shadow-20: rgba(0, 0, 0, 60%);
@@ -78,13 +65,10 @@ dialog::backdrop {
   --clr-ink-30: var(--clr-light-ink-30);
   --clr-ink-20: var(--clr-light-ink-20);
   --clr-ink-10: var(--clr-light-ink-10);
-  --clr-shadow-100: var(--clr-light-shadow-100);
-  --clr-shadow-30: var(--clr-light-shadow-30);
-  --clr-shadow-20: var(--clr-light-shadow-20);
-  --clr-shadow-10: var(--clr-light-shadow-10);
   --clr-accent: var(--clr-light-accent);
 }
 
+:root,
 dialog::backdrop {
   --clr-shadow-100: var(--clr-light-shadow-100);
   --clr-shadow-30: var(--clr-light-shadow-30);
@@ -403,6 +387,9 @@ dialog::backdrop {
   cursor: pointer;
   font-family: var(--font-default);
   font-size: 1rem;
+}
+#new-timetable-dialog .select-wrapper select option {
+  color: black;
 }
 @-moz-document url-prefix() {
   #new-timetable-dialog .select-wrapper select {
