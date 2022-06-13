@@ -364,12 +364,17 @@ dialog::backdrop {
   background-color: transparent;
   border: none;
   height: 2rem;
-  padding-left: 0.75rem;
+  padding-left: 1rem;
   padding-right: 1.5rem;
   color: var(--clr-ink-80);
   cursor: pointer;
   font-family: var(--font-default);
   font-size: 1rem;
+}
+@-moz-document url-prefix() {
+  #new-timetable-dialog .select-wrapper select {
+    text-indent: -0.13rem;
+  }
 }
 #new-timetable-dialog .select-wrapper .select-wrapper-highlight {
   pointer-events: none;
