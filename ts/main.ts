@@ -1,6 +1,9 @@
 import { Editor } from "./editor";
 import { Network } from "./network";
-import { setup as setupNewTimetableDialog, show as showNewTimetableDialog } from "./new-timetable-dialog";
+import { setup as setupNewTimetableDialog, /*show as showNewTimetableDialog*/ } from "./new-timetable-dialog";
+
+// Todo: Fix bug causing layout before CSS is loaded, especially apparent when
+// using throttled connections without caching in DevTools.
 
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
 
@@ -10,17 +13,16 @@ window.addEventListener("resize", () => editor.windowResized());
 const network = new Network();
 network.load().then(() => {
   showWelcome();
-})
+});
 
 setupNewTimetableDialog();
 
 document.querySelector("#new-timetable-button").addEventListener("click", () => {
-  alert("Coming soon!")
+  alert("Coming soon!");
   // showNewTimetableDialog(network);
 });
 document.querySelector("#import-button").addEventListener("click", () => {
-  alert("Coming soon!")
-  // showNewTimetableDialog(network);
+  alert("Coming soon!");
 });
 
 function showWelcome() {
@@ -33,7 +35,7 @@ function showWelcome() {
   (document.querySelector("#new-timetable-button") as HTMLButtonElement).disabled = false;
   (document.querySelector("#import-button") as HTMLButtonElement).disabled = false;
 }
-function showEditor() {
-  // Todo: Hide the welcome/loading screens, populate the sections in the
-  // header. Maybe even enable the "export" button?
-}
+// function showEditor() {
+//   // Todo: Hide the welcome/loading screens, populate the sections in the
+//   // header. Maybe even enable the "export" button?
+// }
