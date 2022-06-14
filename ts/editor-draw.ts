@@ -1,6 +1,5 @@
 import { Editor } from "./editor";
 import { css } from "./css";
-import $ from "jquery";
 
 export const ROW_SIZE = 20;
 export const COL_SIZE = 48;
@@ -23,8 +22,8 @@ export function editorDraw(editor: Editor) {
 
   // Set the container holding the canvas to the full size (makes the scrollbar
   // work properly)
-  $(editor.html.grid).css("width", COL_SIZE * cols + "px");
-  $(editor.html.grid).css("height", ROW_SIZE * rows + "px");
+  editor.html.grid.style.width = COL_SIZE * cols + "px";
+  editor.html.grid.style.height = ROW_SIZE * rows + "px";
 
   // Make the canvas big enough to fit only the cells actually on screen
   // Shift the canvas within it's parent so when it's scrolled, it still appears
@@ -110,9 +109,8 @@ function getOnScreenCells(editor: Editor, rows: number, cols: number) {
   const gridWidth = editorSize.width - gridScreenX;
   const gridHeight = editorSize.height - gridScreenY;
 
-  const editorJQuery = $(editor.html.editor);
-  const scrollX = editorJQuery.scrollLeft();
-  const scrollY = editorJQuery.scrollTop();
+  const scrollX = editor.html.editor.scrollLeft;
+  const scrollY = editor.html.editor.scrollTop;
 
   const startRow = Math.max(0, Math.floor(scrollY / ROW_SIZE));
   const endRow = Math.min(rows, startRow + Math.ceil(gridHeight / ROW_SIZE) + 1);

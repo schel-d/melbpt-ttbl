@@ -1,6 +1,5 @@
 import { Editor } from "./editor";
 import { COL_SIZE, ROW_SIZE } from "./editor-draw";
-import $ from "jquery";
 
 export function editorInit(editor: Editor) {
   editor.draw();
@@ -29,7 +28,7 @@ export function editorInit(editor: Editor) {
     editor.events.mouseOver = null;
     editor.draw();
   });
-  $(editor.html.editor).on("scroll", () => {
+  editor.html.editor.addEventListener("scroll", () => {
     editor.events.mouseOver = null;
     editor.draw();
   });
