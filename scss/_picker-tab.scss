@@ -1,0 +1,30 @@
+label.picker-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  input[type="radio"] {
+    appearance: none;
+    display: none;
+  }
+}
+label.picker-tab input[type="radio"] {
+  + .picker-tab-content {
+    background-color: transparent;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    transition: background-color 0.05s;
+  }
+  &:hover + .picker-tab-content {
+    background-color: var(--clr-ink-10);
+  }
+  &:active + .picker-tab-content {
+    background-color: var(--clr-ink-20);
+  }
+  &:disabled + .picker-tab-content {
+    opacity: 0.5;
+  }
+  &:checked + .picker-tab-content {
+    background-color: var(--clr-paper-30);
+    border-top: 2px solid var(--clr-accent);
+  }
+}

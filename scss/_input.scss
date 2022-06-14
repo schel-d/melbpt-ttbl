@@ -1,0 +1,27 @@
+@mixin dialog-input {
+  appearance: none;
+  outline: none;
+  background-color: var(--clr-ink-10);
+  border: none;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-default);
+  font-size: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  height: 2rem;
+  color: var(--clr-ink-80);
+
+  transition: background-color 0.05s;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--clr-ink-20);
+  }
+  &:active {
+    background-color: var(--clr-ink-30);
+  }
+}
