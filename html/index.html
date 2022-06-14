@@ -20,154 +20,45 @@
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="/roboto-mono-700.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <title>Timetable Editor - Train Arrives In</title>
   </head>
   <body class="no-select">
     <header id="header">
-      <button id="new-timetable-button"><p>New Timetable</p></button>
-      <button><p>Import</p></button>
+      <button id="new-timetable-button" disabled><p>New Timetable</p></button>
+      <button id="import-button" disabled><p>Import</p></button>
       <div id="sections">
-        <div class="section-group">
+        <!-- <div class="section-group">
           <div class="section-group-header"><p>Down:</p></div>
           <label class="picker-tab">
             <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content">
-              <p>Mon-Thu</p>
-            </div>
+            <div class="picker-tab-content"><p> ... </p></div>
           </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Fri</p></div>
-          </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Sat</p></div>
-          </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Sun</p></div>
-          </label>
-        </div>
-        <div class="section-group">
-          <div class="section-group-header"><p>Up:</p></div>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content">
-              <p class="color-weak">Mon-Thu</p>
-            </div>
-          </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Fri</p></div>
-          </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Sat</p></div>
-          </label>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p>Sun</p></div>
-          </label>
-        </div>
+        </div> -->
       </div>
-      <button><p>Export</p></button>
+      <button id="export-button" disabled><p>Export</p></button>
     </header>
     <main id="editor">
       <div id="corner"></div>
       <div id="services">
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
-        <div class="service"><p>Hello?</p></div>
+        <!-- <div class="service"> ... </div> -->
       </div>
       <div id="stops">
-        <div class="stop"><p>Pakenham</p></div>
-        <div class="stop"><p>Cardinia Road</p></div>
-        <div class="stop"><p>Officer</p></div>
-        <div class="stop"><p>Beaconsfield</p></div>
-        <div class="stop"><p>Berwick</p></div>
-        <div class="stop"><p>Narre Warren</p></div>
-        <div class="stop"><p>Hallam</p></div>
-        <div class="stop"><p>Dandenong</p></div>
-        <div class="stop"><p>Yarraman</p></div>
-        <div class="stop"><p>Noble Park</p></div>
-        <div class="stop"><p>Sandown Park</p></div>
-        <div class="stop"><p>Springvale</p></div>
-        <div class="stop"><p>Westall</p></div>
-        <div class="stop"><p>Clayton</p></div>
-        <div class="stop"><p>Huntingdale</p></div>
-        <div class="stop"><p>Oakleigh</p></div>
-        <div class="stop"><p>Hughesdale</p></div>
-        <div class="stop"><p>Murrumbeena</p></div>
-        <div class="stop"><p>Carnegie</p></div>
-        <div class="stop"><p>Caulfield</p></div>
-        <div class="stop"><p>Malvern</p></div>
-        <div class="stop"><p>Armadale</p></div>
-        <div class="stop"><p>Toorak</p></div>
-        <div class="stop"><p>Hawksburn</p></div>
-        <div class="stop"><p>South Yarra</p></div>
-        <div class="stop"><p>Richmond</p></div>
-        <div class="stop"><p>Parliament</p></div>
-        <div class="stop"><p>Melbourne Central</p></div>
-        <div class="stop"><p>Flagstaff</p></div>
-        <div class="stop"><p>Southern Cross</p></div>
-        <div class="stop"><p>Flinders Street</p></div>
+        <!-- <div class="stop"><p>Pakenham</p></div> -->
       </div>
       <div id="grid">
         <canvas id="grid-canvas"></canvas>
+      </div>
+      <div id="status">
+        <div id="status-loading">
+          <p>Loading lines and stops...</p>
+        </div>
+        <div class="gone" id="status-ready">
+          <h1>Timetable Editor - Train Arrives In</h1>
+          <p>
+            This page will host a timetable editor tool for Train Arrives In
+            timetables, but it's not ready just yet!
+          </p>
+        </div>
       </div>
     </main>
     <footer id="footer">

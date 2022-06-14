@@ -35,13 +35,16 @@ $header-size: 2.5rem;
   scrollbar-width: thin;
   align-items: stretch;
   height: $header-size;
+  border-left: 1px solid var(--clr-ink-20);
   border-right: 1px solid var(--clr-ink-20);
 
   .section-group {
     @include css-template.row;
-    border-left: 1px solid var(--clr-ink-20);
     flex-shrink: 0;
     align-items: stretch;
+  }
+  .section-group:not(:first-child) {
+    border-left: 1px solid var(--clr-ink-20);
   }
   .section-group-header {
     @include css-template.row;

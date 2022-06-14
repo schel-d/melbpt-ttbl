@@ -13,6 +13,10 @@ body {
   overflow: hidden;
 }
 
+.gone {
+  @include css-template.gone;
+}
+
 // Test dark mode styles (even though dark mode probably won't be used here):
 // @include css-template.dark;
 
@@ -38,9 +42,6 @@ $editor-column-width: 3rem;
   min-height: 0;
   overflow: scroll;
 
-  * {
-    font-family: "Roboto Mono", monospace;
-  }
   > * {
     flex-shrink: 0;
   }
@@ -76,6 +77,10 @@ $editor-column-width: 3rem;
   left: 0;
   z-index: 1;
   border-right: 1px solid var(--clr-ink-20);
+
+  * {
+    font-family: "Roboto Mono", monospace;
+  }
 }
 #grid {
   position: relative;
@@ -106,6 +111,33 @@ $editor-column-width: 3rem;
   @include css-template.row;
   width: $editor-column-width;
   p {
+    font-size: 0.7rem;
+  }
+}
+#status {
+  z-index: 0;
+  grid-row: 2;
+  grid-column: 2;
+  align-items: center;
+  justify-content: center;
+
+  > div {
+    align-items: center;
+    margin: 2rem;
+  }
+  p,
+  h1 {
+    text-align: center;
+  }
+  #status-loading p {
+    font-size: 0.85rem;
+  }
+  #status-ready h1 {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  #status-ready p {
     font-size: 0.7rem;
   }
 }
