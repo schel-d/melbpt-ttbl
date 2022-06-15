@@ -1,44 +1,68 @@
 import { Network } from "./network";
 
-// HTML IDs for dialog elements.
-const dialogID = "#new-timetable-dialog"
-const cancelButtonID = "#new-timetable-dialog-cancel"
-const submitButtonID = "#new-timetable-dialog-submit"
-const linesSelectID = "#new-timetable-dialog-lines"
+export type NewTimetableDialogCallback =
+  (lineID: number, days: string, timetableID: string) => void
 
-export function setup() {
-  // Close dialog on cancel button (note that ESC key can also close dialogs).
-  document.querySelector(cancelButtonID).addEventListener("click", () => {
-    // Required to cast to any since typescript does not know about showModal().
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dialog = document.querySelector(dialogID) as any;
-    dialog.close();
-  });
-
-  // Close dialog on submit button.
-  document.querySelector(submitButtonID).addEventListener("click", () => {
-    // Required to cast to any since typescript does not know about showModal().
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const dialog = document.querySelector(dialogID) as any;
-    dialog.close();
-  });
-}
-export function show(network: Network) {
-  // Sort lines by name alphabetical order.
-  const lines = [...network.lines].sort((a, b) => a.name.localeCompare(b.name));
-
-  // Required to cast to any since typescript does not know about showModal().
+export class NewTimetableDialog {
+  // Typescript does not have up to date dialog type information, so this is
+  // needed to be able to call showModal().
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dialog = document.querySelector(dialogID) as any;
+  private dialog: any;
 
-  // Remove all existing options from lines select, and add each line as an
-  // option.
-  const select = document.querySelector(linesSelectID) as HTMLSelectElement;
-  while (select.lastChild) { select.removeChild(select.lastChild); }
-  lines.map(line => {
-    const option = new Option(line.name, line.id.toString());
-    select.appendChild(option);
-  })
+  private cancelButton: HTMLButtonElement;
+  private submitButton: HTMLButtonElement;
+  private linesSelect: HTMLSelectElement;
+  private daysSelect: HTMLSelectElement;
+  private idFieldID: HTMLInputElement;
 
-  dialog.showModal();
+  private submitted: NewTimetableDialogCallback;
+
+  constructor(htmlID: string, submitted: NewTimetableDialogCallback) {
+
+    this.dialog = document.querySelector(`#${htmlID}`);
+    this.cancelButton = document.querySelector(`#${htmlID}-cancel`);
+    this.submitButton = document.querySelector(`#${htmlID}-submit`);
+    this.linesSelect = document.querySelector(`#${htmlID}-lines`);
+    this.daysSelect = document.querySelector(`#${htmlID}-days`);
+    this.idFieldID = document.querySelector(`#${htmlID}-id`);
+
+    this.submitted = submitted;
+  }
+  init(network: Network) {
+    // Sort lines by name alphabetical order, and add an option for each to the
+    // lines select.
+    const lines = [...network.lines]
+      .sort((a, b) => a.name.localeCompare(b.name));
+    lines.map(line => {
+      const option = new Option(line.name, line.id.toString());
+      this.linesSelect.appendChild(option);
+    })
+
+    // Close the dialog if the close button is clicked. Note that pressing ESC
+    // also closes the dialog, so it cannot be assumed this will run.
+    this.cancelButton.addEventListener("click", () => {
+      this.dialog.close();
+    });
+
+    // Retrieve the values, run the callback, and close the dialog when the
+    // submit button is pressed. If any error occurs, display the error and do
+    // not close the dialog.
+    this.submitButton.addEventListener("click", () => {
+      const lineIDStr = this.linesSelect.value;
+      const days = this.daysSelect.value;
+      const timetableID = this.idFieldID.value;
+      const lineIDNum = parseInt(lineIDStr);
+
+      try {
+        this.submitted(lineIDNum, days, timetableID)
+        this.dialog.close();
+      }
+      catch {
+        // todo: handle invalid input
+      }
+    });
+  }
+  show() {
+    this.dialog.showModal();
+  }
 }
