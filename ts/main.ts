@@ -1,6 +1,6 @@
 import { Editor } from "./editor";
 import { Network } from "./network";
-import { setup as setupNewTimetableDialog, /*show as showNewTimetableDialog*/ } from "./new-timetable-dialog";
+import { setup as setupNewTimetableDialog, show as showNewTimetableDialog } from "./new-timetable-dialog";
 
 // Todo: Fix bug causing layout before CSS is loaded, especially apparent when
 // using throttled connections without caching in DevTools.
@@ -17,11 +17,7 @@ network.load().then(() => {
 setupNewTimetableDialog();
 
 document.querySelector("#new-timetable-button").addEventListener("click", () => {
-  alert("Coming soon!");
-  // showNewTimetableDialog(network);
-});
-document.querySelector("#import-button").addEventListener("click", () => {
-  alert("Coming soon!");
+  showNewTimetableDialog(network);
 });
 
 function showWelcome() {
@@ -35,22 +31,22 @@ function showWelcome() {
   (document.querySelector("#new-timetable-button") as HTMLButtonElement).disabled = false;
   (document.querySelector("#import-button") as HTMLButtonElement).disabled = false;
 }
-function showEditor() {
-  // Todo: Hide the welcome/loading screens, populate the sections in the
-  // header. Maybe even enable the "export" button?
-  document.querySelector("#status-loading").classList.add("gone");
-  document.querySelector("#status-ready").classList.add("gone");
-  document.querySelector("#status").classList.add("gone");
-  (document.querySelector("#new-timetable-button") as HTMLButtonElement).disabled = false;
-  (document.querySelector("#import-button") as HTMLButtonElement).disabled = false;
-  (document.querySelector("#export-button") as HTMLButtonElement).disabled = false;
+// function showEditor() {
+//   // Todo: Hide the welcome/loading screens, populate the sections in the
+//   // header. Maybe even enable the "export" button?
+//   document.querySelector("#status-loading").classList.add("gone");
+//   document.querySelector("#status-ready").classList.add("gone");
+//   document.querySelector("#status").classList.add("gone");
+//   (document.querySelector("#new-timetable-button") as HTMLButtonElement).disabled = false;
+//   (document.querySelector("#import-button") as HTMLButtonElement).disabled = false;
+//   (document.querySelector("#export-button") as HTMLButtonElement).disabled = false;
 
-  const content: string[][] = [];
-  for (let x = 0; x < 50; x++) {
-    content[x] = [];
-    for (let y = 0; y < 30; y++) {
-      content[x][y] = "00:00";
-    }
-  }
-  editor.content = content;
-}
+//   const content: string[][] = [];
+//   for (let x = 0; x < 50; x++) {
+//     content[x] = [];
+//     for (let y = 0; y < 30; y++) {
+//       content[x][y] = "00:00";
+//     }
+//   }
+//   editor.content = content;
+// }
