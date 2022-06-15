@@ -111,13 +111,15 @@ function getUpDirectionIDs(line: LineNetworkApiV1Schema): string[] {
   }
   else if (line.routeType === "branch") {
     line.directions.forEach(d => {
+      // Direction names can be anything on a branch line, but will always end
+      // in "-up".
       if (d.id.endsWith("-up")) {
         upDirections.push(d.id);
       }
     });
   }
   else {
-    throw new Error(`Route types of "${line.routeType}" are not supported.`)
+    throw new Error(`Route types of "${line.routeType}" are not supported.`);
   }
 
   return upDirections;
