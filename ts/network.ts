@@ -1,26 +1,28 @@
-type NetworkApiV1Schema = {
-  hash: string,
-  stops: {
-    id: number,
-    name: string,
-    platforms: {
-      id: string,
-      name: string
-    }[],
-    urlName: string
+export type StopNetworkApiV1Schema = {
+  id: number,
+  name: string,
+  platforms: {
+    id: string,
+    name: string
   }[],
-  lines: {
-    id: number,
+  urlName: string
+};
+export type LineNetworkApiV1Schema = {
+  id: number,
+  name: string,
+  color: string,
+  service: string,
+  routeType: string,
+  directions: {
+    id: string,
     name: string,
-    color: string,
-    service: string,
-    routeType: string,
-    directions: {
-      id: string,
-      name: string,
-      stops: number[]
-    }[]
+    stops: number[]
   }[]
+};
+export type NetworkApiV1Schema = {
+  hash: string,
+  stops: StopNetworkApiV1Schema[],
+  lines: LineNetworkApiV1Schema[]
 }
 
 export class Network {
@@ -46,5 +48,15 @@ export class Network {
       throw new Error("Network not loaded.");
     }
     return this._json.lines;
+  }
+  stopName(stop: number) {
+    if (this._json == null) {
+      throw new Error("Network not loaded.");
+    }
+    const stopObj = this._json.stops.find(s => s.id === stop);
+    if (stopObj == null) {
+      throw new Error(`No stop with id=${stop}`);
+    }
+    return stopObj.name;
   }
 }
