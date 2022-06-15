@@ -7,24 +7,24 @@ export class NewTimetableDialog {
   // Typescript does not have up to date dialog type information, so this is
   // needed to be able to call showModal().
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private dialog: any;
+  private _dialog: any;
 
-  private cancelButton: HTMLButtonElement;
-  private submitButton: HTMLButtonElement;
-  private linesSelect: HTMLSelectElement;
-  private daysSelect: HTMLSelectElement;
-  private idFieldID: HTMLInputElement;
+  private _cancelButton: HTMLButtonElement;
+  private _submitButton: HTMLButtonElement;
+  private _linesSelect: HTMLSelectElement;
+  private _daysSelect: HTMLSelectElement;
+  private _idFieldID: HTMLInputElement;
 
   private submitted: NewTimetableDialogCallback;
 
   constructor(htmlID: string, submitted: NewTimetableDialogCallback) {
 
-    this.dialog = document.querySelector(`#${htmlID}`);
-    this.cancelButton = document.querySelector(`#${htmlID}-cancel`);
-    this.submitButton = document.querySelector(`#${htmlID}-submit`);
-    this.linesSelect = document.querySelector(`#${htmlID}-lines`);
-    this.daysSelect = document.querySelector(`#${htmlID}-days`);
-    this.idFieldID = document.querySelector(`#${htmlID}-id`);
+    this._dialog = document.querySelector(`#${htmlID}`);
+    this._cancelButton = document.querySelector(`#${htmlID}-cancel`);
+    this._submitButton = document.querySelector(`#${htmlID}-submit`);
+    this._linesSelect = document.querySelector(`#${htmlID}-lines`);
+    this._daysSelect = document.querySelector(`#${htmlID}-days`);
+    this._idFieldID = document.querySelector(`#${htmlID}-id`);
 
     this.submitted = submitted;
   }
@@ -35,27 +35,27 @@ export class NewTimetableDialog {
       .sort((a, b) => a.name.localeCompare(b.name));
     lines.map(line => {
       const option = new Option(line.name, line.id.toString());
-      this.linesSelect.appendChild(option);
+      this._linesSelect.appendChild(option);
     })
 
     // Close the dialog if the close button is clicked. Note that pressing ESC
     // also closes the dialog, so it cannot be assumed this will run.
-    this.cancelButton.addEventListener("click", () => {
-      this.dialog.close();
+    this._cancelButton.addEventListener("click", () => {
+      this._dialog.close();
     });
 
     // Retrieve the values, run the callback, and close the dialog when the
     // submit button is pressed. If any error occurs, display the error and do
     // not close the dialog.
-    this.submitButton.addEventListener("click", () => {
-      const lineIDStr = this.linesSelect.value;
-      const days = this.daysSelect.value;
-      const timetableID = this.idFieldID.value;
+    this._submitButton.addEventListener("click", () => {
+      const lineIDStr = this._linesSelect.value;
+      const days = this._daysSelect.value;
+      const timetableID = this._idFieldID.value;
       const lineIDNum = parseInt(lineIDStr);
 
       try {
         this.submitted(lineIDNum, days, timetableID)
-        this.dialog.close();
+        this._dialog.close();
       }
       catch {
         // todo: handle invalid input
@@ -63,6 +63,6 @@ export class NewTimetableDialog {
     });
   }
   show() {
-    this.dialog.showModal();
+    this._dialog.showModal();
   }
 }

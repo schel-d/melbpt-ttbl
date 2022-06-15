@@ -25,23 +25,26 @@ type NetworkApiV1Schema = {
 
 export class Network {
   domain: string;
-  json: NetworkApiV1Schema | null;
+  private _json: NetworkApiV1Schema | null;
+
   constructor(domain = "api.trainarrives.in") {
     this.domain = domain;
-    this.json = null;
+    this._json = null;
   }
+
   async load() {
     const api = "network/v1";
     const response = await fetch(`https://${this.domain}/${api}`)
     if (response.status != 200) {
       throw new Error(`"${this.domain}" did not respond.`);
     }
-    this.json = await response.json() as NetworkApiV1Schema;
+    this._json = await response.json() as NetworkApiV1Schema;
   }
+
   get lines() {
-    if (this.json == null) {
+    if (this._json == null) {
       throw new Error("Network not loaded.");
     }
-    return this.json.lines;
+    return this._json.lines;
   }
 }
