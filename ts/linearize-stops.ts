@@ -124,7 +124,9 @@ function getUpStopLists(lineID: number, network: Network): number[][] {
  * @param network The network object to retrieve line/stop information from.
  * @param linearizedStops The apparently linear list of stops.
  */
-function validateLinearizedStops(lineID: number, network: Network, linearizedStops: number[]) {
+function validateLinearizedStops(lineID: number, network: Network,
+  linearizedStops: number[]) {
+
   // Check that for the each of the stop lists in each up direction, that order
   // is maintained.
   const checkStopLists = getUpStopLists(lineID, network);
