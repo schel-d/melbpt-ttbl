@@ -1,12 +1,12 @@
-<svg class="tai-favicon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
   <style>
-    .tai-favicon .top { fill: #00a5ca; }
-    .tai-favicon .bottom { fill: #a236e3; }
-    .tai-favicon #outer { fill: #000000; }
-    .tai-favicon #inner { fill: #FFFFFF; }
+    .top { fill: #00a5ca; }
+    .bottom { fill: #a236e3; }
+    #outer { fill: #000000; }
+    #inner { fill: #FFFFFF; }
     @media (prefers-color-scheme: dark) {
-      .tai-favicon #outer { fill: #FFFFFF; }
-      .tai-favicon #inner { fill: transparent; }
+      #outer { fill: #FFFFFF; }
+      #inner { fill: transparent; }
     }
   </style>
   <path class="top" d=" M 6 4 L 1 4 C 0.448 4 0 4.448 0 5 L 0 8 L 6 8 L 6 4 Z "/>
