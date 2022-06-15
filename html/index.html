@@ -71,14 +71,7 @@
       </div>
       <h2>Days</h2>
       <div class="select-wrapper">
-        <select id="new-timetable-dialog-days" autocomplete="off">
-          <option>Mon-Thu, Fri, Sat, Sun</option>
-          <option>Mon-Fri, Sat, Sun</option>
-          <option>Mon-Sun</option>
-          <option>Mon, Tue-Thu, Fri, Sat, Sun</option>
-          <option>Mon, Tue-Fri, Sat, Sun</option>
-          <option>Mon, Tue, Wed, Thu, Fri, Sat, Sun</option>
-        </select>
+        <select id="new-timetable-dialog-dows" autocomplete="off"></select>
         <div class="select-wrapper-highlight"></div>
         <div class="select-wrapper-arrow"></div>
       </div>
@@ -88,6 +81,7 @@
         character unique to this timetable. (Base-36: 0-9 and A-Z)
       </p>
       <input id="new-timetable-dialog-id" type="text" autocomplete="off" />
+      <p id="new-timetable-dialog-error"></p>
       <div class="row">
         <button id="new-timetable-dialog-cancel">
           <p>Cancel</p>

@@ -1,10 +1,12 @@
+import { DOWPresets } from "./dow";
 import { Editor } from "./editor";
 import { Header } from "./header";
 import { Network } from "./network";
 import { NewTimetableDialog } from "./new-timetable-dialog";
 import { StatusScreens } from "./status-screens";
+import { Timetable } from "./timetable";
 
-let timetable: string = null;
+let timetable: Timetable = null;
 
 // Initialize the editor.
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
@@ -42,13 +44,18 @@ header.newTimetableButton.addEventListener("click", () => {
   }
 });
 
-function dialogSubmitted(lineID: number, days: string, timetableID: string) {
-  timetable = "Something!";
+function dialogSubmitted(lineID: number, dowPresetIndex: number,
+  timetableID: string) {
+
+  // Setup the new timetable object.
+  const timetableIDNum = parseInt(timetableID, 36);
+  const daysArray = DOWPresets[dowPresetIndex];
+  timetable = new Timetable(timetableIDNum, lineID, daysArray, network);
 
   status.editing();
 
   const content: string[][] = [];
-  for (let x = 0; x < 50; x++) {
+  for (let x = 0; x < 10; x++) {
     content[x] = [];
     for (let y = 0; y < 30; y++) {
       content[x][y] = "00:00";

@@ -1,7 +1,8 @@
+import { DOWPresets, nameDOW } from "./dow";
 import { Network } from "./network";
 
 export type NewTimetableDialogCallback =
-  (lineID: number, days: string, timetableID: string) => void
+  (lineID: number, dowPresetIndex: number, timetableID: string) => void
 
 export class NewTimetableDialog {
   // Typescript does not have up to date dialog type information, so this is
@@ -12,19 +13,20 @@ export class NewTimetableDialog {
   private _cancelButton: HTMLButtonElement;
   private _submitButton: HTMLButtonElement;
   private _linesSelect: HTMLSelectElement;
-  private _daysSelect: HTMLSelectElement;
-  private _idFieldID: HTMLInputElement;
+  private _dowsSelect: HTMLSelectElement;
+  private _idInput: HTMLInputElement;
+  private _errorText: HTMLParagraphElement;
 
   private submitted: NewTimetableDialogCallback;
 
   constructor(htmlID: string, submitted: NewTimetableDialogCallback) {
-
     this._dialog = document.querySelector(`#${htmlID}`);
     this._cancelButton = document.querySelector(`#${htmlID}-cancel`);
     this._submitButton = document.querySelector(`#${htmlID}-submit`);
     this._linesSelect = document.querySelector(`#${htmlID}-lines`);
-    this._daysSelect = document.querySelector(`#${htmlID}-days`);
-    this._idFieldID = document.querySelector(`#${htmlID}-id`);
+    this._dowsSelect = document.querySelector(`#${htmlID}-dows`);
+    this._idInput = document.querySelector(`#${htmlID}-id`);
+    this._errorText = document.querySelector(`#${htmlID}-error`);
 
     this.submitted = submitted;
   }
@@ -38,6 +40,14 @@ export class NewTimetableDialog {
       this._linesSelect.appendChild(option);
     })
 
+    // Add each DOW (days of week) present to the select. They are referenced by
+    // index.
+    DOWPresets.map((preset, index) => {
+      const option = new Option(preset.map(d => nameDOW(d)).join(", "),
+        index.toString());
+      this._dowsSelect.appendChild(option);
+    })
+
     // Close the dialog if the close button is clicked. Note that pressing ESC
     // also closes the dialog, so it cannot be assumed this will run.
     this._cancelButton.addEventListener("click", () => {
@@ -49,20 +59,24 @@ export class NewTimetableDialog {
     // not close the dialog.
     this._submitButton.addEventListener("click", () => {
       const lineIDStr = this._linesSelect.value;
-      const days = this._daysSelect.value;
-      const timetableID = this._idFieldID.value;
+      const dowPresetIndexStr = this._dowsSelect.value;
+      const timetableID = this._idInput.value;
+
       const lineIDNum = parseInt(lineIDStr);
+      const dowPresetIndex = parseInt(dowPresetIndexStr);
 
       try {
-        this.submitted(lineIDNum, days, timetableID)
+        this.submitted(lineIDNum, dowPresetIndex, timetableID)
         this._dialog.close();
+        this._errorText.textContent = "";
       }
-      catch {
-        // todo: handle invalid input
+      catch (ex) {
+        this._errorText.textContent = ex.message;
       }
     });
   }
   show() {
     this._dialog.showModal();
+    this._errorText.textContent = "";
   }
 }

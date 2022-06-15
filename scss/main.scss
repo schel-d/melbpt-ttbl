@@ -23,6 +23,9 @@ body {
 :root {
   --font-default: "Poppins", sans-serif;
   --clr-light-accent: #00a5ca;
+
+  // Should be added to css-template project in future.
+  --clr-error-text: #a52121;
 }
 
 $editor-stops-col-size: max(6rem, 10vw);
