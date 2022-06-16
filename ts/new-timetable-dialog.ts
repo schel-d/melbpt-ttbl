@@ -20,13 +20,19 @@ export class NewTimetableDialog {
   private submitted: NewTimetableDialogCallback;
 
   constructor(htmlID: string, submitted: NewTimetableDialogCallback) {
-    this._dialog = document.querySelector(`#${htmlID}`);
-    this._cancelButton = document.querySelector(`#${htmlID}-cancel`);
-    this._submitButton = document.querySelector(`#${htmlID}-submit`);
-    this._linesSelect = document.querySelector(`#${htmlID}-lines`);
-    this._dowsSelect = document.querySelector(`#${htmlID}-dows`);
-    this._idInput = document.querySelector(`#${htmlID}-id`);
-    this._errorText = document.querySelector(`#${htmlID}-error`);
+    this._dialog = document.getElementById(htmlID);
+    this._cancelButton =
+      document.getElementById(`${htmlID}-cancel`) as HTMLButtonElement;
+    this._submitButton =
+      document.getElementById(`${htmlID}-submit`) as HTMLButtonElement;
+    this._linesSelect =
+      document.getElementById(`${htmlID}-lines`) as HTMLSelectElement;
+    this._dowsSelect =
+      document.getElementById(`${htmlID}-dows`) as HTMLSelectElement;
+    this._idInput =
+      document.getElementById(`${htmlID}-id`) as HTMLInputElement;
+    this._errorText =
+      document.getElementById(`${htmlID}-error`) as HTMLParagraphElement;
 
     this.submitted = submitted;
   }

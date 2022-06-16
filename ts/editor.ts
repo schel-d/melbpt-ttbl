@@ -1,15 +1,16 @@
 import { editorDraw } from "./editor-draw"
 import { editorInit } from "./editor-init"
+import { Network } from "./network";
 import { TimetableSection } from "./timetable";
 
 export class Editor {
   html: {
-    editor: HTMLElement,
-    grid: HTMLElement,
+    editor: HTMLDivElement,
+    grid: HTMLDivElement,
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
-    stops: HTMLElement,
-    services: HTMLElement
+    stops: HTMLDivElement,
+    services: HTMLDivElement
   };
 
   private _content: string[][];
@@ -28,13 +29,15 @@ export class Editor {
     dragging: boolean
   };
 
-  constructor(editorID: string, gridID: string, canvasID: string, stopsID: string, servicesID: string) {
-    const editor = document.getElementById(editorID);
-    const grid = document.getElementById(gridID);
+  constructor(editorID: string, gridID: string, canvasID: string,
+    stopsID: string, servicesID: string) {
+
+    const editor = document.getElementById(editorID) as HTMLDivElement;
+    const grid = document.getElementById(gridID) as HTMLDivElement;
     const canvas = document.getElementById(canvasID) as HTMLCanvasElement;
     const context = canvas.getContext("2d");
-    const stops = document.getElementById(stopsID);
-    const services = document.getElementById(servicesID);
+    const stops = document.getElementById(stopsID) as HTMLDivElement;
+    const services = document.getElementById(servicesID) as HTMLDivElement;
     this.html = {
       editor: editor,
       grid: grid,
@@ -51,6 +54,7 @@ export class Editor {
     this.events.mouseOver = null;
     this.draw();
   }
+
   private resetEvents() {
     this.events = {
       mouseOver: null,
@@ -62,6 +66,7 @@ export class Editor {
   init() {
     editorInit(this);
   }
+
   draw() {
     editorDraw(this);
   }
@@ -69,15 +74,31 @@ export class Editor {
   clear() {
     this._content = [];
     this.resetEvents();
+    this.html.stops.replaceChildren();
     this.draw();
   }
-  setSection(section: TimetableSection) {
+
+  setSection(section: TimetableSection, network: Network) {
     this._content = section.grid;
     this.resetEvents();
+    this.setStops(section.stops, network);
     this.draw();
   }
 
   get content() {
     return this._content;
+  }
+
+  setStops(stops: number[], network: Network) {
+    this.html.stops.replaceChildren(...stops.map(s => {
+      const stop = document.createElement("div");
+      stop.className = "stop";
+
+      const stopP = document.createElement("p");
+      stopP.textContent = network.stopName(s);
+      stop.append(stopP);
+
+      return stop;
+    }))
   }
 }

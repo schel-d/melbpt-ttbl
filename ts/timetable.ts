@@ -69,12 +69,5 @@ export class TimetableSection {
     this.dow = validateDOW(dow);
     this.grid = [];
     this.stops = stops;
-
-    for (let x = 0; x < 10; x++) {
-      this.grid[x] = [];
-      for (let y = 0; y < 30; y++) {
-        this.grid[x][y] = this.generalDir;
-      }
-    }
   }
 }

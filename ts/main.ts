@@ -12,6 +12,10 @@ let timetable: Timetable = null;
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
 editor.init();
 window.addEventListener("resize", () => editor.windowResized());
+document.addEventListener("paste", (e) => {
+  onPaste(e.clipboardData.getData("text"));
+  e.preventDefault();
+});
 
 // Initialize the new timetable dialog.
 const newTimetableDialog = new NewTimetableDialog("new-timetable-dialog",
@@ -55,9 +59,14 @@ function dialogSubmitted(lineID: number, dowPresetIndex: number,
 
   // Update the header buttons and create the tabs for the timetable sections.
   status.editing(timetable);
-  status.editingSection(timetable, timetable.generalDirs[0], timetable.dows[0], true);
+  status.editingSection(timetable, timetable.generalDirs[0], timetable.dows[0],
+    true, network);
 }
 
 function tabClicked(generalDir: string, dow: string) {
-  status.editingSection(timetable, generalDir, dow, false);
+  status.editingSection(timetable, generalDir, dow, false, network);
+}
+
+function onPaste(pastedText: string) {
+  console.log(JSON.stringify(pastedText));
 }

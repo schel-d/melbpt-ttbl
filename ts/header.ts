@@ -17,10 +17,14 @@ export class Header {
   constructor(newTimetableButton: string, importButton: string,
     exportButton: string, tabs: string, callback: HeaderTabCallback) {
 
-    this.newTimetableButton = document.querySelector(`#${newTimetableButton}`);
-    this.importButton = document.querySelector(`#${importButton}`);
-    this.exportButton = document.querySelector(`#${exportButton}`);
-    this.tabs = document.querySelector(`#${tabs}`);
+    this.newTimetableButton =
+      document.getElementById(newTimetableButton) as HTMLButtonElement;
+    this.importButton =
+      document.getElementById(importButton) as HTMLButtonElement;
+    this.exportButton =
+      document.getElementById(exportButton) as HTMLButtonElement;
+    this.tabs =
+      document.getElementById(tabs) as HTMLDivElement;
     this._callback = callback;
   }
   set newTimetableButtonEnabled(value: boolean) {

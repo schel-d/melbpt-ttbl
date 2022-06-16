@@ -1,5 +1,6 @@
 import { Editor } from "./editor";
 import { Header } from "./header";
+import { Network } from "./network";
 import { Timetable } from "./timetable";
 
 export class StatusScreens {
@@ -10,9 +11,11 @@ export class StatusScreens {
   private _header: Header;
 
   constructor(htmlID: string, editor: Editor, header: Header) {
-    this._status = document.querySelector(`#${htmlID}`);
-    this._statusLoading = document.querySelector(`#${htmlID}-loading`);
-    this._statusReady = document.querySelector(`#${htmlID}-ready`);
+    this._status = document.getElementById(htmlID) as HTMLDivElement;
+    this._statusLoading =
+      document.getElementById(`${htmlID}-loading`) as HTMLDivElement;
+    this._statusReady =
+      document.getElementById(`${htmlID}-ready`) as HTMLDivElement;
     this._editor = editor;
     this._header = header;
   }
@@ -55,11 +58,13 @@ export class StatusScreens {
     };
   }
   editingSection(timetable: Timetable, generalDir: string, dow: string,
-    selectTab: boolean) {
+    selectTab: boolean, network: Network) {
 
     if (selectTab) {
       this._header.selectTab(generalDir, dow);
     }
-    this._editor.setSection(timetable.getTimetableSection(generalDir, dow));
+
+    this._editor.setSection(timetable.getTimetableSection(generalDir, dow),
+      network);
   }
 }
