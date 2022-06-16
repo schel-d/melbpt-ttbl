@@ -1,5 +1,5 @@
 @use "css-template/import" as css-template;
-@use "picker-tab";
+@use "tab";
 @use "button";
 
 $header-size: 2.5rem;
@@ -26,7 +26,7 @@ $header-size: 2.5rem;
     }
   }
 }
-#sections {
+#tabs {
   @include css-template.row;
   flex-grow: 1;
   flex-shrink: 1;
@@ -38,15 +38,15 @@ $header-size: 2.5rem;
   border-left: 1px solid var(--clr-ink-20);
   border-right: 1px solid var(--clr-ink-20);
 
-  .section-group {
+  .tab-group {
     @include css-template.row;
     flex-shrink: 0;
     align-items: stretch;
   }
-  .section-group:not(:first-child) {
+  .tab-group:not(:first-child) {
     border-left: 1px solid var(--clr-ink-20);
   }
-  .section-group-header {
+  .tab-group-header {
     @include css-template.row;
     padding: 0 0.5rem;
     p {
@@ -54,10 +54,10 @@ $header-size: 2.5rem;
     }
     font-size: 0.7rem;
   }
-  .picker-tab {
+  .tab {
     align-items: stretch;
   }
-  .picker-tab-content {
+  .tab-content {
     @include css-template.row;
     padding: 0 0.5rem;
     p {

@@ -1,4 +1,4 @@
-label.picker-tab {
+label.tab {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7,23 +7,23 @@ label.picker-tab {
     display: none;
   }
 }
-label.picker-tab input[type="radio"] {
-  + .picker-tab-content {
+label.tab input[type="radio"] {
+  + .tab-content {
     background-color: transparent;
     border-top: 2px solid transparent;
     border-bottom: 2px solid transparent;
     transition: background-color 0.05s;
   }
-  &:hover + .picker-tab-content {
+  &:hover + .tab-content {
     background-color: var(--clr-ink-10);
   }
-  &:active + .picker-tab-content {
+  &:active + .tab-content {
     background-color: var(--clr-ink-20);
   }
-  &:disabled + .picker-tab-content {
+  &:disabled + .tab-content {
     opacity: 0.5;
   }
-  &:checked + .picker-tab-content {
+  &:checked + .tab-content {
     background-color: var(--clr-paper-30);
     border-top: 2px solid var(--clr-accent);
   }

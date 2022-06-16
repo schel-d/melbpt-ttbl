@@ -1,5 +1,6 @@
 import { editorDraw } from "./editor-draw"
 import { editorInit } from "./editor-init"
+import { TimetableSection } from "./timetable";
 
 export class Editor {
   html: {
@@ -43,16 +44,19 @@ export class Editor {
       services: services,
     };
     this._content = [];
-    this.events = {
-      mouseOver: null,
-      selected: null,
-      dragging: false,
-    };
+    this.resetEvents();
   }
 
   windowResized() {
     this.events.mouseOver = null;
     this.draw();
+  }
+  private resetEvents() {
+    this.events = {
+      mouseOver: null,
+      selected: null,
+      dragging: false,
+    };
   }
 
   init() {
@@ -61,11 +65,19 @@ export class Editor {
   draw() {
     editorDraw(this);
   }
-  set content(newContent: string[][]) {
-    this._content = newContent;
+
+  clear() {
+    this._content = [];
+    this.resetEvents();
     this.draw();
   }
-  get content(): string[][] {
+  setSection(section: TimetableSection) {
+    this._content = section.grid;
+    this.resetEvents();
+    this.draw();
+  }
+
+  get content() {
     return this._content;
   }
 }

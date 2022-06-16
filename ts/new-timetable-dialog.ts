@@ -34,19 +34,16 @@ export class NewTimetableDialog {
     // Sort lines by name alphabetical order, and add an option for each to the
     // lines select.
     const lines = [...network.lines]
-      .sort((a, b) => a.name.localeCompare(b.name));
-    lines.map(line => {
-      const option = new Option(line.name, line.id.toString());
-      this._linesSelect.appendChild(option);
-    })
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(line => new Option(line.name, line.id.toString()));
+    this._linesSelect.replaceChildren(...lines);
 
     // Add each DOW (days of week) present to the select. They are referenced by
     // index.
-    DOWPresets.map((preset, index) => {
-      const option = new Option(preset.map(d => nameDOW(d)).join(", "),
-        index.toString());
-      this._dowsSelect.appendChild(option);
-    })
+    const dows = DOWPresets.map((preset, index) => new Option(
+      preset.map(d => nameDOW(d)).join(", "),
+      index.toString()))
+    this._dowsSelect.replaceChildren(...dows);
 
     // Close the dialog if the close button is clicked. Note that pressing ESC
     // also closes the dialog, so it cannot be assumed this will run.

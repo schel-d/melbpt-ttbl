@@ -5,20 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Timetable Editor - Train Arrives In</title>
-    <link
-      rel="preload"
-      href="poppins-400.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="poppins-700.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <link rel="stylesheet" href="main.css" />
     <link rel="icon" href="favicon.svg" />
   </head>
@@ -26,15 +12,7 @@
     <header id="header">
       <button id="new-timetable-button" disabled><p>New Timetable</p></button>
       <button id="import-button" disabled><p>Import</p></button>
-      <div id="sections">
-        <!-- <div class="section-group">
-          <div class="section-group-header"><p>Down:</p></div>
-          <label class="picker-tab">
-            <input type="radio" name="section" autocomplete="off" />
-            <div class="picker-tab-content"><p> ... </p></div>
-          </label>
-        </div> -->
-      </div>
+      <div id="tabs"></div>
       <button id="export-button" disabled><p>Export</p></button>
     </header>
     <main id="editor">

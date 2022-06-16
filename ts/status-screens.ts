@@ -1,5 +1,6 @@
 import { Editor } from "./editor";
 import { Header } from "./header";
+import { Timetable } from "./timetable";
 
 export class StatusScreens {
   private _status: HTMLDivElement;
@@ -23,8 +24,9 @@ export class StatusScreens {
     this._header.newTimetableButtonEnabled = false;
     this._header.importButtonEnabled = false;
     this._header.exportButtonEnabled = false;
+    this._header.clearTabs();
 
-    this._editor.content = [];
+    this._editor.clear();
     window.onbeforeunload = null;
   }
   ready() {
@@ -35,19 +37,29 @@ export class StatusScreens {
     this._header.newTimetableButtonEnabled = true;
     this._header.importButtonEnabled = true;
     this._header.exportButtonEnabled = false;
+    this._header.clearTabs();
 
-    this._editor.content = [];
+    this._editor.clear();
     window.onbeforeunload = null;
   }
-  editing() {
+  editing(timetable: Timetable) {
     this._status.classList.add("gone");
 
     this._header.newTimetableButtonEnabled = true;
     this._header.importButtonEnabled = true;
     this._header.exportButtonEnabled = true;
+    this._header.createTabs(timetable.generalDirs, timetable.dows);
 
     window.onbeforeunload = function () {
       return true;
     };
+  }
+  editingSection(timetable: Timetable, generalDir: string, dow: string,
+    selectTab: boolean) {
+
+    if (selectTab) {
+      this._header.selectTab(generalDir, dow);
+    }
+    this._editor.setSection(timetable.getTimetableSection(generalDir, dow));
   }
 }

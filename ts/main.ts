@@ -20,7 +20,8 @@ const newTimetableDialog = new NewTimetableDialog("new-timetable-dialog",
 // Initialize the header and status screens, and ensuring the loading screen is
 // displaying correctly (should be default in markup anyway - that way it shows
 // before the script is loaded too).
-const header = new Header("new-timetable-button", "import-button", "export-button");
+const header = new Header("new-timetable-button", "import-button",
+  "export-button", "tabs", tabClicked);
 const status = new StatusScreens("status", editor, header);
 status.loading();
 
@@ -49,19 +50,14 @@ function dialogSubmitted(lineID: number, dowPresetIndex: number,
 
   // Setup the new timetable object.
   const timetableIDNum = parseInt(timetableID, 36);
-  const daysArray = DOWPresets[dowPresetIndex];
-  timetable = new Timetable(timetableIDNum, lineID, daysArray, network);
+  const dows = DOWPresets[dowPresetIndex];
+  timetable = new Timetable(timetableIDNum, lineID, dows, network);
 
-  status.editing();
+  // Update the header buttons and create the tabs for the timetable sections.
+  status.editing(timetable);
+  status.editingSection(timetable, timetable.generalDirs[0], timetable.dows[0], true);
+}
 
-  const content: string[][] = [];
-  for (let x = 0; x < 10; x++) {
-    content[x] = [];
-    for (let y = 0; y < 30; y++) {
-      content[x][y] = "00:00";
-    }
-  }
-  editor.content = content;
-
-  // throw new Error("Not implemented yet!");
+function tabClicked(generalDir: string, dow: string) {
+  status.editingSection(timetable, generalDir, dow, false);
 }

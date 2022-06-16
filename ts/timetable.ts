@@ -6,39 +6,75 @@ import { validateLineID, validateTimetableID } from "./validation";
 export class Timetable {
   timetableID: number;
   lineID: number;
-  upStopIDs: number[];
-  downStopIDs: number[];
+  linearizedStops: {
+    "up": number[],
+    "down": number[]
+  }
   sections: TimetableSection[];
 
-  constructor(timetableID: number, lineID: number, sectionsDOWs: string[],
+  private _dows: string[];
+
+  constructor(timetableID: number, lineID: number, dows: string[],
     network: Network) {
 
     this.timetableID = validateTimetableID(timetableID);
     this.lineID = validateLineID(lineID, network);
+    this._dows = dows;
     this.sections = [];
 
     // It can be assumed that the down stops are just the up stops, but
     // backwards!
-    this.upStopIDs = linearizeStops(lineID, network);
-    this.downStopIDs = [...this.upStopIDs].reverse();
+    const linearizedStops = linearizeStops(lineID, network);
+    this.linearizedStops = {
+      "up": linearizedStops,
+      "down": [...linearizedStops].reverse()
+    };
 
     // Create an up and down timetable section for each set of days (a set of
     // days being something like "MTWT___" for Mon-Thu, or "______S" for Sun).
-    sectionsDOWs.forEach(d => {
-      this.sections.push(new TimetableSection(true, d));
-      this.sections.push(new TimetableSection(false, d));
-    })
+    dows.forEach(d => {
+      this.sections.push(
+        new TimetableSection("up", d, this.linearizedStops.up));
+      this.sections.push(
+        new TimetableSection("down", d, this.linearizedStops.down));
+    });
+  }
+  get generalDirs() {
+    return ["up", "down"];
+  }
+  get dows() {
+    return [...this._dows];
+  }
+  getTimetableSection(generalDir: string, dow: string) {
+    const section = this.sections.find(s =>
+      s.generalDir === generalDir && s.dow === dow);
+
+    if (section != null) {
+      return section;
+    }
+
+    throw new Error(`Timetable section in generalDir="${generalDir}", ` +
+      `dow="${dow}" does not exist`);
   }
 }
 
 export class TimetableSection {
-  upDirection: boolean;
+  generalDir: string;
   dow: string;
   grid: string[][];
+  stops: number[];
 
-  constructor(upDirection: boolean, dow: string) {
-    this.upDirection = upDirection;
+  constructor(generalDir: string, dow: string, stops: number[]) {
+    this.generalDir = generalDir;
     this.dow = validateDOW(dow);
     this.grid = [];
+    this.stops = stops;
+
+    for (let x = 0; x < 10; x++) {
+      this.grid[x] = [];
+      for (let y = 0; y < 30; y++) {
+        this.grid[x][y] = this.generalDir;
+      }
+    }
   }
 }
