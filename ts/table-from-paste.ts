@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { Network } from "./network";
 import { TimetableSection } from "./timetable";
 
@@ -48,7 +49,7 @@ export function extractContent(network: Network, section: TimetableSection,
         result[x][y] = "";
       }
       else {
-        result[x][y] = times[x];
+        result[x][y] = formatTime(times[x]);
       }
     }
   }
@@ -57,4 +58,24 @@ export function extractContent(network: Network, section: TimetableSection,
 
 function stopNameAlternatives(stopName: string) {
   return [stopName, `${stopName} dep`, `${stopName} arr`]
+}
+
+function formatTime(time: string) {
+  if (time === "-") {
+    return "-";
+  }
+
+  time = time.replace(".", ":").replace(/[ uda]\b/, "");
+
+  const hour24 = DateTime.fromFormat(time, "H:mm");
+  if (hour24.isValid) {
+    return hour24.toFormat("HH:mm");
+  }
+
+  const hour12 = DateTime.fromFormat(time, "h:mma");
+  if (hour12.isValid) {
+    return hour12.toFormat("HH:mm");
+  }
+
+  return "?";
 }

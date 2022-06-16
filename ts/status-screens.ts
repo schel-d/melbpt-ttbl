@@ -53,8 +53,10 @@ export class StatusScreens {
     this._header.exportButtonEnabled = true;
     this._header.createTabs(timetable.generalDirs, timetable.dows);
 
-    window.onbeforeunload = function () {
-      return timetable.hasContent();
+    window.onbeforeunload = () => {
+      if (timetable.hasContent()) {
+        return true;
+      }
     };
   }
   editingSection(section: TimetableSection, selectTab: boolean,

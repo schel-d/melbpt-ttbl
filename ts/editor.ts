@@ -13,7 +13,7 @@ export class Editor {
     services: HTMLDivElement
   };
 
-  private _content: string[][];
+  private _section: TimetableSection | null;
 
   events: {
     mouseOver: {
@@ -46,21 +46,13 @@ export class Editor {
       stops: stops,
       services: services,
     };
-    this._content = [];
+    this._section = null;
     this.resetEvents();
   }
 
   windowResized() {
     this.events.mouseOver = null;
     this.draw();
-  }
-
-  private resetEvents() {
-    this.events = {
-      mouseOver: null,
-      selected: null,
-      dragging: false,
-    };
   }
 
   init() {
@@ -72,31 +64,34 @@ export class Editor {
   }
 
   clear() {
-    this._content = [];
+    this._section = null;
     this.resetEvents();
     this.html.stops.replaceChildren();
     this.draw();
   }
 
   setSection(section: TimetableSection, network: Network) {
-    this._content = section.grid;
+    this._section = section;
     this.resetEvents();
     this.setStops(section.stops, network);
     this.draw();
   }
 
   get content() {
-    return this._content;
+    if (this._section == null) {
+      return [];
+    }
+    return this._section.grid;
   }
   addContent(content: string[][]) {
-    // Todo: clearly this is wrong, it should be added to the end, not replaced!
-    // Also this code probably shouldn't be here, since it should be added to
-    // the timetable section object too - so do that first.
-    this._content = content;
+    if (this._section == null) {
+      throw new Error("No section selected to edit to");
+    }
+    this._section.grid.push(...content);
     this.draw();
   }
 
-  setStops(stops: number[], network: Network) {
+  private setStops(stops: number[], network: Network) {
     this.html.stops.replaceChildren(...stops.map(s => {
       const stop = document.createElement("div");
       stop.className = "stop";
@@ -107,5 +102,12 @@ export class Editor {
 
       return stop;
     }))
+  }
+  private resetEvents() {
+    this.events = {
+      mouseOver: null,
+      selected: null,
+      dragging: false,
+    };
   }
 }
