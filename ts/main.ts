@@ -4,7 +4,7 @@ import { Header } from "./header";
 import { Network } from "./network";
 import { NewTimetableDialog } from "./new-timetable-dialog";
 import { StatusScreens } from "./status-screens";
-import { extractContent } from "./table-from-paste";
+import { extractContent } from "./extract-content";
 import { Timetable, TimetableSection } from "./timetable";
 
 let timetable: Timetable | null = null;
@@ -71,6 +71,7 @@ function tabClicked(generalDir: string, dow: string) {
   status.editingSection(timetableSection, false, network);
 }
 
-function onPaste(pastedText: string) {
-  editor.addContent(extractContent(network, timetableSection, pastedText));
+function onPaste(text: string) {
+  const stopNames = timetableSection.stops.map(s => network.stopName(s));
+  extractContent(text, stopNames, newContent => editor.addContent(newContent));
 }
