@@ -88,6 +88,13 @@ export class Editor {
   get content() {
     return this._content;
   }
+  addContent(content: string[][]) {
+    // Todo: clearly this is wrong, it should be added to the end, not replaced!
+    // Also this code probably shouldn't be here, since it should be added to
+    // the timetable section object too - so do that first.
+    this._content = content;
+    this.draw();
+  }
 
   setStops(stops: number[], network: Network) {
     this.html.stops.replaceChildren(...stops.map(s => {

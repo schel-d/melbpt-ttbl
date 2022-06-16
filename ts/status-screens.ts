@@ -1,7 +1,7 @@
 import { Editor } from "./editor";
 import { Header } from "./header";
 import { Network } from "./network";
-import { Timetable } from "./timetable";
+import { Timetable, TimetableSection } from "./timetable";
 
 export class StatusScreens {
   private _status: HTMLDivElement;
@@ -54,17 +54,16 @@ export class StatusScreens {
     this._header.createTabs(timetable.generalDirs, timetable.dows);
 
     window.onbeforeunload = function () {
-      return true;
+      return timetable.hasContent();
     };
   }
-  editingSection(timetable: Timetable, generalDir: string, dow: string,
-    selectTab: boolean, network: Network) {
+  editingSection(section: TimetableSection, selectTab: boolean,
+    network: Network) {
 
     if (selectTab) {
-      this._header.selectTab(generalDir, dow);
+      this._header.selectTab(section.generalDir, section.dow);
     }
 
-    this._editor.setSection(timetable.getTimetableSection(generalDir, dow),
-      network);
+    this._editor.setSection(section, network);
   }
 }

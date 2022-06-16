@@ -56,6 +56,9 @@ export class Timetable {
     throw new Error(`Timetable section in generalDir="${generalDir}", ` +
       `dow="${dow}" does not exist`);
   }
+  hasContent(): boolean {
+    return this.sections.some(s => s.grid.length > 0);
+  }
 }
 
 export class TimetableSection {

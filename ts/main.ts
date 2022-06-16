@@ -4,9 +4,12 @@ import { Header } from "./header";
 import { Network } from "./network";
 import { NewTimetableDialog } from "./new-timetable-dialog";
 import { StatusScreens } from "./status-screens";
-import { Timetable } from "./timetable";
+import { extractContent } from "./table-from-paste";
+import { PASTE_TEXT, PASTE_TEXT_2 } from "./temp-paste-data";
+import { Timetable, TimetableSection } from "./timetable";
 
-let timetable: Timetable = null;
+let timetable: Timetable | null = null;
+let timetableSection: TimetableSection | null = null;
 
 // Initialize the editor.
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
@@ -32,6 +35,15 @@ status.loading();
 // Begin downloading the network information from the API.
 const network = new Network();
 network.load().then(() => {
+  // <TEMPORARY> ===============================================================
+  // dialogSubmitted(14, 0, "0");
+  // onPaste(PASTE_TEXT);
+
+  // dialogSubmitted(6, 0, "0");
+  // onPaste(PASTE_TEXT_2);
+  // return;
+  // </TEMPORARY> ==============================================================
+
   // When download is finished, initialize the new timetable dialog and show
   // the welcome screen.
   newTimetableDialog.init(network);
@@ -59,14 +71,17 @@ function dialogSubmitted(lineID: number, dowPresetIndex: number,
 
   // Update the header buttons and create the tabs for the timetable sections.
   status.editing(timetable);
-  status.editingSection(timetable, timetable.generalDirs[0], timetable.dows[0],
-    true, network);
+  timetableSection = timetable.getTimetableSection(timetable.generalDirs[0],
+    timetable.dows[0]);
+  status.editingSection(timetableSection, true, network);
 }
 
 function tabClicked(generalDir: string, dow: string) {
-  status.editingSection(timetable, generalDir, dow, false, network);
+  timetableSection = timetable.getTimetableSection(generalDir, dow);
+  status.editingSection(timetableSection, false, network);
 }
 
 function onPaste(pastedText: string) {
-  console.log(JSON.stringify(pastedText));
+  // console.log(JSON.stringify(pastedText));
+  editor.addContent(extractContent(network, timetableSection, pastedText));
 }
