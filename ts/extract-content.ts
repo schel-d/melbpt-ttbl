@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { DuplicatesList, PasteIssuesDialog } from "./paste-issues-dialog";
 
 // Regex to test if a line in the pasted text is a timetable line.
 const timetableRowRegex = /^.+( +(([0-9]{1,2}[:.][0-9]{2}(am|pm|[uda])?)|-))+$/;
@@ -7,7 +8,7 @@ const timetableRowRegex = /^.+( +(([0-9]{1,2}[:.][0-9]{2}(am|pm|[uda])?)|-))+$/;
 // from the stop name).
 const timesOnlyRegex = /( +(([0-9]{1,2}[:.][0-9]{2}(am|pm|[uda])?)|-))+$/;
 
-type Row = { stop: string, times: string[] };
+export type Row = { stop: string, times: string[], header: string };
 type ClarifiedRows = { [key: number]: string[] | null };
 
 /**
@@ -15,14 +16,20 @@ type ClarifiedRows = { [key: number]: string[] | null };
  * content.
  * @param text The block of text to parse timetable content from.
  * @param stopNames The names of each stop in the current timetable section.
+ * @param pasteIssuesDialog The paste issues dialog controller, used by this
+ * function when there are issues to resolve, such as multiple rows for the same
+ * stop.
+ * @param callback The function to call when the content is ready to be appended
+ * to the current timetable section.
  */
 export function extractContent(text: string, stopNames: string[],
-  callback: (content: string[][]) => void) {
+  pasteIssuesDialog: PasteIssuesDialog,
+  callback: (content: string[][], missingRows: string[]) => void) {
 
   const rows = extractRows(text, stopNames);
-  clarifyRows(rows, stopNames, (clarifiedRows) => {
+  clarifyRows(rows, stopNames, pasteIssuesDialog, (clarifiedRows, missing) => {
     const content = contentify(clarifiedRows);
-    callback(content);
+    callback(content, missing);
   });
 }
 
@@ -59,7 +66,8 @@ function extractRows(text: string, stopNames: string[]): Row[] {
       // Return the stop and times, and split the times into an array as well.
       return {
         stop: stop,
-        times: x.substring(timesOnlyRegex.exec(x).index).trim().split(" ")
+        times: x.substring(timesOnlyRegex.exec(x).index).trim().split(" "),
+        header: header
       };
     })
 
@@ -75,35 +83,53 @@ function extractRows(text: string, stopNames: string[]): Row[] {
  * rows cause a dialog to show so the user can decide which row to take.
  * @param rows The output of the extractRows() function.
  * @param stopNames The names of each stop in the current timetable section.
+ * @param pasteIssuesDialog The paste issues dialog controller, used by this
+ * function when there are issues to resolve, such as multiple rows for the same
+ * stop.
  * @param callback The function called when the result is ready (required in
  * case a dialog is necessary).
  */
 function clarifyRows(rows: Row[], stopNames: string[],
-  callback: (clarifiedRows: ClarifiedRows) => void) {
+  pasteIssuesDialog: PasteIssuesDialog,
+  callback: (clarifiedRows: ClarifiedRows, missingRows: string[]) => void) {
 
-  // Todo: show dialog to resolve duplicate rows and show warnings about missing
-  // rows.
+  const missingRows: string[] = [];
+  const duplicates: DuplicatesList = [];
 
-  // <TEMPORARY>
   const clarifiedRows: ClarifiedRows = {};
-  for (const i in stopNames) {
+  for (let i = 0; i < stopNames.length; i++) {
     const stopName = stopNames[i];
     const rowOptions = rows.filter(r => r.stop === stopName);
 
-    if (rowOptions.length == 0) {
-      clarifiedRows[i] = null;
-      alert(`Missing information for "${stopName}".`);
-      continue;
+    if (rowOptions.length == 1) {
+      clarifiedRows[i] = rowOptions[0].times;
     }
-
-    clarifiedRows[i] = rowOptions[0].times;
-    if (rowOptions.length > 1) {
-      alert(`Multiple rows for "${stopName}".`);
+    else if (rowOptions.length == 0) {
+      clarifiedRows[i] = null;
+      missingRows.push(stopName);
+    }
+    else {
+      clarifiedRows[i] = null;
+      duplicates.push({
+        stopName: stopName,
+        rowIndex: i,
+        options: rowOptions
+      });
     }
   }
-  // </TEMPORARY>
 
-  callback(clarifiedRows);
+  if (duplicates.length > 0) {
+    pasteIssuesDialog.show(duplicates, (choices) => {
+      for (const choice of choices) {
+        clarifiedRows[choice.rowIndex] = choice.option.times;
+      }
+      callback(clarifiedRows, missingRows);
+    });
+  }
+  else {
+    callback(clarifiedRows, missingRows);
+  }
+
 }
 
 /**

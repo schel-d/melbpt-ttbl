@@ -75,3 +75,48 @@ dialog {
     }
   }
 }
+
+#paste-issues-dialog {
+  @include css-template.no-select;
+  padding: 1rem;
+  width: min(90vw, var(--dialog-max-width));
+  h1 {
+    color: var(--clr-ink-100);
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+    margin-top: 0.25rem;
+  }
+  h2 {
+    color: var(--clr-ink-100);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  > .row {
+    @include css-template.row;
+    margin-right: -0.5rem;
+    justify-content: end;
+  }
+  button {
+    @include button.header-button;
+    height: 2rem;
+    margin-right: 0.5rem;
+    p {
+      margin-left: 1rem;
+      margin-right: 1rem;
+      font-size: 0.85rem;
+    }
+  }
+  > p {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+  .select-wrapper {
+    @include select.dialog-select-wrapper;
+    margin-bottom: 1rem;
+    select {
+      font-size: 0.85rem;
+    }
+  }
+}

@@ -40,7 +40,7 @@
       <p>Valid timetable</p>
     </footer>
     <dialog id="new-timetable-dialog">
-      <h1>New Timetable</h1>
+      <h1>New timetable</h1>
       <h2>Line</h2>
       <div class="select-wrapper">
         <select id="new-timetable-dialog-lines" autocomplete="off"></select>
@@ -66,6 +66,28 @@
         </button>
         <button id="new-timetable-dialog-submit">
           <p>Create New Timetable</p>
+        </button>
+      </div>
+    </dialog>
+    <dialog id="paste-issues-dialog">
+      <h1>Fix issues in pasted content</h1>
+      <div id="paste-issues-dialog-duplicates">
+        <!-- <h2>Multiple rows found for "Southern Cross"</h2>
+        <div class="select-wrapper">
+          <select id="paste-issues-dialog-multiple-stop-102" autocomplete="off">
+            <option value="">Use "Southern Cross arr"</option>
+            <option value="">Use "Southern Cross dep"</option>
+          </select>
+          <div class="select-wrapper-highlight"></div>
+          <div class="select-wrapper-arrow"></div>
+        </div> -->
+      </div>
+      <div class="row">
+        <button id="paste-issues-dialog-cancel">
+          <p>Cancel</p>
+        </button>
+        <button id="paste-issues-dialog-submit">
+          <p>Add To Timetable</p>
         </button>
       </div>
     </dialog>

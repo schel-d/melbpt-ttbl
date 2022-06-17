@@ -36,6 +36,7 @@ export class NewTimetableDialog {
 
     this.submitted = submitted;
   }
+
   init(network: Network) {
     // Sort lines by name alphabetical order, and add an option for each to the
     // lines select.
@@ -78,6 +79,7 @@ export class NewTimetableDialog {
       }
     });
   }
+
   show() {
     this._dialog.showModal();
     this._errorText.textContent = "";
