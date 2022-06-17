@@ -5,6 +5,7 @@
 @use "dialog";
 @use "select";
 @use "input";
+@use "toasts";
 
 html,
 body {
@@ -150,6 +151,7 @@ $editor-column-width: 3rem;
   @include css-template.row;
   height: 1.5rem;
   border-top: 1px solid var(--clr-ink-20);
+  flex-shrink: 0;
   p {
     margin-left: 0.5rem;
     font-size: 0.7rem;

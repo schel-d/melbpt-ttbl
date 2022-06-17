@@ -1,0 +1,43 @@
+@use "css-template/import" as css-template;
+
+#toasts {
+  z-index: 10;
+  position: fixed;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  align-items: center;
+  justify-content: end;
+  .toast {
+    @include css-template.bg-paper-30;
+    box-shadow: 0 0.25rem 0.5rem var(--clr-shadow-10);
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: 0.25rem;
+    > p {
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    animation: 10s forwards toast-animation;
+  }
+}
+@keyframes toast-animation {
+  0% {
+    transform: translateY(1rem) scale(50%);
+    opacity: 0%;
+  }
+  2% {
+    transform: translateY(0) scale(100%);
+    opacity: 100%;
+  }
+  96% {
+    transform: translateY(0) scale(100%);
+    opacity: 100%;
+  }
+  100% {
+    transform: translateY(-1rem) scale(50%);
+    opacity: 00%;
+  }
+}

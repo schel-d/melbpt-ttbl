@@ -60,8 +60,7 @@ function extractRows(text: string, stopNames: string[]): Row[] {
       // the resulting string (case-insensitive). Also check variations with
       // "dep" and "arr" for V/Line timetables.
       const header = x.split(timesOnlyRegex)[0];
-      const stop = stopNames.find(s => stopNameAlternatives(s).some(a =>
-        a.toLowerCase() === header));
+      const stop = stopNames.find(s => matchesStopName(header, s));
 
       // Return the stop and times, and split the times into an array as well.
       return {
@@ -93,22 +92,29 @@ function clarifyRows(rows: Row[], stopNames: string[],
   pasteIssuesDialog: PasteIssuesDialog,
   callback: (clarifiedRows: ClarifiedRows, missingRows: string[]) => void) {
 
+  // Keep track of missing rows and duplicates during the next step.
   const missingRows: string[] = [];
   const duplicates: DuplicatesList = [];
 
+  // For each stop in the timetable section...
   const clarifiedRows: ClarifiedRows = {};
   for (let i = 0; i < stopNames.length; i++) {
     const stopName = stopNames[i];
     const rowOptions = rows.filter(r => r.stop === stopName);
 
     if (rowOptions.length == 1) {
+      // If one row from the pasted text relates to this stop, then choose it.
       clarifiedRows[i] = rowOptions[0].times;
     }
     else if (rowOptions.length == 0) {
+      // If there's nothing from the pasted text for this stop, then add this
+      // stop to the list passed back from extractContent(). This is used to
+      // show a toast to the user.
       clarifiedRows[i] = null;
       missingRows.push(stopName);
     }
     else {
+      // If there are more than 1, add this to the list of duplicates.
       clarifiedRows[i] = null;
       duplicates.push({
         stopName: stopName,
@@ -119,7 +125,13 @@ function clarifyRows(rows: Row[], stopNames: string[],
   }
 
   if (duplicates.length > 0) {
+    // If there are duplicates, show a dialog that allows the user to choose
+    // which row they would like to be entered into the timetable for that stop.
     pasteIssuesDialog.show(duplicates, (choices) => {
+      // After applying their choices, return the result via callback.
+      // They may hit cancel on the dialog, in which case the callback never
+      // runs, therefore cancelling inputting the text.
+      // Also return the list of missing stops to show a toast if needed.
       for (const choice of choices) {
         clarifiedRows[choice.rowIndex] = choice.option.times;
       }
@@ -127,9 +139,10 @@ function clarifyRows(rows: Row[], stopNames: string[],
     });
   }
   else {
+    // If there were no duplicates, return the result via callback (no dialog).
+    // Also return the list of missing stops to show a toast if needed.
     callback(clarifiedRows, missingRows);
   }
-
 }
 
 /**
@@ -173,12 +186,19 @@ function contentify(rows: ClarifiedRows): string[][] {
 }
 
 /**
- * Returns variants of the stop name commonly seen in V/Line timetables ("dep"
- * and "arr").
- * @param stopName The raw stop name.
+ * Returns true if this row in the pasted text may be a match for this station.
+ * This includes checking if the input is a variation of the stop name with
+ * a suffix such as "arr" or "dep" as is commonly seen in V/Line timetables.
+ * @param input The row header in the pasted text.
+ * @param stopName The stop name.
  */
-function stopNameAlternatives(stopName: string) {
-  return [stopName, `${stopName} dep`, `${stopName} arr`]
+function matchesStopName(input: string, stopName: string) {
+  input = input.toLowerCase().trim();
+  stopName = stopName.toLowerCase();
+  const suffixRegex = /^ (dep|arr|station|stn\.?|\([0-9]+\))$/g;
+
+  return input === stopName || (input.startsWith(stopName)
+    && suffixRegex.test(input.substring(stopName.length)));
 }
 
 /**
