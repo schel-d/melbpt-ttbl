@@ -93,7 +93,7 @@ export class Editor {
 
   private setStops(stops: number[], network: Network) {
     this.html.stops.replaceChildren(...stops.map(s => {
-      const stop = document.createElement("div");
+      const stop = document.createElement("button");
       stop.className = "stop";
 
       const stopP = document.createElement("p");

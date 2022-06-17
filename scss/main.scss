@@ -101,6 +101,7 @@ $editor-column-width: 3rem;
 #stops .stop {
   @include css-template.one-line;
   @include css-template.row;
+  @include button.editor-button;
   height: $editor-row-height;
   p {
     margin: 0 0.5rem;
@@ -113,9 +114,15 @@ $editor-column-width: 3rem;
 }
 #services .service {
   @include css-template.row;
+  @include button.editor-button;
+  justify-content: center;
   width: $editor-column-width;
-  p {
-    font-size: 0.7rem;
+  padding-left: 0.25rem;
+  img {
+    opacity: 60%;
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-right: 0.25rem;
   }
 }
 #status {

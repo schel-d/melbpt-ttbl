@@ -26,3 +26,40 @@
     opacity: 0.5;
   }
 }
+@mixin editor-button {
+  appearance: none;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    background-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    &::after {
+      background-color: var(--clr-ink-10);
+    }
+  }
+  &:active {
+    &::after {
+      background-color: var(--clr-ink-20);
+    }
+  }
+  &:disabled {
+    &::after {
+      background-color: transparent;
+    }
+    opacity: 0.5;
+  }
+}

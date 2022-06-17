@@ -51,7 +51,7 @@ network.load().then(() => {
 // Wire up the new timetable button to show the dialog when clicked. The new
 // timetable button is disabled until the network is loaded.
 header.newTimetableButton.addEventListener("click", () => {
-  const result = timetable == null || !timetable.hasContent ||
+  const result = timetable == null || !timetable.hasContent() ||
     confirm("Create a new timetable? This one won't be saved anywhere.");
 
   if (result) {
@@ -85,7 +85,7 @@ function onPaste(text: string) {
   const stopNames = timetableSection.stops.map(s => network.stopName(s));
   extractContent(text, stopNames, pasteIssuesDialog, (newContent, missing) => {
     const numOfStopsFound = stopNames.length - missing.length;
-    if (numOfStopsFound <= 3) {
+    if (numOfStopsFound <= 1) {
       // If there was basically no usable timetable content in what was pasted,
       // mostly ignore it.
       createToast(`That didn't seem like timetable content.`);
@@ -99,7 +99,7 @@ function onPaste(text: string) {
     // happen often, especially in V/Line timetables, but informs the user just
     // in case they make a mistake coping the full table.
     if (missing.length > 3) {
-      createToast(` ${missing.length} stops were missing from pasted content.`);
+      createToast(`${missing.length} stops were missing from pasted content.`);
     }
     else if (missing.length != 0) {
       createToast(`${missing.join(", ")} ${missing.length == 1 ? "was" : "were"} missing from the pasted content.`);
