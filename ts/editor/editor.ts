@@ -1,4 +1,5 @@
 import { Network } from "../network";
+import { runSmarts } from "../service-smarts";
 import { TimetableSection } from "../timetable";
 import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
@@ -52,6 +53,7 @@ export class Editor {
 
     this.section = null;
     this.stops.clear();
+    this.services.clear();
     this.grid.resetEvents();
     this.grid.draw();
   }
@@ -63,6 +65,7 @@ export class Editor {
 
     this.section = section;
     this.stops.setStops(section.stops.map(s => network.stopName(s)));
+    this.services.setServices(section.grid.map(s => runSmarts(s)));
 
     this.section.registerListeners(
       () => this.onEdited(),
@@ -78,8 +81,10 @@ export class Editor {
     this.grid.draw();
   }
   private onColsAdded(startIndex: number, amount: number) {
-    // Todo: add service buttons to services row for the new columns.
-    // Todo: validate the new columns.
+    // Todo: validate the new columns... properly.
+    const newServices = this.section.grid.slice(startIndex,
+      startIndex + amount);
+    this.services.addServices(startIndex, newServices.map(s => runSmarts(s)));
   }
   private onColsDeleted(indices: number[]) {
     // Todo: remove service buttons from the services row for removed columns.
