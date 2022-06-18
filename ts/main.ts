@@ -1,5 +1,5 @@
 import { DOWPresets } from "./dow";
-import { Editor } from "./editor";
+import { Editor } from "./editor/editor";
 import { Header } from "./header";
 import { Network } from "./network";
 import { NewTimetableDialog } from "./new-timetable-dialog";
@@ -15,7 +15,7 @@ let timetableSection: TimetableSection | null = null;
 // Initialize the editor.
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
 editor.init();
-window.addEventListener("resize", () => editor.windowResized());
+window.addEventListener("resize", () => editor.resize());
 document.addEventListener("paste", (e) => {
   if (timetableSection != null) {
     onPaste(e.clipboardData.getData("text"));
@@ -93,7 +93,7 @@ function onPaste(text: string) {
     }
 
     // Otherwise add it to the editor.
-    editor.addContent(newContent);
+    editor.paste(newContent);
 
     // Display a toast if any stops were not present. This kind of thing may
     // happen often, especially in V/Line timetables, but informs the user just

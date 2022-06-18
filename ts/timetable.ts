@@ -67,10 +67,48 @@ export class TimetableSection {
   grid: string[][];
   stops: number[];
 
+  private _edited: (() => void) | null;
+  private _colsAdded: ((startIndex: number, amount: number) => void) | null;
+  private _colsDeleted: ((indices: number[]) => void) | null;
+  private _colsEdited: ((indices: number[]) => void) | null;
+  private _rowsEdited: ((indices: number[]) => void) | null;
+
   constructor(generalDir: string, dow: string, stops: number[]) {
     this.generalDir = generalDir;
     this.dow = validateDOW(dow);
     this.grid = [];
     this.stops = stops;
   }
+  registerListeners(
+    edited: () => void,
+    colsAdded: (startIndex: number, amount: number) => void,
+    colsDeleted: (indices: number[]) => void,
+    colsEdited: (indices: number[]) => void,
+    rowsEdited: (indices: number[]) => void) {
+
+    this._edited = edited;
+    this._colsAdded = colsAdded;
+    this._colsDeleted = colsDeleted;
+    this._colsEdited = colsEdited;
+    this._rowsEdited = rowsEdited;
+  }
+  clearListeners() {
+    this._edited = null;
+    this._colsAdded = null;
+    this._colsDeleted = null;
+    this._colsEdited = null;
+    this._rowsEdited = null;
+  }
+
+  appendServices(content: string[][]) {
+    const priorLength = this.grid.length;
+    this.grid.push(...content);
+    if (this._edited) { this._edited(); }
+    if (this._colsAdded) { this._colsAdded(priorLength, content.length); }
+    if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
+  }
 }
+
+function range(start: number, end: number) {
+  return [...Array(end - start).keys()].map(x => x + start);
+};
