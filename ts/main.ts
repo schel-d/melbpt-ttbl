@@ -16,25 +16,10 @@ let timetableSection: TimetableSection | null = null;
 const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
 editor.init();
 window.addEventListener("resize", () => editor.resize());
-document.addEventListener("paste", (e) => {
-  const dialogsOpen = newTimetableDialog.isOpen() || pasteIssuesDialog.isOpen();
-  if (timetableSection != null && !dialogsOpen) {
-    onPaste(e.clipboardData.getData("text"));
-    e.preventDefault();
-  }
-});
-document.addEventListener("keydown", (e) => {
-  const dialogsOpen = newTimetableDialog.isOpen() || pasteIssuesDialog.isOpen();
-  const isPaste = (e.ctrlKey || e.metaKey) && e.code == "KeyV";
-  if (timetableSection != null && !dialogsOpen && !isPaste) {
-    e.preventDefault();
-    const isModKey = e.key == "Control" || e.key == "Meta" || e.key == "Alt"
-      || e.key == "Shift";
-    if (!isModKey) {
-      editor.onKey(e.key, e.code, e.ctrlKey || e.metaKey, e.altKey, e.shiftKey);
-    }
-  }
-});
+
+// Hookup some keyboard events.
+document.addEventListener("paste", (e) => onPaste(e));
+document.addEventListener("keydown", (e) => onKeyDown(e));
 
 // Initialize the header and status screens, and ensuring the loading screen is
 // displaying correctly (should be default in markup anyway - that way it shows
@@ -92,7 +77,26 @@ function tabClicked(generalDir: string, dow: string) {
   status.editingSection(timetableSection, false, network);
 }
 
-function onPaste(text: string) {
+function onKeyDown(e: KeyboardEvent) {
+  if ((e.ctrlKey || e.metaKey) && e.code == "KeyV") { return; }
+  if (timetableSection == null || newTimetableDialog.isOpen() ||
+    pasteIssuesDialog.isOpen()) { return; }
+
+  e.preventDefault();
+
+  if (e.key == "Control" || e.key == "Meta" || e.key == "Alt" ||
+    e.key == "Shift") { return; }
+
+  editor.onKey(e.key, e.code, e.ctrlKey || e.metaKey, e.altKey, e.shiftKey);
+}
+
+function onPaste(e: ClipboardEvent) {
+  if (timetableSection == null || newTimetableDialog.isOpen() ||
+    pasteIssuesDialog.isOpen()) { return; }
+
+  const text = e.clipboardData.getData("text");
+  e.preventDefault();
+
   // Try to extract timetable content from the pasted text based on the stop
   // names in this timetable.
   const stopNames = timetableSection.stops.map(s => network.stopName(s));
@@ -115,7 +119,9 @@ function onPaste(text: string) {
       createToast(`${missing.length} stops were missing from pasted content.`);
     }
     else if (missing.length != 0) {
-      createToast(`${missing.join(", ")} ${missing.length == 1 ? "was" : "were"} missing from the pasted content.`);
+      createToast(
+        `${missing.join(", ")} ${missing.length == 1 ? "was" : "were"} ` +
+        `missing from the pasted content.`);
     }
   });
 }
