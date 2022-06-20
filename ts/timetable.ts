@@ -1,7 +1,7 @@
 import { validateDOW } from "./dow";
 import { linearizeStopIDs as linearizeStops } from "./linearize-stops";
 import { Network } from "./network";
-import { validateLineID, validateTimetableID } from "./validation";
+import { validateLineID, validateTimetableID } from "./utils";
 
 export class Timetable {
   timetableID: number;
@@ -106,6 +106,13 @@ export class TimetableSection {
     if (this._edited) { this._edited(); }
     if (this._colsAdded) { this._colsAdded(priorLength, content.length); }
     if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
+  }
+
+  get width() {
+    return this.grid.length;
+  }
+  get height() {
+    return this.stops.length;
   }
 }
 

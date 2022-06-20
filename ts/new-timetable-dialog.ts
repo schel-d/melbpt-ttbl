@@ -84,4 +84,8 @@ export class NewTimetableDialog {
     this._dialog.showModal();
     this._errorText.textContent = "";
   }
+
+  isOpen() {
+    return this._dialog.open == true;
+  }
 }

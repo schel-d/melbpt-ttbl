@@ -17,9 +17,22 @@ const editor = new Editor("editor", "grid", "grid-canvas", "stops", "services");
 editor.init();
 window.addEventListener("resize", () => editor.resize());
 document.addEventListener("paste", (e) => {
-  if (timetableSection != null) {
+  const dialogsOpen = newTimetableDialog.isOpen() || pasteIssuesDialog.isOpen();
+  if (timetableSection != null && !dialogsOpen) {
     onPaste(e.clipboardData.getData("text"));
     e.preventDefault();
+  }
+});
+document.addEventListener("keydown", (e) => {
+  const dialogsOpen = newTimetableDialog.isOpen() || pasteIssuesDialog.isOpen();
+  const isPaste = (e.ctrlKey || e.metaKey) && e.code == "KeyV";
+  if (timetableSection != null && !dialogsOpen && !isPaste) {
+    e.preventDefault();
+    const isModKey = e.key == "Control" || e.key == "Meta" || e.key == "Alt"
+      || e.key == "Shift";
+    if (!isModKey) {
+      editor.onKey(e.key, e.code, e.ctrlKey || e.metaKey, e.altKey, e.shiftKey);
+    }
   }
 });
 

@@ -59,9 +59,11 @@ export class EditorGrid {
 
   draw() {
     const content = this._editor.section?.grid ?? [];
+    const cols = this._editor.section?.width ?? 0;
+    const rows = this._editor.section?.height ?? 0;
 
-    const cols = content.length;
-    const rows = content[0]?.length ?? 0;
+    // todo: the timetable section should be in charge of making sure it's
+    // rectangular
     if (content.some((c) => c.length !== rows)) {
       throw "Grid is jagged (some columns have more rows than others)";
     }
@@ -194,4 +196,31 @@ export class EditorGrid {
     const width = x2 - x1;
     return { x1: x1, x2: x2, y1: y1, y2: y2, width: width, height: height };
   };
+
+  get selected() {
+    if (this._selected == null) {
+      return null;
+    }
+    return { ...this._selected };
+  }
+  get selectedRange() {
+    if (this._selected == null) {
+      return null;
+    }
+    return {
+      x1: Math.min(this._selected.startX, this._selected.endX),
+      y1: Math.min(this._selected.startY, this._selected.endY),
+      x2: Math.max(this._selected.startX, this._selected.endX),
+      y2: Math.max(this._selected.startY, this._selected.endY)
+    };
+  }
+  select(startX: number, startY: number, endX?: number, endY?: number) {
+    this._selected = {
+      startX: startX,
+      startY: startY,
+      endX: endX ?? startX,
+      endY: endY ?? startY
+    };
+    this.draw();
+  }
 }

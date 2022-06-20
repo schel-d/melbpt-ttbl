@@ -103,6 +103,10 @@ export class PasteIssuesDialog {
     this._dialog.showModal();
   }
 
+  isOpen() {
+    return this._dialog.open == true;
+  }
+
   private selectID(rowIndex: number) {
     // Generate an ID for the select for this stop in the timetable. Modularized
     // here because its called both when creating the select, and later
