@@ -1,12 +1,12 @@
 import { DOWPresets } from "./dow";
 import { Editor } from "./editor/editor";
-import { Header } from "./header";
+import { Header } from "./components/header";
 import { Network } from "./network";
-import { NewTimetableDialog } from "./new-timetable-dialog";
-import { StatusScreens } from "./status-screens";
 import { Timetable } from "./timetable";
-import { PasteIssuesDialog } from "./paste-issues-dialog";
-import { CommandListener as CommandListener } from "./commands/command-listener";
+import { CommandListener } from "./commands/command-listener";
+import { StatusScreens } from "./components/status-screens";
+import { NewTimetableDialog } from "./components/new-timetable-dialog";
+import { PasteIssuesDialog } from "./components/paste-issues-dialog";
 
 export class AppContext {
   network: Network | null;
@@ -67,13 +67,14 @@ export class AppContext {
 
     // Update the header buttons and create the tabs for the timetable sections.
     this.status.editing(this.timetable);
-    const timetableSection = this.timetable.getTimetableSection(this.timetable.generalDirs[0],
-      this.timetable.dows[0]);
+    const timetableSection = this.timetable.getTimetableSection(
+      this.timetable.generalDirs[0], this.timetable.dows[0]);
     this.status.editingSection(timetableSection, true, this.network);
   }
 
   tabClicked(generalDir: string, dow: string) {
-    const timetableSection = this.timetable.getTimetableSection(generalDir, dow);
+    const timetableSection = this.timetable.getTimetableSection(generalDir,
+      dow);
     this.status.editingSection(timetableSection, false, this.network);
   }
 }

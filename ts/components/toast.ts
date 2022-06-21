@@ -13,5 +13,6 @@ export function createToast(message: string) {
     toast.remove();
   }, 10000);
 
-  document.querySelectorAll("#toasts .toast:not(:nth-last-child(-n + 5))").forEach(x => x.remove());
+  document.querySelectorAll("#toasts .toast:not(:nth-last-child(-n + 5))")
+    .forEach(x => x.remove());
 }

@@ -1,4 +1,4 @@
-import { Row } from "./extract-content";
+import { Row } from "../extract-content";
 
 export type PasteIssuesDialogCallback =
   (choices: { rowIndex: number, option: Row }[]) => void

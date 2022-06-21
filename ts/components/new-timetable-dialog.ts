@@ -1,5 +1,5 @@
-import { DOWPresets, nameDOW } from "./dow";
-import { Network } from "./network";
+import { DOWPresets, nameDOW } from "../dow";
+import { Network } from "../network";
 
 export type NewTimetableDialogCallback =
   (lineID: number, dowPresetIndex: number, timetableID: string) => void

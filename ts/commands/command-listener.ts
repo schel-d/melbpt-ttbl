@@ -3,7 +3,7 @@ import { SelectArrowsHandler } from "./select-arrows-handler";
 import { AppContext } from "../main";
 import { TabHandler } from "./tab-handler";
 import { extractContent } from "../extract-content";
-import { createToast } from "../toast";
+import { createToast } from "../components/toast";
 
 export class CommandListener {
   private _appContext: AppContext;
