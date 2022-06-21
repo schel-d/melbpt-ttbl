@@ -35,6 +35,15 @@ export class EditorServices {
     serviceBefore.after(...services.map(s =>
       this.createServiceButton(s)));
   }
+  removeServices(indices: number[]) {
+    const sortedIndices = [...indices].sort((a, b) => b - a);
+
+    for (const index of sortedIndices) {
+      this._servicesDiv.querySelector(`.service:nth-child(${index + 1})`)
+        .remove();
+    }
+  }
+
   private createServiceButton(info: ServiceInfo) {
     const service = document.createElement("button");
     service.className = "service";

@@ -16,7 +16,7 @@ export class EnterHandler extends CommandHandler {
     if (section == null || grid.selected == null) { return; }
 
     const { startX, startY, endX, endY } = grid.selected;
-    appContext.editor.section.watchModify("Fill empty cells", log => {
+    section.watchModify("Fill empty cells", log => {
       log.modifyCells(startX, startY, endX, endY, (x) => x === "" ? "-" : x);
     });
   }

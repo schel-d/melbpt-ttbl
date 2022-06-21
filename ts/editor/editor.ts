@@ -90,7 +90,7 @@ export class Editor {
     this.services.addServices(startIndex, newServices.map(s => runSmarts(s)));
   }
   private onColsDeleted(originalIndices: number[]) {
-    // Todo: remove service buttons from the services row for removed columns.
+    this.services.removeServices(originalIndices);
   }
   private onColsEdited(indices: number[]) {
     // Todo: re-validate the columns that changed (only do service-based

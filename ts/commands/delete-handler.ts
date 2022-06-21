@@ -16,8 +16,18 @@ export class DeleteHandler extends CommandHandler {
     if (section == null || grid.selected == null) { return; }
 
     const { startX, startY, endX, endY } = grid.selected;
-    appContext.editor.section.watchModify("Fill empty cells", log => {
-      log.modifyCells(startX, startY, endX, endY, () => "");
-    });
+
+    if (startY == 0 && endY == section.height - 1) {
+      const actionName = startX == endX ? "Delete service" : "Delete services";
+      section.watchDelete(actionName, log => {
+        log.deleteServices(Math.min(startX, endX), Math.max(startX, endX) + 1);
+      });
+      grid.clearSelection();
+    }
+    else {
+      section.watchModify("Delete text", log => {
+        log.modifyCells(startX, startY, endX, endY, () => "");
+      });
+    }
   }
 }

@@ -223,4 +223,8 @@ export class EditorGrid {
     };
     this.draw();
   }
+  clearSelection() {
+    this._selected = null;
+    this.draw();
+  }
 }
