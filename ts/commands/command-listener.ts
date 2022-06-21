@@ -4,6 +4,7 @@ import { AppContext } from "../main";
 import { TabHandler } from "./tab-handler";
 import { extractContent } from "./extract-content";
 import { createToast } from "../components/toast";
+import { EnterHandler } from "./enter-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -12,7 +13,8 @@ export class CommandListener {
   constructor() {
     this._handlers = [
       new SelectArrowsHandler(),
-      new TabHandler()
+      new TabHandler(),
+      new EnterHandler()
     ];
   }
   init(appContext: AppContext) {
@@ -42,8 +44,7 @@ export class CommandListener {
     // cannot call e.preventDefault() for Ctrl+V.
     if (e.code == "KeyV" && (e.ctrlKey || e.metaKey)) { return; }
 
-    if (this._appContext.editor.section == null ||
-      this._appContext.newTimetableDialog.isOpen() ||
+    if (this._appContext.newTimetableDialog.isOpen() ||
       this._appContext.pasteIssuesDialog.isOpen()) { return; }
 
     e.preventDefault();
@@ -81,7 +82,9 @@ export class CommandListener {
       }
 
       // Otherwise add it to the current section.
-      section.appendServices(newContent);
+      section.watchAppend("Paste timetable content", (log) => {
+        log.appendServices(newContent);
+      })
 
       // Display a toast if any stops were not present. This kind of thing may
       // happen often, especially in V/Line timetables, but informs the user just

@@ -24,3 +24,7 @@ export function clamp(x: number, a: number, b: number) {
   const max = Math.max(a, b);
   return Math.min(Math.max(x, min), max);
 }
+
+export function range(start: number, end: number) {
+  return [...Array(end - start).keys()].map(x => x + start);
+}

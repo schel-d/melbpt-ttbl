@@ -1,7 +1,8 @@
-import { validateLineID, validateTimetableID } from "../utils";
+import { range, validateLineID, validateTimetableID } from "../utils";
 import { validateDOW } from "./dow";
 import { linearizeStopIDs as linearizeStops } from "./linearize-stops";
 import { Network } from "./network";
+import { SectionAppendLog, SectionDeleteLog, SectionModifyLog } from "./section-edit-log";
 
 export class Timetable {
   timetableID: number;
@@ -82,7 +83,7 @@ export class TimetableSection {
   registerListeners(
     edited: () => void,
     colsAdded: (startIndex: number, amount: number) => void,
-    colsDeleted: (indices: number[]) => void,
+    colsDeleted: (originalIndices: number[]) => void,
     colsEdited: (indices: number[]) => void,
     rowsEdited: (indices: number[]) => void) {
 
@@ -100,12 +101,36 @@ export class TimetableSection {
     this._rowsEdited = null;
   }
 
-  appendServices(content: string[][]) {
-    const priorLength = this.grid.length;
-    this.grid.push(...content);
+  private _cloneGrid(): string[][] {
+    return this.grid.map(x => [...x]);
+  }
+
+  watchAppend(actionName: string, func: (log: SectionAppendLog) => void) {
+    const log = new SectionAppendLog(this._cloneGrid(), actionName);
+    func(log);
+    this.grid = log.grid;
+
     if (this._edited) { this._edited(); }
-    if (this._colsAdded) { this._colsAdded(priorLength, content.length); }
+    if (this._colsAdded) { this._colsAdded(log.startIndex, log.amount); }
     if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
+  }
+  watchDelete(actionName: string, func: (log: SectionDeleteLog) => void) {
+    const log = new SectionDeleteLog(this._cloneGrid(), actionName);
+    func(log);
+    this.grid = log.grid;
+
+    if (this._edited) { this._edited(); }
+    if (this._colsDeleted) { this._colsDeleted(log.originalIndices); }
+    if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
+  }
+  watchModify(actionName: string, func: (log: SectionModifyLog) => void) {
+    const log = new SectionModifyLog(this._cloneGrid(), actionName);
+    func(log);
+    this.grid = log.grid;
+
+    if (this._edited) { this._edited(); }
+    if (this._colsEdited) { this._colsEdited(log.colsEdited); }
+    if (this._rowsEdited) { this._rowsEdited(log.rowsEdited); }
   }
 
   get width() {
@@ -115,7 +140,3 @@ export class TimetableSection {
     return this.stops.length;
   }
 }
-
-function range(start: number, end: number) {
-  return [...Array(end - start).keys()].map(x => x + start);
-};

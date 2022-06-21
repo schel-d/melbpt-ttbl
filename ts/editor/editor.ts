@@ -73,7 +73,7 @@ export class Editor {
     this.section.registerListeners(
       () => this.onEdited(),
       (startIndex, amount) => this.onColsAdded(startIndex, amount),
-      (indices) => this.onColsDeleted(indices),
+      (originalIndices) => this.onColsDeleted(originalIndices),
       (indices) => this.onColsEdited(indices),
       (indices) => this.onRowsEdited(indices));
     this.grid.resetEvents();
@@ -89,7 +89,7 @@ export class Editor {
       startIndex + amount);
     this.services.addServices(startIndex, newServices.map(s => runSmarts(s)));
   }
-  private onColsDeleted(indices: number[]) {
+  private onColsDeleted(originalIndices: number[]) {
     // Todo: remove service buttons from the services row for removed columns.
   }
   private onColsEdited(indices: number[]) {
