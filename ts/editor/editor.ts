@@ -77,7 +77,7 @@ export class Editor {
       (originalIndices) => this.onColsDeleted(originalIndices),
       (indices) => this.onColsEdited(indices),
       (indices) => this.onRowsEdited(indices),
-      (actionName) => this.onUndo(actionName));
+      (actionName, type) => this.onReplace(actionName, type));
     this.grid.resetEvents();
     this.grid.draw();
   }
@@ -102,11 +102,17 @@ export class Editor {
     // Todo: re-validate the rows that changed (only do stop-based validation
     // here, service-based validation occurs in onColsEdited()).
   }
-  private onUndo(actionName: string) {
+  private onReplace(actionName: string, type: "undo" | "redo") {
     // Todo: re-validate everything just like the section just got set!
     this.services.setServices(this.section.grid.map(s => runSmarts(s)));
     this.grid.draw();
-    createToast(`Undone "${actionName}"`);
+
+    if (type == "undo") {
+      createToast(`Undone "${actionName}"`);
+    }
+    else if (type == "redo") {
+      createToast(`Redone "${actionName}"`);
+    }
   }
   private onServiceClicked(index: number) {
     this.grid.select(index, 0, index, this.section.height - 1);

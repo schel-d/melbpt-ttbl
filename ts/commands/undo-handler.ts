@@ -5,18 +5,27 @@ import { CommandHandler, keyFilter } from "./command-handler";
 export class UndoHandler extends CommandHandler {
   constructor() {
     super([
-      keyFilter({ key: "KeyZ", ctrl: true })
+      keyFilter({ key: "KeyZ", ctrl: true, shift: "*" }),
+      keyFilter({ key: "KeyY", ctrl: true })
     ]);
   }
 
-  handle(_char: string, _key: string, _ctrl: boolean, _alt: boolean,
-    _shift: boolean, appContext: AppContext): void {
+  handle(_char: string, key: string, _ctrl: boolean, _alt: boolean,
+    shift: boolean, appContext: AppContext): void {
 
     const section = appContext.editor.section;
-    const success = section.undo();
 
-    if (!success) {
-      createToast("Cannot undo any further");
+    if (key == "KeyY" || shift) {
+      const success = section.redo();
+      if (!success) {
+        createToast("Cannot redo any further");
+      }
+    }
+    else {
+      const success = section.undo();
+      if (!success) {
+        createToast("Cannot undo any further");
+      }
     }
   }
 }
