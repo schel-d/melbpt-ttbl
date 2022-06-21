@@ -2,7 +2,6 @@ import { Network } from "../network";
 import { runSmarts } from "../service-smarts";
 import { TimetableSection } from "../timetable";
 import { EditorGrid } from "./editor-grid";
-import { EditorKeyboard } from "./editor-keyboard";
 import { EditorServices } from "./editor-services";
 import { EditorStops } from "./editor-stops";
 
@@ -12,7 +11,6 @@ export class Editor {
   stops: EditorStops;
   services: EditorServices;
 
-  private _keyboard: EditorKeyboard;
   private _editorDiv: HTMLDivElement;
 
   constructor(editorID: string, gridID: string, canvasID: string,
@@ -24,7 +22,6 @@ export class Editor {
     this.grid = new EditorGrid(this, gridID, canvasID);
     this.stops = new EditorStops(stopsID);
     this.services = new EditorServices(servicesID);
-    this._keyboard = new EditorKeyboard(this);
   }
 
   init() {
@@ -112,20 +109,11 @@ export class Editor {
     e.preventDefault();
   };
 
-  paste(content: string[][]) {
-    if (this.section == null) { return; }
-    this.section.appendServices(content);
-  }
-
   clientSize() {
     return this._editorDiv.getBoundingClientRect();
   }
 
   scrollPos() {
     return { x: this._editorDiv.scrollLeft, y: this._editorDiv.scrollTop };
-  }
-
-  onKey(char: string, key: string, ctrl: boolean, alt: boolean, shift: boolean) {
-    this._keyboard.onKey(char, key, ctrl, alt, shift);
   }
 }

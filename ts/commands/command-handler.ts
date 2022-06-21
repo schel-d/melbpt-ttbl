@@ -1,21 +1,8 @@
-import { Editor } from "./editor";
+import { AppContext } from "../main";
 
 export type KeyFilter = {
   char: string, key: string, ctrl: boolean, alt: boolean, shift: boolean
 };
-
-export abstract class EditorKeyboardHandler {
-  protected _editor: Editor;
-  acceptedFilters: KeyFilter[];
-
-  constructor(editor: Editor, acceptedFilters: KeyFilter[]) {
-    this._editor = editor;
-    this.acceptedFilters = acceptedFilters;
-  }
-
-  abstract handle(char: string, key: string, ctrl: boolean, alt: boolean,
-    shift: boolean): void;
-}
 
 export function keyFilter(options: {
   char?: string, key?: string, ctrl?: boolean | "*", alt?: boolean | "*",
@@ -29,4 +16,15 @@ export function keyFilter(options: {
     alt: options.alt == "*" ? null : (options.alt ?? false),
     shift: options.shift == "*" ? null : (options.shift ?? false)
   };
+}
+
+export abstract class CommandHandler {
+  acceptedFilters: KeyFilter[];
+
+  constructor(acceptedFilters: KeyFilter[]) {
+    this.acceptedFilters = acceptedFilters;
+  }
+
+  abstract handle(char: string, key: string, ctrl: boolean, alt: boolean,
+    shift: boolean, appContext: AppContext): void;
 }
