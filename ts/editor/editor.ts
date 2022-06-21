@@ -1,3 +1,4 @@
+import { createToast } from "../components/toast";
 import { Network } from "../data/network";
 import { runSmarts } from "../data/service-smarts";
 import { TimetableSection } from "../data/timetable";
@@ -75,7 +76,8 @@ export class Editor {
       (startIndex, amount) => this.onColsAdded(startIndex, amount),
       (originalIndices) => this.onColsDeleted(originalIndices),
       (indices) => this.onColsEdited(indices),
-      (indices) => this.onRowsEdited(indices));
+      (indices) => this.onRowsEdited(indices),
+      (actionName) => this.onUndo(actionName));
     this.grid.resetEvents();
     this.grid.draw();
   }
@@ -99,6 +101,12 @@ export class Editor {
   private onRowsEdited(indices: number[]) {
     // Todo: re-validate the rows that changed (only do stop-based validation
     // here, service-based validation occurs in onColsEdited()).
+  }
+  private onUndo(actionName: string) {
+    // Todo: re-validate everything just like the section just got set!
+    this.services.setServices(this.section.grid.map(s => runSmarts(s)));
+    this.grid.draw();
+    createToast(`Undone "${actionName}"`);
   }
   private onServiceClicked(index: number) {
     this.grid.select(index, 0, index, this.section.height - 1);

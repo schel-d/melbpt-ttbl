@@ -1,8 +1,10 @@
 export abstract class SectionEditLog {
   grid: string[][];
+  undoGrid: string[][];
   actionName: string;
   constructor(grid: string[][], actionName: string) {
     this.grid = grid;
+    this.undoGrid = grid.map(x => [...x]);
     this.actionName = actionName;
   }
 }

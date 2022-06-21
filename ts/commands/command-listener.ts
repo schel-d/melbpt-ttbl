@@ -7,6 +7,7 @@ import { createToast } from "../components/toast";
 import { EnterHandler } from "./enter-handler";
 import { DeleteHandler } from "./delete-handler";
 import { SelectAllHandler } from "./select-all-handler";
+import { UndoHandler } from "./undo-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -18,7 +19,8 @@ export class CommandListener {
       new TabHandler(),
       new EnterHandler(),
       new DeleteHandler(),
-      new SelectAllHandler()
+      new SelectAllHandler(),
+      new UndoHandler()
     ];
   }
   init(appContext: AppContext) {

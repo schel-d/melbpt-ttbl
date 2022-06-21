@@ -2,7 +2,7 @@ import { range, validateLineID, validateTimetableID } from "../utils";
 import { validateDOW } from "./dow";
 import { linearizeStopIDs as linearizeStops } from "./linearize-stops";
 import { Network } from "./network";
-import { SectionAppendLog, SectionDeleteLog, SectionModifyLog } from "./section-edit-log";
+import { SectionAppendLog, SectionDeleteLog, SectionEditLog, SectionModifyLog } from "./section-edit-log";
 
 export class Timetable {
   timetableID: number;
@@ -67,31 +67,36 @@ export class TimetableSection {
   dow: string;
   grid: string[][];
   stops: number[];
+  undoFrames: SectionEditLog[];
 
   private _edited: (() => void) | null;
   private _colsAdded: ((startIndex: number, amount: number) => void) | null;
   private _colsDeleted: ((indices: number[]) => void) | null;
   private _colsEdited: ((indices: number[]) => void) | null;
   private _rowsEdited: ((indices: number[]) => void) | null;
+  private _undo: ((actionName: string) => void) | null;
 
   constructor(generalDir: string, dow: string, stops: number[]) {
     this.generalDir = generalDir;
     this.dow = validateDOW(dow);
     this.grid = [];
     this.stops = stops;
+    this.undoFrames = [];
   }
   registerListeners(
     edited: () => void,
     colsAdded: (startIndex: number, amount: number) => void,
     colsDeleted: (originalIndices: number[]) => void,
     colsEdited: (indices: number[]) => void,
-    rowsEdited: (indices: number[]) => void) {
+    rowsEdited: (indices: number[]) => void,
+    undo: (actionName: string) => void) {
 
     this._edited = edited;
     this._colsAdded = colsAdded;
     this._colsDeleted = colsDeleted;
     this._colsEdited = colsEdited;
     this._rowsEdited = rowsEdited;
+    this._undo = undo;
   }
   clearListeners() {
     this._edited = null;
@@ -99,6 +104,7 @@ export class TimetableSection {
     this._colsDeleted = null;
     this._colsEdited = null;
     this._rowsEdited = null;
+    this._undo = null;
   }
 
   private _cloneGrid(): string[][] {
@@ -109,6 +115,7 @@ export class TimetableSection {
     const log = new SectionAppendLog(this._cloneGrid(), actionName);
     func(log);
     this.grid = log.grid;
+    this.pushUndoFrame(log);
 
     if (this._edited) { this._edited(); }
     if (this._colsAdded) { this._colsAdded(log.startIndex, log.amount); }
@@ -118,6 +125,7 @@ export class TimetableSection {
     const log = new SectionDeleteLog(this._cloneGrid(), actionName);
     func(log);
     this.grid = log.grid;
+    this.pushUndoFrame(log);
 
     if (this._edited) { this._edited(); }
     if (this._colsDeleted) { this._colsDeleted(log.originalIndices); }
@@ -127,10 +135,26 @@ export class TimetableSection {
     const log = new SectionModifyLog(this._cloneGrid(), actionName);
     func(log);
     this.grid = log.grid;
+    this.pushUndoFrame(log);
 
     if (this._edited) { this._edited(); }
     if (this._colsEdited) { this._colsEdited(log.colsEdited); }
     if (this._rowsEdited) { this._rowsEdited(log.rowsEdited); }
+  }
+
+  pushUndoFrame(undoFrame: SectionEditLog) {
+    this.undoFrames.push(undoFrame);
+    while (this.undoFrames.length > 5) {
+      this.undoFrames.shift();
+    }
+  }
+  undo(): boolean {
+    const undoFrame = this.undoFrames.pop();
+    if (undoFrame == null) { return false; }
+
+    this.grid = undoFrame.undoGrid;
+    if (this._undo) { this._undo(undoFrame.actionName); }
+    return true;
   }
 
   get width() {
