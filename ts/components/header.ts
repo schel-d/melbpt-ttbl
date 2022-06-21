@@ -1,4 +1,4 @@
-import { nameDOW } from "../dow";
+import { nameDOW } from "../data/dow";
 
 export type HeaderTabCallback = (direction: string, dow: string) => void;
 

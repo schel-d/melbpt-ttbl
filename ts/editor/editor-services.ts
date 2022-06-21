@@ -1,4 +1,4 @@
-import { ServiceInfo } from "../service-smarts";
+import { ServiceInfo } from "../data/service-smarts";
 
 export class EditorServices {
   private _servicesDiv: HTMLDivElement;

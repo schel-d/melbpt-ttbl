@@ -1,6 +1,6 @@
-import { Network } from "../network";
-import { runSmarts } from "../service-smarts";
-import { TimetableSection } from "../timetable";
+import { Network } from "../data/network";
+import { runSmarts } from "../data/service-smarts";
+import { TimetableSection } from "../data/timetable";
 import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
 import { EditorStops } from "./editor-stops";

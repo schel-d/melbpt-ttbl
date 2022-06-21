@@ -1,6 +1,6 @@
+import { TimetableSection } from "../data/timetable";
 import { EditorGrid } from "../editor/editor-grid";
 import { AppContext } from "../main";
-import { TimetableSection } from "../timetable";
 import { CommandHandler, keyFilter } from "./command-handler";
 
 export class TabHandler extends CommandHandler {

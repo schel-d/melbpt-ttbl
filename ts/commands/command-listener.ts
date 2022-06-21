@@ -2,7 +2,7 @@ import { CommandHandler } from "./command-handler";
 import { SelectArrowsHandler } from "./select-arrows-handler";
 import { AppContext } from "../main";
 import { TabHandler } from "./tab-handler";
-import { extractContent } from "../extract-content";
+import { extractContent } from "./extract-content";
 import { createToast } from "../components/toast";
 
 export class CommandListener {

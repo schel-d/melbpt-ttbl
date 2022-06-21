@@ -1,5 +1,5 @@
+import { TimetableSection } from "../data/timetable";
 import { AppContext } from "../main";
-import { TimetableSection } from "../timetable";
 import { clamp } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 

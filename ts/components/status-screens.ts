@@ -1,7 +1,7 @@
 import { Editor } from "../editor/editor";
-import { Network } from "../network";
-import { Timetable, TimetableSection } from "../timetable";
+import { Network } from "../data/network";
 import { Header } from "./header";
+import { Timetable, TimetableSection } from "../data/timetable";
 
 export class StatusScreens {
   private _status: HTMLDivElement;

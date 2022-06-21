@@ -1,4 +1,4 @@
-import { Network } from "./network";
+import { Network } from "./data/network";
 
 export function validateTimetableID(timetableID: number) {
   const max = 36 * 36 - 1

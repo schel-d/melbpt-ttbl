@@ -1,12 +1,12 @@
-import { DOWPresets } from "./dow";
 import { Editor } from "./editor/editor";
 import { Header } from "./components/header";
-import { Network } from "./network";
-import { Timetable } from "./timetable";
+import { Network } from "./data/network";
 import { CommandListener } from "./commands/command-listener";
 import { StatusScreens } from "./components/status-screens";
 import { NewTimetableDialog } from "./components/new-timetable-dialog";
 import { PasteIssuesDialog } from "./components/paste-issues-dialog";
+import { Timetable } from "./data/timetable";
+import { DOWPresets } from "./data/dow";
 
 export class AppContext {
   network: Network | null;

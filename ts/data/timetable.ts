@@ -1,7 +1,7 @@
+import { validateLineID, validateTimetableID } from "../utils";
 import { validateDOW } from "./dow";
 import { linearizeStopIDs as linearizeStops } from "./linearize-stops";
 import { Network } from "./network";
-import { validateLineID, validateTimetableID } from "./utils";
 
 export class Timetable {
   timetableID: number;

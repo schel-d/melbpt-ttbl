@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { DuplicatesList, PasteIssuesDialog }
-  from "./components/paste-issues-dialog";
+  from "../components/paste-issues-dialog";
 
 // Regex to test if a line in the pasted text is a timetable line.
 const timetableRowRegex = /^.+( +(([0-9]{1,2}[:.][0-9]{2}(am|pm|[uda])?)|-))+$/;
