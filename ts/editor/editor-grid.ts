@@ -115,9 +115,10 @@ export class EditorGrid {
     for (let x = cells.x1; x < cells.x2; x++) {
       for (let y = cells.y1; y < cells.y2; y++) {
         const str = content[x][y];
+        const textWidth = this._context.measureText(str).width;
         this._context.fillText(
           str,
-          x * COL_SIZE + TEXT_OFFSET_X,
+          x * COL_SIZE + (COL_SIZE - textWidth) / 2,
           y * ROW_SIZE + TEXT_OFFSET_Y
         );
       }

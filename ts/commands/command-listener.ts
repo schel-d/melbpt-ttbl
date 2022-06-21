@@ -9,6 +9,7 @@ import { DeleteHandler } from "./delete-handler";
 import { SelectAllHandler } from "./select-all-handler";
 import { UndoHandler } from "./undo-handler";
 import { AltArrowsHandler } from "./alt-arrows-handler";
+import { TextEntryHandler } from "./text-entry-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -22,7 +23,8 @@ export class CommandListener {
       new DeleteHandler(),
       new SelectAllHandler(),
       new UndoHandler(),
-      new AltArrowsHandler()
+      new AltArrowsHandler(),
+      new TextEntryHandler()
     ];
   }
   init(appContext: AppContext) {
@@ -37,7 +39,7 @@ export class CommandListener {
       if (f.key != undefined && f.key != key) { return false; }
       if (f.ctrl != undefined && f.ctrl != ctrl) { return false; }
       if (f.alt != undefined && f.alt != alt) { return false; }
-      if (f.shift != undefined && f.shift != shift) { return false; }
+      if (f.shift != undefined && f.shift != shift && f.char == undefined) { return false; }
       return true;
     }));
 
