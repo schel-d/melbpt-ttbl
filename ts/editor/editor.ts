@@ -38,6 +38,9 @@ export class Editor {
     this._editorDiv.addEventListener("mousewheel", scrollEvent, false);
     this._editorDiv.addEventListener("DOMMouseScroll", scrollEvent, false);
 
+    this.stops.stopClicked = (index) => this.onStopClicked(index);
+    this.services.serviceClicked = (index) => this.onServiceClicked(index);
+
     this.grid.draw();
   }
 
@@ -96,6 +99,13 @@ export class Editor {
   private onRowsEdited(indices: number[]) {
     // Todo: re-validate the rows that changed (only do stop-based validation
     // here, service-based validation occurs in onColsEdited()).
+  }
+  private onServiceClicked(index: number) {
+    this.grid.select(index, 0, index, this.section.height - 1);
+  }
+  private onStopClicked(index: number) {
+    if (this.section.width == 0) { return; }
+    this.grid.select(0, index, this.section.width - 1, index);
   }
 
   private onScrollWheel(e: Event) {

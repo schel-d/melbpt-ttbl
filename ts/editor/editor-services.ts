@@ -3,6 +3,8 @@ import { ServiceInfo } from "../data/service-smarts";
 export class EditorServices {
   private _servicesDiv: HTMLDivElement;
 
+  serviceClicked: (index: number) => void;
+
   constructor(servicesID: string) {
     this._servicesDiv = document.getElementById(servicesID) as HTMLDivElement;
   }
@@ -44,6 +46,13 @@ export class EditorServices {
       service.append(img);
     }
 
+    service.addEventListener("click", () => {
+      if (this.serviceClicked != null) {
+        const serviceIndex = Array.from(service.parentElement.children)
+          .indexOf(service);
+        this.serviceClicked(serviceIndex);
+      }
+    });
     return service;
   }
   clientHeight() {
