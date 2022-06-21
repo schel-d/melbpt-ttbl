@@ -10,6 +10,7 @@ import { SelectAllHandler } from "./select-all-handler";
 import { UndoHandler } from "./undo-handler";
 import { AltArrowsHandler } from "./alt-arrows-handler";
 import { TextEntryHandler } from "./text-entry-handler";
+import { NewServiceHandler } from "./new-service-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -24,7 +25,8 @@ export class CommandListener {
       new SelectAllHandler(),
       new UndoHandler(),
       new AltArrowsHandler(),
-      new TextEntryHandler()
+      new TextEntryHandler(),
+      new NewServiceHandler()
     ];
   }
   init(appContext: AppContext) {

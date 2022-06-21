@@ -146,7 +146,7 @@ export class TimetableSection {
 
   pushUndoFrame(undoFrame: SectionEditLog) {
     this.undoFrames.push(undoFrame);
-    while (this.undoFrames.length > 5) {
+    while (this.undoFrames.length > 10) {
       this.undoFrames.shift();
     }
     this.redoFrames = [];

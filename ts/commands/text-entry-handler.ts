@@ -33,7 +33,7 @@ export class TextEntryHandler extends CommandHandler {
       grid.select(startX, startY);
     }
 
-    section.watchModify("Fill empty cells", log => {
+    section.watchModify("Edit cell", log => {
       if (key == "Backspace") {
         log.modifyCell(startX, startY, (x) => x.length == 0 ? x : x.substring(0, x.length - 1));
       }
