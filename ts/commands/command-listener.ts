@@ -8,6 +8,7 @@ import { EnterHandler } from "./enter-handler";
 import { DeleteHandler } from "./delete-handler";
 import { SelectAllHandler } from "./select-all-handler";
 import { UndoHandler } from "./undo-handler";
+import { AltArrowsHandler } from "./alt-arrows-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -20,7 +21,8 @@ export class CommandListener {
       new EnterHandler(),
       new DeleteHandler(),
       new SelectAllHandler(),
-      new UndoHandler()
+      new UndoHandler(),
+      new AltArrowsHandler()
     ];
   }
   init(appContext: AppContext) {

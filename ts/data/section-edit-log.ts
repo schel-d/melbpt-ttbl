@@ -1,3 +1,5 @@
+import { range } from "../utils";
+
 export abstract class SectionEditLog {
   grid: string[][];
   undoGrid: string[][];
@@ -50,8 +52,13 @@ export class SectionModifyLog extends SectionEditLog {
   }
   replaceCell(x: number, y: number, newVal: string) {
     this.grid[x][y] = newVal;
-    if (!this.colsEdited.includes(x)) { this.rowsEdited.push(x); }
+    if (!this.colsEdited.includes(x)) { this.colsEdited.push(x); }
     if (!this.rowsEdited.includes(y)) { this.rowsEdited.push(y); }
+  }
+  replaceService(x: number, newVals: string[]) {
+    this.grid[x] = [...newVals];
+    if (!this.colsEdited.includes(x)) { this.colsEdited.push(x); }
+    this.rowsEdited.push(...range(0, this.grid[0].length));
   }
   modifyCell(x: number, y: number, modFunc: (currentVal: string) => string) {
     this.replaceCell(x, y, modFunc(this.grid[x][y]));

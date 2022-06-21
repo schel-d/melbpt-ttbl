@@ -14,6 +14,7 @@ export class UndoHandler extends CommandHandler {
     shift: boolean, appContext: AppContext): void {
 
     const section = appContext.editor.section;
+    if (section == null) { return; }
 
     if (key == "KeyY" || shift) {
       const success = section.redo();
