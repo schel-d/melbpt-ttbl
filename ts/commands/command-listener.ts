@@ -5,6 +5,8 @@ import { TabHandler } from "./tab-handler";
 import { extractContent } from "./extract-content";
 import { createToast } from "../components/toast";
 import { EnterHandler } from "./enter-handler";
+import { DeleteHandler } from "./delete-handler";
+import { SelectAllHandler } from "./select-all-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -14,7 +16,9 @@ export class CommandListener {
     this._handlers = [
       new SelectArrowsHandler(),
       new TabHandler(),
-      new EnterHandler()
+      new EnterHandler(),
+      new DeleteHandler(),
+      new SelectAllHandler()
     ];
   }
   init(appContext: AppContext) {
