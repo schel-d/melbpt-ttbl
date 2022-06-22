@@ -12,6 +12,8 @@ export class EditorServices {
   }
 
   setServices(nextDay: boolean[]) {
+    // todo: this shouldn't happen every edit! only update the number of buttons
+    // if needed etc.
     this._servicesDiv.replaceChildren(...nextDay.map(f => this.makeButton(f)));
   }
 
