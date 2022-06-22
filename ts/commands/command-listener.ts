@@ -60,6 +60,10 @@ export class CommandListener {
     // cannot call e.preventDefault() for Ctrl+V.
     if (e.code == "KeyV" && (e.ctrlKey || e.metaKey)) { return; }
 
+    // Allow opening of devtools via keyboard shortcut (could be shift for
+    // Windows or option on Mac so just block ctrl+i entirely)
+    if (e.code == "KeyI" && (e.ctrlKey || e.metaKey)) { return; }
+
     if (this._appContext.newTimetableDialog.isOpen() ||
       this._appContext.pasteIssuesDialog.isOpen()) { return; }
 

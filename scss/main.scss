@@ -108,6 +108,12 @@ $editor-column-width: 3rem;
     font-weight: bold;
     font-size: 0.7rem;
   }
+  &.error {
+    border-right: 2px solid var(--clr-error-text);
+    p {
+      color: var(--clr-error-text);
+    }
+  }
 }
 #stops .stop:nth-child(2n + 1) {
   @include css-template.bg-paper-10;
@@ -162,5 +168,9 @@ $editor-column-width: 3rem;
   p {
     margin-left: 0.5rem;
     font-size: 0.7rem;
+  }
+  p.error {
+    color: var(--clr-error-text);
+    font-weight: bold;
   }
 }

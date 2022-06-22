@@ -39,11 +39,21 @@ export class AppContext {
     this.network = network;
 
     this.editor.init();
+    this.editor.errorChanged = (error) => {
+      const footerP = document.querySelector("#footer p");
+      if (error == null) {
+        footerP.classList.remove("error");
+        footerP.textContent = "Valid timetable";
+      }
+      else {
+        footerP.classList.add("error");
+        footerP.textContent = error;
+      }
+    }
     window.addEventListener("resize", () => this.editor.resize());
 
     this.newTimetableDialog.init(this.network);
     this.pasteIssuesDialog.init();
-
 
     this.header.newTimetableButton.addEventListener("click", () => {
       const result = this.timetable == null || !this.timetable.hasContent() ||

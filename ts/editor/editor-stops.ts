@@ -28,6 +28,16 @@ export class EditorStops {
       return stop;
     }))
   }
+  markErrorStops(errors: boolean[]) {
+    this._stopsDiv.querySelectorAll(".stop").forEach((x, index) => {
+      if (errors[index]) {
+        x.classList.add("error");
+      }
+      else {
+        x.classList.remove("error");
+      }
+    })
+  }
   clientWidth() {
     return this._stopsDiv.getBoundingClientRect().width;
   }
