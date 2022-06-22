@@ -9,7 +9,7 @@ export class NewServiceHandler extends CommandHandler {
     ]);
   }
 
-  handle(_char: string, key: string, _ctrl: boolean, _alt: boolean,
+  handle(_char: string, _key: string, _ctrl: boolean, _alt: boolean,
     _shift: boolean, appContext: AppContext): void {
 
     const section = appContext.editor.section;

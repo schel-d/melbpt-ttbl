@@ -12,6 +12,7 @@ import { AltArrowsHandler } from "./alt-arrows-handler";
 import { TextEntryHandler } from "./text-entry-handler";
 import { NewServiceHandler } from "./new-service-handler";
 import { SpaceHandler } from "./space-handler";
+import { NextDayHandler } from "./next-day-handler";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -28,7 +29,8 @@ export class CommandListener {
       new AltArrowsHandler(),
       new TextEntryHandler(),
       new NewServiceHandler(),
-      new SpaceHandler()
+      new SpaceHandler(),
+      new NextDayHandler()
     ];
   }
   init(appContext: AppContext) {

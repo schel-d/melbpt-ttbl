@@ -3,7 +3,6 @@ import { Editor } from "./editor";
 
 export const ROW_SIZE = 20;
 export const COL_SIZE = 48;
-const TEXT_OFFSET_X = 7;
 const TEXT_OFFSET_Y = 14;
 
 export class EditorGrid {
@@ -62,9 +61,9 @@ export class EditorGrid {
     const cols = this._editor.section?.width ?? 0;
     const rows = this._editor.section?.height ?? 0;
 
-    // todo: the timetable section should be in charge of making sure it's
+    // Todo: the timetable section should be in charge of making sure it's
     // rectangular
-    if (content.some((c) => c.length !== rows)) {
+    if (content.some((c) => c.times.length !== rows)) {
       throw "Grid is jagged (some columns have more rows than others)";
     }
 
@@ -114,7 +113,7 @@ export class EditorGrid {
     this._context.fillStyle = css.text;
     for (let x = cells.x1; x < cells.x2; x++) {
       for (let y = cells.y1; y < cells.y2; y++) {
-        const str = content[x][y];
+        const str = content[x].times[y];
         const textWidth = this._context.measureText(str).width;
         this._context.fillText(
           str,

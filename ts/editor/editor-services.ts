@@ -18,9 +18,13 @@ export class EditorServices {
   }
   addServices(startIndex: number, services: ServiceInfo[]) {
     if (startIndex == 0) {
+      // Todo: this would delete existing nodes anytime someone wanted to insert
+      // at the start!
       this.setServices(services);
       return;
     }
+
+    // Todo: this solution is very ugly :/
 
     // nth-child() indices are 1-based and the startIndex is 0-based, however
     // we want the child BEFORE this element (startIndex - 1), so no
@@ -32,8 +36,11 @@ export class EditorServices {
         `insert service buttons after.`);
     }
 
-    serviceBefore.after(...services.map(s =>
-      this.createServiceButton(s)));
+    serviceBefore.after(...services.map(s => this.createServiceButton(s)));
+  }
+  updateService(index: number, info: ServiceInfo) {
+    const thisService = this._servicesDiv.querySelector(`.service:nth-child(${index + 1})`);
+    thisService.replaceWith(this.createServiceButton(info));
   }
   removeServices(indices: number[]) {
     const sortedIndices = [...indices].sort((a, b) => b - a);
@@ -44,7 +51,7 @@ export class EditorServices {
     }
   }
 
-  private createServiceButton(info: ServiceInfo) {
+  private createServiceButton(info: ServiceInfo): HTMLButtonElement {
     const service = document.createElement("button");
     service.className = "service";
 

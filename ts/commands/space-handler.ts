@@ -9,7 +9,7 @@ export class SpaceHandler extends CommandHandler {
     ]);
   }
 
-  handle(_char: string, key: string, _ctrl: boolean, _alt: boolean,
+  handle(_char: string, _key: string, _ctrl: boolean, _alt: boolean,
     _shift: boolean, appContext: AppContext): void {
 
     const section = appContext.editor.section;
@@ -24,14 +24,14 @@ export class SpaceHandler extends CommandHandler {
     const { x1, y1, y2 } = grid.selectedRange;
 
     const validSituationToShiftRight = range(y1, y2 + 1).every(y =>
-      section.grid[x1][y] != "" &&
-      range(x1 + 1, section.width).some(x => section.grid[x][y] == "")
+      section.grid[x1].times[y] != "" &&
+      range(x1 + 1, section.width).some(x => section.grid[x].times[y] == "")
     );
     if (!validSituationToShiftRight) { return; }
 
     section.watchModify("Fill timetable gap", log => {
       range(y1, y2 + 1).forEach(y => {
-        const x2 = section.grid.map(service => service[y])
+        const x2 = section.grid.map(service => service.times[y])
           .findIndex(c => c == "");
 
         for (let x = x2; x >= x1; x--) {
@@ -39,7 +39,7 @@ export class SpaceHandler extends CommandHandler {
             log.replaceCell(x, y, "-");
           }
           else {
-            log.replaceCell(x, y, section.grid[x - 1][y]);
+            log.replaceCell(x, y, section.grid[x - 1].times[y]);
           }
         }
       })

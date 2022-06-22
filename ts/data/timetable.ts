@@ -62,10 +62,12 @@ export class Timetable {
   }
 }
 
+export type Service = { times: string[], nextDay: boolean }
+
 export class TimetableSection {
   generalDir: string;
   dow: string;
-  grid: string[][];
+  grid: Service[];
   stops: number[];
   undoFrames: SectionEditLog[];
   redoFrames: SectionEditLog[];
@@ -109,12 +111,8 @@ export class TimetableSection {
     this._replace = null;
   }
 
-  private _cloneGrid(): string[][] {
-    return this.grid.map(x => [...x]);
-  }
-
   watchAppend(actionName: string, func: (log: SectionAppendLog) => void) {
-    const log = new SectionAppendLog(this._cloneGrid(), actionName);
+    const log = new SectionAppendLog(this.grid, actionName);
     func(log);
     this.grid = log.grid;
     this.pushUndoFrame(log);
@@ -124,7 +122,7 @@ export class TimetableSection {
     if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
   }
   watchDelete(actionName: string, func: (log: SectionDeleteLog) => void) {
-    const log = new SectionDeleteLog(this._cloneGrid(), actionName);
+    const log = new SectionDeleteLog(this.grid, actionName);
     func(log);
     this.grid = log.grid;
     this.pushUndoFrame(log);
@@ -134,7 +132,7 @@ export class TimetableSection {
     if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
   }
   watchModify(actionName: string, func: (log: SectionModifyLog) => void) {
-    const log = new SectionModifyLog(this._cloneGrid(), actionName);
+    const log = new SectionModifyLog(this.grid, actionName);
     func(log);
     this.grid = log.grid;
     this.pushUndoFrame(log);

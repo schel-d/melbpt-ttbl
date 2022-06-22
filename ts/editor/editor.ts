@@ -97,6 +97,7 @@ export class Editor {
   private onColsEdited(indices: number[]) {
     // Todo: re-validate the columns that changed (only do service-based
     // validation here, stop-based validation occurs in onRowsEdited()).
+    indices.forEach(s => this.services.updateService(s, runSmarts(this.section.grid[s])));
   }
   private onRowsEdited(indices: number[]) {
     // Todo: re-validate the rows that changed (only do stop-based validation
