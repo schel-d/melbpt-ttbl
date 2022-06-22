@@ -1,5 +1,3 @@
-import { ServiceInfo } from "../data/service-smarts";
-
 export class EditorServices {
   private _servicesDiv: HTMLDivElement;
 
@@ -12,19 +10,18 @@ export class EditorServices {
   clear() {
     this.setServices([]);
   }
-  setServices(services: ServiceInfo[]) {
-    this._servicesDiv.replaceChildren(...services.map(s =>
-      this.createServiceButton(s)));
+  setServices(nextDay: boolean[]) {
+    this._servicesDiv.replaceChildren(...nextDay.map(f => this.makeButton(f)));
   }
-  addServices(startIndex: number, services: ServiceInfo[]) {
-    if (startIndex == 0) {
-      // Todo: this would delete existing nodes anytime someone wanted to insert
-      // at the start!
-      this.setServices(services);
+  addServices(startIndex: number, nextDay: boolean[]) {
+    if (this._servicesDiv.children.length == 0) {
+      this.setServices(nextDay);
       return;
     }
-
-    // Todo: this solution is very ugly :/
+    if (startIndex == 0) {
+      this._servicesDiv.firstChild.before(...nextDay.map(f => this.makeButton(f)));
+      return;
+    }
 
     // nth-child() indices are 1-based and the startIndex is 0-based, however
     // we want the child BEFORE this element (startIndex - 1), so no
@@ -36,11 +33,7 @@ export class EditorServices {
         `insert service buttons after.`);
     }
 
-    serviceBefore.after(...services.map(s => this.createServiceButton(s)));
-  }
-  updateService(index: number, info: ServiceInfo) {
-    const thisService = this._servicesDiv.querySelector(`.service:nth-child(${index + 1})`);
-    thisService.replaceWith(this.createServiceButton(info));
+    serviceBefore.after(...nextDay.map(f => this.makeButton(f)));
   }
   removeServices(indices: number[]) {
     const sortedIndices = [...indices].sort((a, b) => b - a);
@@ -51,11 +44,16 @@ export class EditorServices {
     }
   }
 
-  private createServiceButton(info: ServiceInfo): HTMLButtonElement {
+  updateService(index: number, nextDay: boolean) {
+    const thisService = this._servicesDiv.querySelector(`.service:nth-child(${index + 1})`);
+    thisService.replaceWith(this.makeButton(nextDay));
+  }
+
+  private makeButton(nextDay: boolean): HTMLButtonElement {
     const service = document.createElement("button");
     service.className = "service";
 
-    if (info.nextDay) {
+    if (nextDay) {
       const img = document.createElement("img");
       img.src = "service-icons/next-day.svg";
       img.alt = "Next day";

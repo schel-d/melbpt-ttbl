@@ -1,6 +1,5 @@
 import { createToast } from "../components/toast";
 import { Network } from "../data/network";
-import { runSmarts } from "../data/service-smarts";
 import { TimetableSection } from "../data/timetable";
 import { ValidationEngine } from "../data/validation-engine";
 import { range } from "../utils";
@@ -73,15 +72,13 @@ export class Editor {
       this.section.clearListeners();
     }
 
-    // Stage 1: create the buttons
     this.section = section;
     this.stops.setStops(section.stops.map(s => network.stopName(s)));
-    this.services.setServices(section.grid.map(s => runSmarts(s)));
+    this.services.setServices(section.grid.map(s => s.nextDay));
 
-    // Stage 2: Apply validation markings to buttons
     this.validationEngine = new ValidationEngine(section);
-    this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
+    this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
 
     this.section.registerListeners(
       () => this.onEdited(),
@@ -98,45 +95,44 @@ export class Editor {
     this.grid.draw();
   }
   private onColsAdded(startIndex: number, amount: number) {
+    const newServices = this.section.grid.slice(startIndex, startIndex + amount);
+    this.services.addServices(startIndex, newServices.map(s => s.nextDay));
+
     this.validationEngine.revalidateServices(range(startIndex, startIndex + amount));
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
 
     // Todo: use the results from the validation engine.
-    const newServices = this.section.grid.slice(startIndex,
-      startIndex + amount);
-    this.services.addServices(startIndex, newServices.map(s => runSmarts(s)));
   }
   private onColsDeleted(originalIndices: number[]) {
+    this.services.removeServices(originalIndices);
+
     this.validationEngine.removeServices(originalIndices);
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-
-    this.services.removeServices(originalIndices);
   }
   private onColsEdited(indices: number[]) {
+    indices.forEach(s => this.services.updateService(s, this.section.grid[s].nextDay));
+
     this.validationEngine.revalidateServices(indices);
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
 
     // Todo: use the results from the validation engine.
-    indices.forEach(s => this.services.updateService(s, runSmarts(this.section.grid[s])));
   }
   private onRowsEdited(indices: number[]) {
     this.validationEngine.revalidateStops(indices);
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
 
     this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
-
-    // Todo: use the results from the validation engine to mark the broken
-    // stops in red or something.
   }
   private onReplace(actionName: string, type: "undo" | "redo") {
+    this.services.setServices(this.section.grid.map(s => s.nextDay));
+
     // Replace the validation engine object because the whole grid just changed
     // and we can't really track how it changed, so just start fresh.
     this.validationEngine = new ValidationEngine(this.section);
     if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
     this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
+    // Todo: use the service results from the validation engine.
 
-    // Todo: use the results from the validation engine.
-    this.services.setServices(this.section.grid.map(s => runSmarts(s)));
     this.grid.draw();
 
     if (type == "undo") {
