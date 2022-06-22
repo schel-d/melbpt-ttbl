@@ -1,5 +1,6 @@
 import { Network } from "../data/network";
 import { TimetableSection } from "../data/timetable-section";
+import { ValidationResults } from "../data/timetable-validation";
 import { clamp } from "../utils";
 import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
@@ -13,7 +14,7 @@ export class Editor {
 
   private _editorDiv: HTMLDivElement;
 
-  errorChanged: ((error: string | null) => void) | null;
+  requestValidation: (() => void) | null;
 
   constructor(editorID: string, gridID: string, canvasID: string,
     stopsID: string, servicesID: string) {
@@ -77,9 +78,15 @@ export class Editor {
     this.grid.draw();
   }
 
+  applyValidationOverlay(results: ValidationResults) {
+    this.stops.markErrorStops(results.stopErrors.map(e => e != null));
+  }
+
   private onChanged() {
     this.grid.draw();
     this.services.setServices(this.section.map(s => s.nextDay));
+
+    if (this.requestValidation != null) { this.requestValidation(); }
   }
 
   private onServiceClicked(index: number) {

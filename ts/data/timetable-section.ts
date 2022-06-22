@@ -75,6 +75,21 @@ export class TimetableSection {
     return this._data.map(func);
   }
 
+  toJSON() {
+    return {
+      generalDir: this.generalDir,
+      dow: this.dow,
+      stops: this.stops,
+      data: this._data.toJSON()
+    };
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static fromJSON(json: any): TimetableSection {
+    const section = new TimetableSection(json.generalDir, json.dow, json.stops);
+    section._data = TimetableData.fromJSON(json.data);
+    return section;
+  }
+
   get width() {
     return this._data.width;
   }

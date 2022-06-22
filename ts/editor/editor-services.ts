@@ -1,10 +1,12 @@
 export class EditorServices {
   private _servicesDiv: HTMLDivElement;
+  private _currNextDay: boolean[];
 
   serviceClicked: (index: number) => void;
 
   constructor(servicesID: string) {
     this._servicesDiv = document.getElementById(servicesID) as HTMLDivElement;
+    this._currNextDay = [];
   }
 
   clear() {
@@ -12,8 +14,13 @@ export class EditorServices {
   }
 
   setServices(nextDay: boolean[]) {
-    // todo: this shouldn't happen every edit! only update the number of buttons
-    // if needed etc.
+    // Only edit the DOM if there are changes.
+    if (nextDay.length == this._currNextDay.length &&
+      nextDay.every((val, index) => this._currNextDay[index] == val)) {
+      return;
+    }
+
+    this._currNextDay = nextDay;
     this._servicesDiv.replaceChildren(...nextDay.map(f => this.makeButton(f)));
   }
 

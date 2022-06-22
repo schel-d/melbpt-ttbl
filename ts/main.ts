@@ -7,12 +7,14 @@ import { NewTimetableDialog } from "./components/new-timetable-dialog";
 import { PasteIssuesDialog } from "./components/paste-issues-dialog";
 import { Timetable } from "./data/timetable";
 import { DOWPresets } from "./data/dow";
+import { Validator } from "./validator";
 
 export class AppContext {
   network: Network | null;
   timetable: Timetable | null;
 
   editor: Editor;
+  validator: Validator;
   header: Header;
   status: StatusScreens;
   newTimetableDialog: NewTimetableDialog;
@@ -24,6 +26,8 @@ export class AppContext {
 
     this.editor = new Editor("editor", "grid", "grid-canvas", "stops",
       "services");
+
+    this.validator = new Validator("validation-worker.js");
 
     this.header = new Header("new-timetable-button", "import-button",
       "export-button", "tabs", (a, b) => this.tabClicked(a, b));
@@ -39,7 +43,13 @@ export class AppContext {
     this.network = network;
 
     this.editor.init();
-    this.editor.errorChanged = (error) => {
+    this.editor.requestValidation = () => {
+      this.validator.requestValidation(this.editor.section, this.network);
+    }
+    window.addEventListener("resize", () => this.editor.resize());
+
+    this.validator.onResults = (results) => {
+      const error = results.overallError();
       const footerP = document.querySelector("#footer p");
       if (error == null) {
         footerP.classList.remove("error");
@@ -49,8 +59,9 @@ export class AppContext {
         footerP.classList.add("error");
         footerP.textContent = error;
       }
+
+      this.editor.applyValidationOverlay(results);
     }
-    window.addEventListener("resize", () => this.editor.resize());
 
     this.newTimetableDialog.init(this.network);
     this.pasteIssuesDialog.init();
@@ -92,7 +103,6 @@ export class AppContext {
 const network = new Network();
 const appContext = new AppContext();
 const commandListener = new CommandListener();
-const validationWorker = new Worker("validation-worker.js");
 
 network.load().then(() => {
   appContext.init(network);
@@ -100,9 +110,4 @@ network.load().then(() => {
   commandListener.init(appContext);
   document.addEventListener("keydown", (e) => commandListener.onDocKeyEvent(e));
   document.addEventListener("paste", (e) => commandListener.onPaste(e));
-
-  validationWorker.postMessage("Good morning!");
-  validationWorker.onmessage = (e) => {
-    console.log(e.data);
-  };
 });

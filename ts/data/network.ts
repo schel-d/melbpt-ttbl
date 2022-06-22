@@ -59,4 +59,17 @@ export class Network {
     }
     return stopObj.name;
   }
+
+  toJSON() {
+    return {
+      domain: this.domain,
+      json: this._json
+    };
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static fromJSON(json: any) {
+    const network = new Network(json.domain);
+    network._json = json.json;
+    return network;
+  }
 }

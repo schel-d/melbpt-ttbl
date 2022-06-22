@@ -54,6 +54,17 @@ export class TimetableData {
   get width() {
     return this._services.length;
   }
+
+  toJSON() {
+    return {
+      services: this._services
+    };
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static fromJSON(json: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new TimetableData(json.services.map((x: any) => Service.fromJSON(x)));
+  }
 }
 
 export class Service {
@@ -66,5 +77,9 @@ export class Service {
   }
   clone() {
     return new Service([...this.times], this.nextDay);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static fromJSON(json: any) {
+    return new Service(json.times, json.nextDay);
   }
 }
