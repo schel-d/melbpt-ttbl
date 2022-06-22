@@ -13,6 +13,7 @@ import { TextEntryHandler } from "./text-entry-handler";
 import { NewServiceHandler } from "./new-service-handler";
 import { SpaceHandler } from "./space-handler";
 import { NextDayHandler } from "./next-day-handler";
+import { Service } from "../data/timetable-data";
 
 export class CommandListener {
   private _appContext: AppContext;
@@ -45,7 +46,9 @@ export class CommandListener {
       if (f.key != undefined && f.key != key) { return false; }
       if (f.ctrl != undefined && f.ctrl != ctrl) { return false; }
       if (f.alt != undefined && f.alt != alt) { return false; }
-      if (f.shift != undefined && f.shift != shift && f.char == undefined) { return false; }
+      if (f.shift != undefined && f.shift != shift && f.char == undefined) {
+        return false;
+      }
       return true;
     }));
 
@@ -95,22 +98,23 @@ export class CommandListener {
     extractContent(text, stopNames, pid, (newContent, missing) => {
       const numOfStopsFound = stopNames.length - missing.length;
       if (numOfStopsFound <= 1) {
-        // If there was basically no usable timetable content in what was pasted,
-        // mostly ignore it.
+        // If there was basically no usable timetable content in what was
+        // pasted, ignore it.
         createToast(`That didn't seem like timetable content.`);
         return;
       }
 
       // Otherwise add it to the current section.
-      section.watchAppend("Paste timetable content", (log) => {
-        log.appendServices(newContent);
+      section.edit("Paste timetable content", data => {
+        data.addServices(newContent.map(x => new Service(x, false)));
       })
 
       // Display a toast if any stops were not present. This kind of thing may
-      // happen often, especially in V/Line timetables, but informs the user just
-      // in case they make a mistake coping the full table.
+      // happen often, especially in V/Line timetables, but informs the user
+      // just in case they make a mistake coping the full table.
       if (missing.length > 3) {
-        createToast(`${missing.length} stops were missing from pasted content.`);
+        createToast(
+          `${missing.length} stops were missing from the pasted content.`);
       }
       else if (missing.length != 0) {
         createToast(

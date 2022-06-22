@@ -1,4 +1,4 @@
-import { TimetableSection } from "../data/timetable";
+import { TimetableSection } from "../data/timetable-section";
 import { AppContext } from "../main";
 import { clamp } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";

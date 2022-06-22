@@ -16,8 +16,8 @@ export class EnterHandler extends CommandHandler {
     if (section == null || grid.selected == null) { return; }
 
     const { startX, startY, endX, endY } = grid.selected;
-    section.watchModify("Fill empty cells", log => {
-      log.modifyCells(startX, startY, endX, endY, (x) => x === "" ? "-" : x);
+    section.edit("Fill empty cells", data => {
+      data.modifyCells(startX, startY, endX, endY, (x) => x === "" ? "-" : x);
     });
   }
 }

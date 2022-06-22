@@ -92,6 +92,7 @@ export class AppContext {
 const network = new Network();
 const appContext = new AppContext();
 const commandListener = new CommandListener();
+const validationWorker = new Worker("validation-worker.js");
 
 network.load().then(() => {
   appContext.init(network);
@@ -99,4 +100,9 @@ network.load().then(() => {
   commandListener.init(appContext);
   document.addEventListener("keydown", (e) => commandListener.onDocKeyEvent(e));
   document.addEventListener("paste", (e) => commandListener.onPaste(e));
+
+  validationWorker.postMessage("Good morning!");
+  validationWorker.onmessage = (e) => {
+    console.log(e.data);
+  };
 });

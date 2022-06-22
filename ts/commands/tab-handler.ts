@@ -1,4 +1,4 @@
-import { TimetableSection } from "../data/timetable";
+import { TimetableSection } from "../data/timetable-section";
 import { EditorGrid } from "../editor/editor-grid";
 import { AppContext } from "../main";
 import { CommandHandler, keyFilter } from "./command-handler";

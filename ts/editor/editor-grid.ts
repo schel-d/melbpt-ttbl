@@ -57,27 +57,21 @@ export class EditorGrid {
   }
 
   draw() {
-    const content = this._editor.section?.grid ?? [];
-    const cols = this._editor.section?.width ?? 0;
-    const rows = this._editor.section?.height ?? 0;
-
-    // Todo: the timetable section should be in charge of making sure it's
-    // rectangular
-    if (content.some((c) => c.times.length !== rows)) {
-      throw "Grid is jagged (some columns have more rows than others)";
-    }
+    const section = this._editor.section;
+    const cols = section?.width ?? 0;
+    const rows = section?.height ?? 0;
 
     const dpiRatio = this.calculateDpiRatio();
     const cells = this.getOnScreenCells(rows, cols);
 
-    // Set the container holding the canvas to the full size (makes the scrollbar
-    // work properly)
+    // Set the container holding the canvas to the full size (makes the
+    // scrollbar work properly)
     this._grid.style.width = COL_SIZE * cols + "px";
     this._grid.style.height = ROW_SIZE * rows + "px";
 
     // Make the canvas big enough to fit only the cells actually on screen
-    // Shift the canvas within it's parent so when it's scrolled, it still appears
-    // on screen despite its smaller size
+    // Shift the canvas within it's parent so when it's scrolled, it still
+    // appears on screen despite its smaller size
     this._canvas.width = COL_SIZE * cells.width * dpiRatio;
     this._canvas.height = ROW_SIZE * cells.height * dpiRatio;
     this._canvas.style.width = COL_SIZE * cells.width + "px";
@@ -93,6 +87,8 @@ export class EditorGrid {
       -cells.y1 * ROW_SIZE * dpiRatio
     );
     this._context.scale(dpiRatio, dpiRatio);
+
+    if (section == null) { return; }
 
     // Render a lighter background for every second row
     this._context.fillStyle = css.paper10;
@@ -113,7 +109,7 @@ export class EditorGrid {
     this._context.fillStyle = css.text;
     for (let x = cells.x1; x < cells.x2; x++) {
       for (let y = cells.y1; y < cells.y2; y++) {
-        const str = content[x].times[y];
+        const str = section.cell(x, y);
         const textWidth = this._context.measureText(str).width;
         this._context.fillText(
           str,

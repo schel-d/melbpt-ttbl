@@ -1,3 +1,4 @@
+import { Service } from "../data/timetable-data";
 import { AppContext } from "../main";
 import { repeat } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
@@ -20,8 +21,8 @@ export class NewServiceHandler extends CommandHandler {
       return;
     }
 
-    section.watchAppend("Add empty service", log => {
-      log.appendServices([repeat("", section.height)]);
+    section.edit("Add empty service", data => {
+      data.addServices([new Service(repeat("", section.height), false)]);
     });
   }
 }

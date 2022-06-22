@@ -1,15 +1,12 @@
-import { createToast } from "../components/toast";
 import { Network } from "../data/network";
-import { TimetableSection } from "../data/timetable";
-import { ValidationEngine } from "../data/validation-engine";
-import { range } from "../utils";
+import { TimetableSection } from "../data/timetable-section";
+import { clamp } from "../utils";
 import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
 import { EditorStops } from "./editor-stops";
 
 export class Editor {
   section: TimetableSection | null;
-  validationEngine: ValidationEngine | null;
   grid: EditorGrid;
   stops: EditorStops;
   services: EditorServices;
@@ -27,7 +24,6 @@ export class Editor {
     this.services = new EditorServices(servicesID);
 
     this.section = null;
-    this.validationEngine = null;
   }
 
   init() {
@@ -38,8 +34,9 @@ export class Editor {
       this.grid.draw();
     });
 
-    // Make the scrollwheel cause horizontal scrolling in the editor, not vertical
-    // Firefox is 'DOMMouseScroll' and basically everything else is 'mousewheel'
+    // Make the scrollwheel cause horizontal scrolling in the editor, not
+    // vertical Firefox is 'DOMMouseScroll' and basically everything else is
+    // 'mousewheel'
     const scrollEvent = (e: Event) => this.onScrollWheel(e);
     this._editorDiv.addEventListener("mousewheel", scrollEvent, false);
     this._editorDiv.addEventListener("DOMMouseScroll", scrollEvent, false);
@@ -57,10 +54,9 @@ export class Editor {
 
   clear() {
     if (this.section != null) {
-      this.section.clearListeners();
+      this.section.changed = null;
     }
     this.section = null;
-    this.validationEngine = null;
     this.stops.clear();
     this.services.clear();
     this.grid.resetEvents();
@@ -69,82 +65,27 @@ export class Editor {
 
   setSection(section: TimetableSection, network: Network) {
     if (this.section != null) {
-      this.section.clearListeners();
+      this.section.changed = null;
     }
 
     this.section = section;
     this.stops.setStops(section.stops.map(s => network.stopName(s)));
-    this.services.setServices(section.grid.map(s => s.nextDay));
+    this.services.setServices(this.section.map(s => s.nextDay));
 
-    this.validationEngine = new ValidationEngine(section);
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-    this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
-
-    this.section.registerListeners(
-      () => this.onEdited(),
-      (startIndex, amount) => this.onColsAdded(startIndex, amount),
-      (originalIndices) => this.onColsDeleted(originalIndices),
-      (indices) => this.onColsEdited(indices),
-      (indices) => this.onRowsEdited(indices),
-      (actionName, type) => this.onReplace(actionName, type));
+    this.section.changed = () => this.onChanged();
     this.grid.resetEvents();
     this.grid.draw();
   }
 
-  private onEdited() {
+  private onChanged() {
     this.grid.draw();
+    this.services.setServices(this.section.map(s => s.nextDay));
   }
-  private onColsAdded(startIndex: number, amount: number) {
-    const newServices = this.section.grid.slice(startIndex, startIndex + amount);
-    this.services.addServices(startIndex, newServices.map(s => s.nextDay));
 
-    this.validationEngine.revalidateServices(range(startIndex, startIndex + amount));
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-
-    // Todo: use the results from the validation engine.
-  }
-  private onColsDeleted(originalIndices: number[]) {
-    this.services.removeServices(originalIndices);
-
-    this.validationEngine.removeServices(originalIndices);
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-  }
-  private onColsEdited(indices: number[]) {
-    indices.forEach(s => this.services.updateService(s, this.section.grid[s].nextDay));
-
-    this.validationEngine.revalidateServices(indices);
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-
-    // Todo: use the results from the validation engine.
-  }
-  private onRowsEdited(indices: number[]) {
-    this.validationEngine.revalidateStops(indices);
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-
-    this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
-  }
-  private onReplace(actionName: string, type: "undo" | "redo") {
-    this.services.setServices(this.section.grid.map(s => s.nextDay));
-
-    // Replace the validation engine object because the whole grid just changed
-    // and we can't really track how it changed, so just start fresh.
-    this.validationEngine = new ValidationEngine(this.section);
-    if (this.errorChanged) { this.errorChanged(this.validationEngine.errorMessage()); }
-    this.stops.markErrorStops(this.validationEngine.stopErrors.map(e => e != null));
-    // Todo: use the service results from the validation engine.
-
-    this.grid.draw();
-
-    if (type == "undo") {
-      createToast(`Undone "${actionName}"`);
-    }
-    else if (type == "redo") {
-      createToast(`Redone "${actionName}"`);
-    }
-  }
   private onServiceClicked(index: number) {
     this.grid.select(index, 0, index, this.section.height - 1);
   }
+
   private onStopClicked(index: number) {
     if (this.section.width == 0) { return; }
     this.grid.select(0, index, this.section.width - 1, index);
@@ -156,7 +97,7 @@ export class Editor {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wheelEvent = e as any;
 
-    const delta = Math.max(-1, Math.min(1, wheelEvent.wheelDelta || -wheelEvent.detail));
+    const delta = clamp(wheelEvent.wheelDelta || -wheelEvent.detail, -1, 1);
     this._editorDiv.scrollLeft -= delta * 64;
     e.preventDefault();
   };

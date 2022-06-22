@@ -33,12 +33,13 @@ export class TextEntryHandler extends CommandHandler {
       grid.select(startX, startY);
     }
 
-    section.watchModify("Edit cell", log => {
+    section.edit("Edit cell", data => {
       if (key == "Backspace") {
-        log.modifyCell(startX, startY, (x) => x.length == 0 ? x : x.substring(0, x.length - 1));
+        data.modifyCell(startX, startY, (x) =>
+          x.length == 0 ? x : x.substring(0, x.length - 1));
       }
       else {
-        log.modifyCell(startX, startY, (x) => x.length >= 5 ? x : (x + char));
+        data.modifyCell(startX, startY, (x) => x.length >= 5 ? x : (x + char));
       }
     });
   }

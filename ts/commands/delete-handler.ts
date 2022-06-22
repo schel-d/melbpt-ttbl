@@ -19,14 +19,14 @@ export class DeleteHandler extends CommandHandler {
 
     if (startY == 0 && endY == section.height - 1 && !ctrl) {
       const actionName = startX == endX ? "Delete service" : "Delete services";
-      section.watchDelete(actionName, log => {
-        log.deleteServices(Math.min(startX, endX), Math.max(startX, endX) + 1);
+      section.edit(actionName, data => {
+        data.deleteServices(Math.min(startX, endX), Math.max(startX, endX) + 1);
       });
       grid.clearSelection();
     }
     else {
-      section.watchModify("Delete text", log => {
-        log.modifyCells(startX, startY, endX, endY, () => "");
+      section.edit("Delete text", data => {
+        data.modifyCells(startX, startY, endX, endY, () => "");
       });
     }
   }

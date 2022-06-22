@@ -29,24 +29,25 @@ export class AltArrowsHandler extends CommandHandler {
     if (key == "ArrowLeft" && x1 > 0) {
       const actionName = x1 == x2 ? "Shift service left" :
         "Shift services left";
-      section.watchModify(actionName, log => {
-        const leftService = section.grid[x1 - 1];
+      section.edit(actionName, data => {
+        const leftService = data.service(x1 - 1);
         for (const x of range(x1, x2 + 1)) {
-          log.replaceService(x - 1, section.grid[x]);
+          data.replaceService(data.service(x), x - 1);
         }
-        log.replaceService(x2, leftService);
+        data.replaceService(leftService, x2);
       });
       grid.select(x1 - 1, 0, x2 - 1, section.height - 1);
     }
+
     if (key == "ArrowRight" && x2 < section.width - 1) {
       const actionName = x1 == x2 ? "Shift service right" :
         "Shift services right";
-      section.watchModify(actionName, log => {
-        const rightService = section.grid[x2 + 1];
+      section.edit(actionName, data => {
+        const rightService = data.service(x2 + 1);
         for (const x of range(x1, x2 + 1)) {
-          log.replaceService(x + 1, section.grid[x]);
+          data.replaceService(data.service(x), x + 1);
         }
-        log.replaceService(x1, rightService);
+        data.replaceService(rightService, x1);
       });
       grid.select(x1 + 1, 0, x2 + 1, section.height - 1);
     }

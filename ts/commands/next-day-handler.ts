@@ -1,4 +1,5 @@
 import { AppContext } from "../main";
+import { range } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 
 export class NextDayHandler extends CommandHandler {
@@ -18,10 +19,10 @@ export class NextDayHandler extends CommandHandler {
     const { startX, startY, endX, endY } = grid.selected;
     if (startY != 0 || endY != section.height - 1) { return; }
 
-    const currentVal = section.grid[startX].nextDay;
+    const currentVal = section.nextDay(startX);
 
-    section.watchModify("Toggle next day", log => {
-      log.modifyNextDay(startX, endX, !currentVal);
+    section.edit("Toggle next day", data => {
+      range(startX, endX + 1).forEach(x => data.setNextDay(x, !currentVal));
     });
   }
 }

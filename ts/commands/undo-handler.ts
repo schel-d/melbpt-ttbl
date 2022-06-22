@@ -17,14 +17,20 @@ export class UndoHandler extends CommandHandler {
     if (section == null) { return; }
 
     if (key == "KeyY" || shift) {
-      const success = section.redo();
-      if (!success) {
+      const actionName = section.redo();
+      if (actionName != null) {
+        createToast(`Redone: ${actionName}`);
+      }
+      else {
         createToast("Cannot redo any further");
       }
     }
     else {
-      const success = section.undo();
-      if (!success) {
+      const actionName = section.undo();
+      if (actionName != null) {
+        createToast(`Undone: ${actionName}`);
+      }
+      else {
         createToast("Cannot undo any further");
       }
     }

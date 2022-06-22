@@ -1,8 +1,7 @@
-import { range, validateLineID, validateTimetableID } from "../utils";
-import { validateDOW } from "./dow";
+import { validateLineID, validateTimetableID } from "../utils";
 import { linearizeStopIDs as linearizeStops } from "./linearize-stops";
 import { Network } from "./network";
-import { SectionAppendLog, SectionDeleteLog, SectionEditLog, SectionModifyLog } from "./section-edit-log";
+import { TimetableSection } from "./timetable-section";
 
 export class Timetable {
   timetableID: number;
@@ -58,122 +57,6 @@ export class Timetable {
       `dow="${dow}" does not exist`);
   }
   hasContent(): boolean {
-    return this.sections.some(s => s.grid.length > 0);
-  }
-}
-
-export type Service = { times: string[], nextDay: boolean }
-
-export class TimetableSection {
-  generalDir: string;
-  dow: string;
-  grid: Service[];
-  stops: number[];
-  undoFrames: SectionEditLog[];
-  redoFrames: SectionEditLog[];
-
-  private _edited: (() => void) | null;
-  private _colsAdded: ((startIndex: number, amount: number) => void) | null;
-  private _colsDeleted: ((indices: number[]) => void) | null;
-  private _colsEdited: ((indices: number[]) => void) | null;
-  private _rowsEdited: ((indices: number[]) => void) | null;
-  private _replace: ((actionName: string, type: "undo" | "redo") => void) | null;
-
-  constructor(generalDir: string, dow: string, stops: number[]) {
-    this.generalDir = generalDir;
-    this.dow = validateDOW(dow);
-    this.grid = [];
-    this.stops = stops;
-    this.undoFrames = [];
-    this.redoFrames = [];
-  }
-  registerListeners(
-    edited: () => void,
-    colsAdded: (startIndex: number, amount: number) => void,
-    colsDeleted: (originalIndices: number[]) => void,
-    colsEdited: (indices: number[]) => void,
-    rowsEdited: (indices: number[]) => void,
-    replace: (actionName: string, type: "undo" | "redo") => void) {
-
-    this._edited = edited;
-    this._colsAdded = colsAdded;
-    this._colsDeleted = colsDeleted;
-    this._colsEdited = colsEdited;
-    this._rowsEdited = rowsEdited;
-    this._replace = replace;
-  }
-  clearListeners() {
-    this._edited = null;
-    this._colsAdded = null;
-    this._colsDeleted = null;
-    this._colsEdited = null;
-    this._rowsEdited = null;
-    this._replace = null;
-  }
-
-  watchAppend(actionName: string, func: (log: SectionAppendLog) => void) {
-    const log = new SectionAppendLog(this.grid, actionName);
-    func(log);
-    this.grid = log.grid;
-    this.pushUndoFrame(log);
-
-    if (this._edited) { this._edited(); }
-    if (this._colsAdded) { this._colsAdded(log.startIndex, log.amount); }
-    if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
-  }
-  watchDelete(actionName: string, func: (log: SectionDeleteLog) => void) {
-    const log = new SectionDeleteLog(this.grid, actionName);
-    func(log);
-    this.grid = log.grid;
-    this.pushUndoFrame(log);
-
-    if (this._edited) { this._edited(); }
-    if (this._colsDeleted) { this._colsDeleted(log.originalIndices); }
-    if (this._rowsEdited) { this._rowsEdited(range(0, this.stops.length)); }
-  }
-  watchModify(actionName: string, func: (log: SectionModifyLog) => void) {
-    const log = new SectionModifyLog(this.grid, actionName);
-    func(log);
-    this.grid = log.grid;
-    this.pushUndoFrame(log);
-
-    if (this._edited) { this._edited(); }
-    if (this._colsEdited) { this._colsEdited(log.colsEdited); }
-    if (this._rowsEdited) { this._rowsEdited(log.rowsEdited); }
-  }
-
-  pushUndoFrame(undoFrame: SectionEditLog) {
-    this.undoFrames.push(undoFrame);
-    while (this.undoFrames.length > 10) {
-      this.undoFrames.shift();
-    }
-    this.redoFrames = [];
-  }
-  undo(): boolean {
-    const undoFrame = this.undoFrames.pop();
-    if (undoFrame == null) { return false; }
-
-    this.redoFrames.push(undoFrame);
-
-    this.grid = undoFrame.undoGrid;
-    if (this._replace) { this._replace(undoFrame.actionName, "undo"); }
-    return true;
-  }
-  redo(): boolean {
-    const redoFrame = this.redoFrames.pop();
-    if (redoFrame == null) { return false; }
-
-    this.undoFrames.push(redoFrame);
-
-    this.grid = redoFrame.grid;
-    if (this._replace) { this._replace(redoFrame.actionName, "redo"); }
-    return true;
-  }
-
-  get width() {
-    return this.grid.length;
-  }
-  get height() {
-    return this.stops.length;
+    return this.sections.some(s => s.width != 0);
   }
 }
