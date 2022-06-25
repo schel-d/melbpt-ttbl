@@ -13,7 +13,11 @@ export class Validator {
     };
   }
 
-  requestValidation(section: TimetableSection, network: Network) {
-    this._worker.postMessage({ section: section.toJSON(), network: network.toJSON() });
+  init(network: Network) {
+    this._worker.postMessage({ network: network.toJSON() });
+  }
+
+  requestValidation(section: TimetableSection) {
+    this._worker.postMessage({ section: section.toJSON() });
   }
 }

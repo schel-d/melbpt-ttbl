@@ -13,6 +13,7 @@ export class Editor {
   services: EditorServices;
 
   private _editorDiv: HTMLDivElement;
+  private _validationTimeoutID: number | null;
 
   requestValidation: (() => void) | null;
 
@@ -86,7 +87,14 @@ export class Editor {
     this.grid.draw();
     this.services.setServices(this.section.map(s => s.nextDay));
 
-    if (this.requestValidation != null) { this.requestValidation(); }
+    if (this._validationTimeoutID != null) {
+      clearTimeout(this._validationTimeoutID);
+      this._validationTimeoutID = null;
+    }
+
+    this._validationTimeoutID = setTimeout(() => {
+      if (this.requestValidation != null) { this.requestValidation(); }
+    }, 500);
   }
 
   private onServiceClicked(index: number) {

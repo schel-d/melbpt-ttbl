@@ -42,9 +42,11 @@ export class AppContext {
   init(network: Network) {
     this.network = network;
 
+    this.validator.init(this.network);
+
     this.editor.init();
     this.editor.requestValidation = () => {
-      this.validator.requestValidation(this.editor.section, this.network);
+      this.validator.requestValidation(this.editor.section);
     }
     window.addEventListener("resize", () => this.editor.resize());
 
