@@ -85,6 +85,7 @@ export class TimetableSection {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any): TimetableSection {
+    // Todo: Use zod to validate incoming json?
     const section = new TimetableSection(json.generalDir, json.dow, json.stops);
     section._data = TimetableData.fromJSON(json.data);
     return section;

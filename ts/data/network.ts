@@ -42,6 +42,8 @@ export class Network {
     if (response.status != 200) {
       throw new Error(`"${this.domain}" did not respond.`);
     }
+
+    // Todo: Use zod to validate incoming json?
     this._json = await response.json() as NetworkApiV1Schema;
   }
 
@@ -73,6 +75,7 @@ export class Network {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any) {
+    // Todo: Use zod to validate incoming json?
     const network = new Network(json.domain);
     network._json = json.json;
     return network;

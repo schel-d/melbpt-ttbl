@@ -21,6 +21,8 @@ export function validateSection(section: TimetableSection,
 function checkMissingVals(section: TimetableSection,
   results: ValidationResults) {
 
+  // Todo: Maybe the stop could be responsible for all invalid values, not just
+  // missing ones?
   for (const y of range(0, section.height)) {
     if (range(0, section.width).some(x => section.cell(x, y) == "")) {
       results.reportStopError(y, "Stop has missing values");

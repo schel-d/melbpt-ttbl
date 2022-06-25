@@ -62,6 +62,7 @@ export class TimetableData {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any) {
+    // Todo: Use zod to validate incoming json?
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new TimetableData(json.services.map((x: any) => Service.fromJSON(x)));
   }
@@ -80,6 +81,7 @@ export class Service {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any) {
+    // Todo: Use zod to validate incoming json?
     return new Service(json.times, json.nextDay);
   }
 }
