@@ -13,17 +13,19 @@ export type LineNetworkApiV1Schema = {
   color: string,
   service: string,
   routeType: string,
-  directions: {
-    id: string,
-    name: string,
-    stops: number[]
-  }[]
+  directions: Direction[]
 };
+export type Direction = {
+  id: string,
+  name: string,
+  stops: number[]
+}
 export type NetworkApiV1Schema = {
   hash: string,
   stops: StopNetworkApiV1Schema[],
   lines: LineNetworkApiV1Schema[]
 }
+
 
 export class Network {
   domain: string;
@@ -58,6 +60,9 @@ export class Network {
       throw new Error(`No stop with id=${stop}`);
     }
     return stopObj.name;
+  }
+  directionsForLine(lineID: number): Direction[] {
+    return this._json.lines.find(l => l.id == lineID).directions;
   }
 
   toJSON() {

@@ -23,16 +23,50 @@ export class EditorServices {
     this._currNextDay = nextDay;
     this._servicesDiv.replaceChildren(...nextDay.map(f => this.makeButton(f)));
   }
+  markErrorServices(errors: boolean[]) {
+    this._servicesDiv.querySelectorAll(".service").forEach((x, index) => {
+      // Cannot always expect the errors array to have a value for every index,
+      // since the validation is done async and could arrive late. In this, the
+      // if statement value will be falsey so its ok.
+      if (errors[index]) {
+        x.classList.add("error");
+      }
+      else {
+        x.classList.remove("error");
+      }
+    });
+  }
+  markServiceDirectionIcons(directionIcon: (string | null)[]) {
+    this._servicesDiv.querySelectorAll(".service .direction-icon").forEach((x, index) => {
+      const xImg = x as HTMLImageElement;
+
+      // Cannot always expect the errors array to have a value for every index,
+      // since the validation is done async and could arrive late. In this, the
+      // if statement value will be falsey so its ok.
+      if (directionIcon[index] == null) {
+        xImg.classList.add("gone");
+      }
+      else {
+        xImg.src = `service-icons/${directionIcon[index]}.svg`;
+        xImg.classList.remove("gone");
+      }
+    });
+  }
 
   private makeButton(nextDay: boolean): HTMLButtonElement {
     const service = document.createElement("button");
     service.className = "service";
 
+    const dirImg = document.createElement("img");
+    dirImg.className = "direction-icon gone";
+    dirImg.alt = "Service direction indicator";
+    service.append(dirImg);
+
     if (nextDay) {
-      const img = document.createElement("img");
-      img.src = "service-icons/next-day.svg";
-      img.alt = "Next day";
-      service.append(img);
+      const moonImg = document.createElement("img");
+      moonImg.src = "service-icons/next-day.svg";
+      moonImg.alt = "Next day";
+      service.append(moonImg);
     }
 
     service.addEventListener("click", () => {

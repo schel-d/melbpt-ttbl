@@ -66,7 +66,7 @@ export class TimetableSection {
     return this._data.cell(x, y);
   }
   service(x: number): Service {
-    return this.service(x);
+    return this._data.service(x);
   }
   nextDay(x: number): boolean {
     return this._data.nextDay(x);

@@ -15,6 +15,7 @@ onmessage = (e) => {
   }
 
   const section = TimetableSection.fromJSON(e.data.section);
-  const results = validateSection(section, network);
+  const lineID = e.data.lineID;
+  const results = validateSection(section, network, lineID);
   postMessage(results.toJSON());
 };

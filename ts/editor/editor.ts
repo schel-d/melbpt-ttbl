@@ -77,10 +77,14 @@ export class Editor {
     this.section.changed = () => this.onChanged();
     this.grid.resetEvents();
     this.grid.draw();
+
+    this.requestValidation();
   }
 
   applyValidationOverlay(results: ValidationResults) {
     this.stops.markErrorStops(results.stopErrors.map(e => e != null));
+    this.services.markErrorServices(results.serviceErrors.map(e => e != null));
+    this.services.markServiceDirectionIcons(results.directionsIcons);
   }
 
   private onChanged() {

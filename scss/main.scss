@@ -130,6 +130,9 @@ $editor-column-width: 3rem;
     height: 0.8rem;
     margin-right: 0.25rem;
   }
+  &.error {
+    border-bottom: 2px solid var(--clr-error-text);
+  }
 }
 #status {
   z-index: 0;

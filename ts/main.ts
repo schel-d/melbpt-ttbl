@@ -46,7 +46,8 @@ export class AppContext {
 
     this.editor.init();
     this.editor.requestValidation = () => {
-      this.validator.requestValidation(this.editor.section);
+      this.validator.requestValidation(this.editor.section,
+        this.timetable.lineID);
     }
     window.addEventListener("resize", () => this.editor.resize());
 

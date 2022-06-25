@@ -17,7 +17,7 @@ export class Validator {
     this._worker.postMessage({ network: network.toJSON() });
   }
 
-  requestValidation(section: TimetableSection) {
-    this._worker.postMessage({ section: section.toJSON() });
+  requestValidation(section: TimetableSection, lineID: number) {
+    this._worker.postMessage({ section: section.toJSON(), lineID: lineID });
   }
 }
