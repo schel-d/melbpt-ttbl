@@ -1,5 +1,5 @@
 import { range, repeat } from "../utils";
-import { Direction, Network } from "./network";
+import { Direction, Line, Network } from "./network";
 import { Timetable } from "./timetable";
 import { Service } from "./timetable-data";
 import { TimetableSection } from "./timetable-section";
@@ -48,7 +48,7 @@ function checkDuplicateServices(section: TimetableSection,
 function serviceSmarts(section: TimetableSection, network: Network,
   lineID: number, results: ValidationResults) {
 
-  const directions = network.directionsForLine(lineID);
+  const line = network.line(lineID);
 
   for (const x of range(0, section.width)) {
     const service = section.service(x);
@@ -65,12 +65,12 @@ function serviceSmarts(section: TimetableSection, network: Network,
         continue;
       }
 
-      const direction = matchDirection(section.stops, service, directions);
+      const direction = matchDirection(section.stops, service, line.directions);
       if (direction == null) {
         results.reportServiceError(x, "Service direction unrecognized");
       }
       else {
-        results.reportServiceDirection(x, determineDirectionIcon(direction));
+        results.reportServiceDirection(x, directionIcon(direction, line));
       }
     }
     else {
@@ -112,10 +112,18 @@ function matchDirection(stops: number[], service: Service,
   }
 }
 
-function determineDirectionIcon(direction: string): string {
-  // Todo: yeahhhhhhhhhh noice
-  return direction.endsWith("-via-loop") ?
-    "richmond-via-loop" : "richmond-direct";
+function directionIcon(direction: string, line: Line): string {
+  if (line.routeType === "city-loop") {
+    return direction.endsWith("-via-loop") ?
+      `${line.routeLoopPortal}-via-loop` : `${line.routeLoopPortal}-direct`;
+  }
+  if (line.routeType === "branch") {
+    if (line.directions.length == 2) {
+      return direction === line.directions[0].id ? "branch-a" : "branch-b";
+    }
+  }
+
+  return null;
 }
 
 

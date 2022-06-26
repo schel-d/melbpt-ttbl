@@ -1,4 +1,4 @@
-export type StopNetworkApiV1Schema = {
+export type Stop = {
   id: number,
   name: string,
   platforms: {
@@ -7,12 +7,13 @@ export type StopNetworkApiV1Schema = {
   }[],
   urlName: string
 };
-export type LineNetworkApiV1Schema = {
+export type Line = {
   id: number,
   name: string,
   color: string,
   service: string,
   routeType: string,
+  routeLoopPortal?: string,
   directions: Direction[]
 };
 export type Direction = {
@@ -22,8 +23,8 @@ export type Direction = {
 }
 export type NetworkApiV1Schema = {
   hash: string,
-  stops: StopNetworkApiV1Schema[],
-  lines: LineNetworkApiV1Schema[]
+  stops: Stop[],
+  lines: Line[]
 }
 
 
@@ -62,6 +63,9 @@ export class Network {
       throw new Error(`No stop with id=${stop}`);
     }
     return stopObj.name;
+  }
+  line(lineID: number): Line {
+    return this._json.lines.find(l => l.id == lineID);
   }
   directionsForLine(lineID: number): Direction[] {
     return this._json.lines.find(l => l.id == lineID).directions;
