@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 import { parseMinuteOfDay, range, repeat } from "../utils";
 import { Direction, Line, Network } from "./network";
 import { Timetable } from "./timetable";
