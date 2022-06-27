@@ -62,6 +62,7 @@ export class Editor {
     this.stops.clear();
     this.services.clear();
     this.grid.resetEvents();
+    this.grid.setNextDayThresholds([]);
     this.grid.draw();
   }
 
@@ -85,6 +86,8 @@ export class Editor {
     this.stops.markErrorStops(results.stopErrors.map(e => e != null));
     this.services.markErrorServices(results.serviceErrors.map(e => e != null));
     this.services.markServiceDirectionIcons(results.directionsIcons);
+    this.grid.setNextDayThresholds(results.nextDayThresholds.map(x =>
+      x == null ? this.section.height : x));
   }
 
   private onChanged() {

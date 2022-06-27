@@ -1,4 +1,5 @@
-import { range, repeat } from "../utils";
+import { DateTime } from "luxon";
+import { parseMinuteOfDay, range, repeat } from "../utils";
 import { Direction, Line, Network } from "./network";
 import { Timetable } from "./timetable";
 import { Service } from "./timetable-data";
@@ -55,7 +56,7 @@ function serviceSmarts(section: TimetableSection, network: Network,
 
     // Todo: Validating number ranges with regex? Really!? Should really be
     // letting luxon deal with this...
-    const timesRegex = /((2[0-3])|([01][0-9]):[0-5][0-9])|-/;
+    const timesRegex = /^((2[0-3]|[01][0-9]):[0-5][0-9]|-)$/;
 
     if (service.times.every(t => t == "" || timesRegex.test(t))) {
       if (service.times.some(t => t == "")) {
@@ -71,6 +72,15 @@ function serviceSmarts(section: TimetableSection, network: Network,
       }
       else {
         results.reportServiceDirection(x, directionIcon(direction, line));
+
+        const threshold = nextDayThreshold(service);
+        if (threshold == null) {
+          results.reportServiceError(x,
+            "Time travel required (service spans too many days)");
+        }
+        else {
+          results.reportNextDayThreshold(x, threshold);
+        }
       }
     }
     else {
@@ -94,6 +104,10 @@ function matchDirection(stops: number[], service: Service,
   // Build a list of all the stops that aren't dashes on this service.
   const servicedStops = stops.filter((_s, index) =>
     service.times[index] != "-");
+
+  if (servicedStops.length < 2) {
+    return null;
+  }
 
   // Get the directions that include every stop this service stops at.
   const matchingDirections = directions.filter(d =>
@@ -126,17 +140,44 @@ function directionIcon(direction: string, line: Line): string {
   return null;
 }
 
+function nextDayThreshold(service: Service): number | null {
+  const times = [];
+  let fillValue = 0;
+  for (let y = 0; y < service.times.length; y++) {
+    if (service.times[y] === "-") {
+      times.push(fillValue);
+    }
+    else {
+      const mod = parseMinuteOfDay(service.times[y]);
+      times.push(mod);
+      fillValue = mod;
+    }
+  }
+
+  const reversals = [];
+  for (let y = 1; y < times.length; y++) {
+    if (times[y - 1] > times[y]) {
+      reversals.push(y);
+    }
+  }
+
+  if (service.nextDay && reversals.length === 0) { return 0; }
+  if (!service.nextDay && reversals.length === 0) { return times.length; }
+  if (!service.nextDay && reversals.length === 1) { return reversals[0]; }
+  return null;
+}
+
 
 export class ValidationResults {
   stopErrors: (string | null)[];
   serviceErrors: (string | null)[];
-  nextDayThresholds: number[];
+  nextDayThresholds: (number | null)[];
   directionsIcons: (string | null)[];
 
   constructor(width: number, height: number) {
     this.stopErrors = repeat(null, height);
     this.serviceErrors = repeat(null, width);
-    this.nextDayThresholds = repeat(5, width);
+    this.nextDayThresholds = repeat(null, width);
     this.directionsIcons = repeat(null, width);
   }
   reportStopError(index: number, error: string) {
@@ -147,6 +188,9 @@ export class ValidationResults {
   }
   reportServiceDirection(index: number, directionIcon: string) {
     this.directionsIcons[index] = directionIcon;
+  }
+  reportNextDayThreshold(index: number, threshold: number) {
+    this.nextDayThresholds[index] = threshold;
   }
   isValid(): boolean {
     return this.stopErrors.every(e => e == null)

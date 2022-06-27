@@ -39,7 +39,7 @@ export class CommandListener {
   }
 
   onKey(char: string, key: string, ctrl: boolean, alt: boolean,
-    shift: boolean) {
+    shift: boolean): boolean {
 
     const handler = this._handlers.find(h => h.acceptedFilters.some(f => {
       if (f.char != undefined && f.char != char) { return false; }
@@ -54,28 +54,27 @@ export class CommandListener {
 
     if (handler != null) {
       handler.handle(char, key, ctrl, alt, shift, this._appContext);
+      return true;
     }
+
+    return false;
   }
 
   onDocKeyEvent(e: KeyboardEvent) {
-    // Unfortunately doing paste via the command handlers is impractical
-    // and it is instead done via the document "paste" event. Therefore we
-    // cannot call e.preventDefault() for Ctrl+V.
-    if (e.code == "KeyV" && (e.ctrlKey || e.metaKey)) { return; }
-
-    // Allow opening of devtools via keyboard shortcut (could be shift for
-    // Windows or option on Mac so just block ctrl+i entirely)
-    if (e.code == "KeyI" && (e.ctrlKey || e.metaKey)) { return; }
-
     if (this._appContext.newTimetableDialog.isOpen() ||
       this._appContext.pasteIssuesDialog.isOpen()) { return; }
 
-    e.preventDefault();
+    const isModifier = e.key == "Control" || e.key == "Meta" ||
+      e.key == "Alt" || e.key == "Shift";
+    if (isModifier) {
+      e.preventDefault();
+      return;
+    }
 
-    if (e.key == "Control" || e.key == "Meta" || e.key == "Alt" ||
-      e.key == "Shift") { return; }
-
-    this.onKey(e.key, e.code, e.ctrlKey || e.metaKey, e.altKey, e.shiftKey);
+    const captured = this.onKey(e.key, e.code, e.ctrlKey || e.metaKey, e.altKey, e.shiftKey);
+    if (captured) {
+      e.preventDefault();
+    }
   }
 
   onPaste(e: ClipboardEvent) {

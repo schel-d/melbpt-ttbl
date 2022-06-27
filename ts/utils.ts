@@ -35,3 +35,14 @@ export function repeat<T>(something: T, amount: number): T[] {
   }
   return array;
 }
+
+export function parseMinuteOfDay(str: string): number {
+  const components = str.split(":");
+  const hours = parseInt(components[0]);
+  const minutes = parseInt(components[1]);
+  if (isNaN(hours) || isNaN(minutes) || hours < 0 || minutes < 0
+    || hours > 23 || minutes > 59) {
+    throw new Error(`"${str}" is not a valid time of day`);
+  }
+  return hours * 60 + minutes;
+}

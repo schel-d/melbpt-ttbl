@@ -15,6 +15,8 @@ export class EditorGrid {
   private _selected: { startX: number, startY: number, endX: number, endY: number } | null;
   private _dragging: boolean;
 
+  private _nextDayThresholds: number[];
+
   constructor(editor: Editor, gridID: string, canvasID: string) {
     this._editor = editor;
     this._grid = document.getElementById(gridID) as HTMLDivElement;
@@ -106,9 +108,11 @@ export class EditorGrid {
 
     // Render the text for each cell
     this._context.font = "0.7rem 'Roboto Mono', monospace";
-    this._context.fillStyle = css.text;
     for (let x = cells.x1; x < cells.x2; x++) {
+      const nextDay = this._nextDayThresholds[x] ?? section.height;
+
       for (let y = cells.y1; y < cells.y2; y++) {
+        this._context.fillStyle = y < nextDay ? css.text : css.accent;
         const str = section.cell(x, y);
         const textWidth = this._context.measureText(str).width;
         this._context.fillText(
@@ -221,6 +225,11 @@ export class EditorGrid {
   }
   clearSelection() {
     this._selected = null;
+    this.draw();
+  }
+
+  setNextDayThresholds(val: number[]) {
+    this._nextDayThresholds = val;
     this.draw();
   }
 }
