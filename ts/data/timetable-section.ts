@@ -71,8 +71,11 @@ export class TimetableSection {
   nextDay(x: number): boolean {
     return this._data.nextDay(x);
   }
-  map<T>(func: (service: Service) => T): T[] {
+  map<T>(func: (service: Service, index: number) => T): T[] {
     return this._data.map(func);
+  }
+  filter(func: (service: Service, index: number) => boolean): Service[] {
+    return this._data.filter(func);
   }
 
   toJSON() {

@@ -13,8 +13,11 @@ export class TimetableData {
   nextDay(x: number): boolean {
     return this._services[x].nextDay;
   }
-  map<T>(func: (service: Service) => T): T[] {
-    return this._services.map(s => func(s.clone()));
+  map<T>(func: (service: Service, index: number) => T): T[] {
+    return this._services.map((s, index) => func(s.clone(), index));
+  }
+  filter(func: (service: Service, index: number) => boolean): Service[] {
+    return this._services.map(s => s.clone()).filter((s, i) => func(s, i));
   }
   addServices(service: Service[], index?: number) {
     if (index == null) { this._services.push(...service.map(s => s.clone())); }

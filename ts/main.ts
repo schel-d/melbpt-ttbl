@@ -8,6 +8,7 @@ import { PasteIssuesDialog } from "./components/paste-issues-dialog";
 import { Timetable } from "./data/timetable";
 import { DOWPresets } from "./data/dow";
 import { Validator } from "./validator";
+import { exportTimetable } from "./data/export";
 
 export class AppContext {
   network: Network | null;
@@ -75,6 +76,15 @@ export class AppContext {
 
       if (result) {
         this.newTimetableDialog.show();
+      }
+    });
+
+    this.header.exportButton.addEventListener("click", () => {
+      try {
+        exportTimetable(this.timetable, this.network);
+      }
+      catch (ex) {
+        alert(ex);
       }
     });
 

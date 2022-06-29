@@ -4,9 +4,11 @@ import { Timetable } from "./timetable";
 import { Service } from "./timetable-data";
 import { TimetableSection } from "./timetable-section";
 
-export function isValidTimetable(timetable: Timetable, network: Network) {
-  return timetable.sections.every(s =>
-    validateSection(s, network, timetable.lineID).isValid());
+export function validateTimetable(timetable: Timetable,
+  network: Network): ValidationResults[] {
+
+  return timetable.sections.map(s =>
+    validateSection(s, network, timetable.lineID));
 }
 export function validateSection(section: TimetableSection,
   network: Network, lineID: number): ValidationResults {
@@ -70,7 +72,8 @@ function serviceSmarts(section: TimetableSection, network: Network,
         results.reportServiceError(x, "Service direction unrecognized");
       }
       else {
-        results.reportServiceDirection(x, directionIcon(direction, line));
+        results.reportServiceDirection(x, direction,
+          directionIcon(direction, line));
 
         const threshold = nextDayThreshold(service);
         if (threshold == null) {
@@ -108,9 +111,15 @@ function matchDirection(stops: number[], service: Service,
     return null;
   }
 
-  // Get the directions that include every stop this service stops at.
-  const matchingDirections = directions.filter(d =>
-    servicedStops.every(s => d.stops.includes(s)));
+  // Get the directions that include every stop this service stops at, in the
+  // correct order.
+  const matchingDirections = directions.filter(d => {
+    // Return the stops on this direction that are present in this service.
+    const stopsOnThisService = d.stops.filter(s => servicedStops.includes(s));
+    // If the returned array perfectly matches the service stops (none are
+    // missing and the order is identical), then this direction is a match.
+    return stopsOnThisService.every((x, index) => servicedStops[index] === x);
+  });
 
   if (matchingDirections.length == 0) {
     // If there aren't any, return null.
@@ -171,12 +180,14 @@ export class ValidationResults {
   stopErrors: (string | null)[];
   serviceErrors: (string | null)[];
   nextDayThresholds: (number | null)[];
+  directions: (string | null)[];
   directionsIcons: (string | null)[];
 
   constructor(width: number, height: number) {
     this.stopErrors = repeat(null, height);
     this.serviceErrors = repeat(null, width);
     this.nextDayThresholds = repeat(null, width);
+    this.directions = repeat(null, width);
     this.directionsIcons = repeat(null, width);
   }
   reportStopError(index: number, error: string) {
@@ -185,15 +196,17 @@ export class ValidationResults {
   reportServiceError(index: number, error: string) {
     this.serviceErrors[index] = error;
   }
-  reportServiceDirection(index: number, directionIcon: string) {
-    this.directionsIcons[index] = directionIcon;
+  reportServiceDirection(index: number, direction: string, icon: string | null) {
+    this.directions[index] = direction;
+    this.directionsIcons[index] = icon;
   }
   reportNextDayThreshold(index: number, threshold: number) {
     this.nextDayThresholds[index] = threshold;
   }
   isValid(): boolean {
     return this.stopErrors.every(e => e == null)
-      && this.serviceErrors.every(e => e == null);
+      && this.serviceErrors.every(e => e == null)
+      && this.directions.every(e => e != null);
   }
   overallError(): string | null {
     let error: string = null;
