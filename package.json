@@ -38,7 +38,6 @@
   "homepage": "https://github.com/schel-d/melbpt-ttbl#readme",
   "devDependencies": {
     "@types/jquery": "^3.5.14",
-    "@types/luxon": "^2.3.2",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
     "eslint": "^8.12.0",
