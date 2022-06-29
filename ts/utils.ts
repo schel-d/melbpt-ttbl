@@ -46,3 +46,29 @@ export function parseMinuteOfDay(str: string): number {
   }
   return hours * 60 + minutes;
 }
+
+/**
+ * Returns the input string as a standard format 24-hour time. Examples of valid
+ * input are "21:08" or "1:29pm". Returns null if the format is unrecognized.
+ * @param str
+ */
+export function standardizeTimeString(str: string): string | null {
+  const timeRegex = /^[0-9]{1,2}:[0-9]{2}(am|pm)?$/g;
+  if (!timeRegex.test(str)) { return null; }
+
+  const components = str.split(":");
+  let hours = parseInt(components[0]);
+  const minutes = parseInt(components[1].replace("am", "").replace("pm", ""));
+  if (str.endsWith("am") || str.endsWith("pm")) {
+    hours = hours % 12;
+    if (str.endsWith("pm")) {
+      hours += 12;
+    }
+  }
+
+  if (hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
+    return null;
+  }
+  return `${hours.toFixed().padStart(2, "0")}:` +
+    `${minutes.toFixed().padStart(2, "0")}`;
+}

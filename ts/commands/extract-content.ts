@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { DuplicatesList, PasteIssuesDialog }
   from "../components/paste-issues-dialog";
+import { standardizeTimeString } from "../utils";
 
 // Regex to test if a line in the pasted text is a timetable line.
 const timetableRowRegex = /^.+( +(([0-9]{1,2}[:.][0-9]{2}(am|pm|[uda])?)|-))+$/;
@@ -196,6 +197,8 @@ function contentify(rows: ClarifiedRows): string[][] {
 function matchesStopName(input: string, stopName: string) {
   input = input.toLowerCase().trim();
   stopName = stopName.toLowerCase();
+
+  // Matches " dep", " arr", " station", " stn.", " stn", " (1)", " (2)", etc.
   const suffixRegex = /^ (dep|arr|station|stn\.?|\([0-9]+\))$/g;
 
   return input === stopName || (input.startsWith(stopName)
@@ -216,18 +219,7 @@ function formatTime(time: string) {
   // indicate set down only.
   time = time.replace(".", ":").replace(/[ uda]\b/, "");
 
-  // Match the string to a 12-hour format (Metro timetables).
-  const hour12 = DateTime.fromFormat(time, "h:mma");
-  if (hour12.isValid) {
-    return hour12.toFormat("HH:mm");
-  }
-
-  // Match the string to a 24-hour format (V/Line timetables).
-  const hour24 = DateTime.fromFormat(time, "H:mm");
-  if (hour24.isValid) {
-    return hour24.toFormat("HH:mm");
-  }
-
+  // Convert the time string to a 24-hour standard format used in .ttbl files.
   // Anything that didn't match gets the question mark.
-  return "?";
+  return standardizeTimeString(time) ?? "?";
 }
