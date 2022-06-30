@@ -9,6 +9,7 @@ import { Timetable } from "./data/timetable";
 import { DOWPresets } from "./data/dow";
 import { Validator } from "./validator";
 import { exportTimetable } from "./data/export";
+import { openImportDialog } from "./data/import";
 
 export class AppContext {
   network: Network | null;
@@ -79,6 +80,12 @@ export class AppContext {
       }
     });
 
+    this.header.importButton.addEventListener("click", () => {
+      openImportDialog(this.network, (timetable) => {
+        this.editTimetable(timetable);
+      });
+    });
+
     this.header.exportButton.addEventListener("click", () => {
       try {
         exportTimetable(this.timetable, this.network);
@@ -97,7 +104,12 @@ export class AppContext {
     // Setup the new timetable object.
     const timetableIDNum = parseInt(timetableID, 36);
     const dows = DOWPresets[dowPresetIndex];
-    this.timetable = new Timetable(timetableIDNum, lineID, dows, this.network);
+    const timetable = new Timetable(timetableIDNum, lineID, dows, this.network);
+    this.editTimetable(timetable);
+  }
+
+  private editTimetable(timetable: Timetable) {
+    this.timetable = timetable;
 
     // Update the header buttons and create the tabs for the timetable sections.
     this.status.editing(this.timetable);
