@@ -1,5 +1,5 @@
-# Timetable Editor for Train Arrives In
+# Timetable Editor for TrainQuery
 
 Browser based tool for generating .ttbl files for my [`melbpt`](https://github.com/schel-d/melbpt) project.
 
-✅ Live at [editor.trainarrives.in](https://editor.trainarrives.in)!
+✅ Live at [editor.trainquery.com](https://editor.trainquery.com)!

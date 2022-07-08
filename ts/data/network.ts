@@ -32,7 +32,7 @@ export class Network {
   domain: string;
   private _json: NetworkApiV1Schema | null;
 
-  constructor(domain = "api.trainarrives.in") {
+  constructor(domain = "api.trainquery.com") {
     this.domain = domain;
     this._json = null;
   }
