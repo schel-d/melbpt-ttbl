@@ -9,7 +9,6 @@ import { Timetable } from "./data/timetable";
 import { DOWPresets } from "./data/dow";
 import { Validator } from "./validator";
 import { exportTimetable } from "./data/export";
-import { openImportDialog } from "./data/import";
 
 export class AppContext {
   network: Network | null;
@@ -81,9 +80,10 @@ export class AppContext {
     });
 
     this.header.importButton.addEventListener("click", () => {
-      openImportDialog(this.network, (timetable) => {
-        this.editTimetable(timetable);
-      });
+      alert("Import not available at the moment.");
+      // openImportDialog(this.network, (timetable) => {
+      //   this.editTimetable(timetable);
+      // });
     });
 
     this.header.exportButton.addEventListener("click", () => {
