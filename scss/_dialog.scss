@@ -1,5 +1,4 @@
-@use "css-template/import" as css-template;
-@use "button";
+@use "css-template/import" as template;
 @use "select";
 @use "input";
 
@@ -19,7 +18,7 @@ dialog {
 }
 
 #new-timetable-dialog {
-  @include css-template.no-select;
+  @include template.no-select;
   padding: 1rem;
   width: min(90vw, var(--dialog-max-width));
   h1 {
@@ -36,12 +35,13 @@ dialog {
     font-size: 0.85rem;
   }
   > .row {
-    @include css-template.row;
+    @include template.row;
     margin-right: -0.5rem;
     justify-content: end;
   }
   button {
-    @include button.header-button;
+    @include template.btn-filled-neutral;
+    @include template.content-text;
     height: 2rem;
     margin-right: 0.5rem;
     p {
@@ -77,7 +77,7 @@ dialog {
 }
 
 #paste-issues-dialog {
-  @include css-template.no-select;
+  @include template.no-select;
   padding: 1rem;
   width: min(90vw, var(--dialog-max-width));
   h1 {
@@ -94,12 +94,13 @@ dialog {
     font-size: 0.85rem;
   }
   > .row {
-    @include css-template.row;
+    @include template.row;
     margin-right: -0.5rem;
     justify-content: end;
   }
   button {
-    @include button.header-button;
+    @include template.btn-filled-neutral;
+    @include template.content-text;
     height: 2rem;
     margin-right: 0.5rem;
     p {

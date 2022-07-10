@@ -1,11 +1,10 @@
-@use "css-template/import" as css-template;
+@use "css-template/import" as template;
 @use "tab";
-@use "button";
 
 $header-size: 2.5rem;
 
 #header {
-  @include css-template.row;
+  @include template.row;
   height: $header-size;
   box-shadow: inset 0 -0.5rem 1rem 0 var(--clr-shadow-10);
 
@@ -16,8 +15,8 @@ $header-size: 2.5rem;
     margin-left: 0.5rem;
   }
   button {
-    @include button.header-button;
-    flex-shrink: 0;
+    @include template.btn-filled-neutral;
+    @include template.content-text;
     height: 1.5rem;
     p {
       font-size: 0.7rem;
@@ -27,7 +26,7 @@ $header-size: 2.5rem;
   }
 }
 #tabs {
-  @include css-template.row;
+  @include template.row;
   flex-grow: 1;
   flex-shrink: 1;
   min-width: 0;
@@ -39,15 +38,14 @@ $header-size: 2.5rem;
   border-right: 1px solid var(--clr-ink-20);
 
   .tab-group {
-    @include css-template.row;
-    flex-shrink: 0;
+    @include template.row;
     align-items: stretch;
   }
   .tab-group:not(:first-child) {
     border-left: 1px solid var(--clr-ink-20);
   }
   .tab-group-header {
-    @include css-template.row;
+    @include template.row;
     padding: 0 0.5rem;
     p {
       font-size: 0.7rem;
@@ -58,7 +56,7 @@ $header-size: 2.5rem;
     align-items: stretch;
   }
   .tab-content {
-    @include css-template.row;
+    @include template.row;
     padding: 0 0.5rem;
     p {
       color: var(--clr-ink-60);

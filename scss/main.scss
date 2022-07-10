@@ -1,7 +1,6 @@
-@use "css-template/import" as css-template;
+@use "css-template/import" as template;
 @use "fonts";
 @use "header";
-@use "button";
 @use "dialog";
 @use "select";
 @use "input";
@@ -9,17 +8,17 @@
 
 html,
 body {
-  @include css-template.no-select;
+  @include template.no-select;
   height: 100%;
   overflow: hidden;
 }
 
 .gone {
-  @include css-template.gone;
+  @include template.gone;
 }
 
 // Test dark mode styles (even though dark mode probably won't be used here):
-// @include css-template.dark;
+// @include template.dark;
 
 :root {
   --font-default: "Poppins", sans-serif;
@@ -35,7 +34,7 @@ $editor-row-height: 1.25rem;
 $editor-column-width: 3rem;
 
 #editor {
-  @include css-template.bg-paper-20;
+  @include template.bg-paper-20;
   position: relative;
   display: grid;
   grid-template-columns: $editor-stops-col-size 1fr;
@@ -52,7 +51,7 @@ $editor-column-width: 3rem;
 }
 
 #corner {
-  @include css-template.bg-paper-30;
+  @include template.bg-paper-30;
   grid-row: 1;
   grid-column: 1;
   position: sticky;
@@ -63,8 +62,8 @@ $editor-column-width: 3rem;
   border-right: 1px solid var(--clr-ink-20);
 }
 #services {
-  @include css-template.bg-paper-30;
-  @include css-template.row;
+  @include template.bg-paper-30;
+  @include template.row;
   grid-row: 1;
   grid-column: 2;
   position: sticky;
@@ -74,7 +73,7 @@ $editor-column-width: 3rem;
   border-bottom: 1px solid var(--clr-ink-20);
 }
 #stops {
-  @include css-template.bg-paper-20;
+  @include template.bg-paper-20;
   grid-row: 2;
   grid-column: 1;
   position: sticky;
@@ -99,9 +98,11 @@ $editor-column-width: 3rem;
 }
 
 #stops .stop {
-  @include css-template.one-line;
-  @include css-template.row;
-  @include button.editor-button;
+  @include template.btn-hover;
+  --btn-rounding: 0;
+
+  @include template.one-line;
+  @include template.row;
   height: $editor-row-height;
   p {
     margin: 0 0.5rem;
@@ -116,11 +117,13 @@ $editor-column-width: 3rem;
   }
 }
 #stops .stop:nth-child(2n + 1) {
-  @include css-template.bg-paper-10;
+  @include template.bg-paper-10;
 }
 #services .service {
-  @include css-template.row;
-  @include button.editor-button;
+  @include template.btn-hover;
+  --btn-rounding: 0;
+
+  @include template.row;
   justify-content: center;
   width: $editor-column-width;
   padding-left: 0.25rem;
@@ -163,8 +166,8 @@ $editor-column-width: 3rem;
 }
 
 #footer {
-  @include css-template.bg-paper-30;
-  @include css-template.row;
+  @include template.bg-paper-30;
+  @include template.row;
   height: 1.5rem;
   border-top: 1px solid var(--clr-ink-20);
   flex-shrink: 0;
