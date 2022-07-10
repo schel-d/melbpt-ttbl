@@ -1,4 +1,4 @@
-@use "css-template/import" as css-template;
+@use "css-template/import" as template;
 
 #toasts {
   z-index: 10;
@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: end;
   .toast {
-    @include css-template.bg-paper-30;
+    @include template.bg-paper-30;
     box-shadow: 0 0.25rem 0.5rem var(--clr-shadow-10);
     padding: 0.5rem 1rem;
     margin-bottom: 1rem;
