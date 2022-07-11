@@ -1,6 +1,5 @@
 @use "css-template/import" as template;
 @use "select";
-@use "input";
 
 dialog {
   --dialog-max-width: 25rem;
@@ -50,6 +49,9 @@ dialog {
       font-size: 0.85rem;
     }
   }
+  #new-timetable-dialog-submit {
+    @include template.btn-filled;
+  }
   .select-wrapper {
     @include select.dialog-select-wrapper;
     margin-bottom: 1rem;
@@ -58,8 +60,12 @@ dialog {
     }
   }
   input {
-    @include input.dialog-input;
+    @include template.input-filled-neutral;
+
+    height: 2rem;
     font-size: 0.85rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     margin-bottom: 1rem;
   }
   > p {
@@ -108,6 +114,9 @@ dialog {
       margin-right: 1rem;
       font-size: 0.85rem;
     }
+  }
+  #paste-issues-dialog-submit {
+    @include template.btn-filled;
   }
   > p {
     font-size: 0.85rem;
