@@ -77,10 +77,10 @@ export class PasteIssuesDialog {
       // Create the wrapper holding the custom styled select... yes it sucks :/
       const selectWrapper = document.createElement("div");
       selectWrapper.className = "select-wrapper";
-      const selectWrapperHighlight = document.createElement("div");
-      selectWrapperHighlight.className = "select-wrapper-highlight";
-      const selectWrapperArrow = document.createElement("div");
-      selectWrapperArrow.className = "select-wrapper-arrow";
+      const selectHighlight = document.createElement("div");
+      selectHighlight.className = "select-highlight";
+      const selectArrow = document.createElement("div");
+      selectArrow.className = "select-arrow";
 
       // Use a specific ID for this select so it can be retrieved when the
       // submit button is clicked.
@@ -96,7 +96,8 @@ export class PasteIssuesDialog {
       }));
 
       // Add everything for this stop to the DOM.
-      selectWrapper.append(select, selectWrapperHighlight, selectWrapperArrow);
+      selectHighlight.append(selectArrow);
+      selectWrapper.append(select, selectHighlight);
       this._duplicatesDiv.append(title, selectWrapper);
     });
 

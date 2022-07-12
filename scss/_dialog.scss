@@ -1,5 +1,4 @@
 @use "css-template/import" as template;
-@use "select";
 
 dialog {
   --dialog-max-width: 25rem;
@@ -53,10 +52,16 @@ dialog {
     @include template.btn-filled;
   }
   .select-wrapper {
-    @include select.dialog-select-wrapper;
+    @include template.select-filled-neutral;
     margin-bottom: 1rem;
     select {
+      height: 2rem;
+      padding-left: 1rem;
+      padding-right: 1.5rem;
       font-size: 0.85rem;
+    }
+    .select-arrow {
+      margin-right: 0.25rem;
     }
   }
   input {
@@ -123,10 +128,16 @@ dialog {
     margin-bottom: 0.75rem;
   }
   .select-wrapper {
-    @include select.dialog-select-wrapper;
+    @include template.select-filled-neutral;
     margin-bottom: 1rem;
     select {
+      height: 2rem;
+      padding-left: 1rem;
+      padding-right: 1.5rem;
       font-size: 0.85rem;
+    }
+    .select-arrow {
+      margin-right: 0.25rem;
     }
   }
 }
