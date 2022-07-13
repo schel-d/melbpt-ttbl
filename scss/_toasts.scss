@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: end;
   .toast {
-    @include template.bg-paper-30;
+    background-color: var(--clr-paper-30);
     box-shadow: 0 0.25rem 0.5rem var(--clr-shadow-10);
     padding: 0.5rem 1rem;
     margin-bottom: 1rem;
