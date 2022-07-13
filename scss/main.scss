@@ -15,14 +15,10 @@ body {
   @include template.gone;
 }
 
-// Test dark mode styles (even though dark mode probably won't be used here):
-// @include template.dark;
-
 :root {
   --font-default: "Poppins", sans-serif;
   --clr-light-accent: #00a5ca;
 
-  // Should be added to css-template project in future.
   --clr-error-text: #a52121;
 }
 
