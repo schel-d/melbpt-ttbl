@@ -1,24 +1,14 @@
 @use "css-template/import" as template;
 
 dialog {
-  --dialog-max-width: 25rem;
-  border: none;
+  @include template.dialog;
   border-radius: 0.5rem;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0.5rem 3rem var(--clr-shadow-20);
-  background-color: var(--clr-paper-30);
-  &::backdrop {
-    background-color: var(--clr-shadow-20);
-  }
+  padding: 1rem;
+  width: min(90vw, 25rem);
 }
 
 #new-timetable-dialog {
   @include template.no-select;
-  padding: 1rem;
-  width: min(90vw, var(--dialog-max-width));
   h1 {
     color: var(--clr-ink-100);
     font-weight: bold;
@@ -89,8 +79,6 @@ dialog {
 
 #paste-issues-dialog {
   @include template.no-select;
-  padding: 1rem;
-  width: min(90vw, var(--dialog-max-width));
   h1 {
     color: var(--clr-ink-100);
     font-weight: bold;
