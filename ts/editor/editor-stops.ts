@@ -1,9 +1,15 @@
 import { getDiv } from "../dom-utils";
 import { HtmlIDs } from "../main";
 
+/**
+ * Manages the list of stops on the left-hand side of the editor.
+ */
 export class EditorStops {
   private _stopsDiv: HTMLDivElement;
 
+  /**
+   * Callback called when a stop is clicked.
+   */
   stopClicked: ((index: number) => void) | null;
 
   constructor() {
@@ -11,9 +17,17 @@ export class EditorStops {
     this.stopClicked = null;
   }
 
+  /**
+   * Removes every stop.
+   */
   clear() {
     this.setStops([]);
   }
+
+  /**
+   * Sets the list of stops.
+   * @param stopNames The names of each stop to create.
+   */
   setStops(stopNames: string[]) {
     this._stopsDiv.replaceChildren(...stopNames.map((s, index) => {
       const stop = document.createElement("button");
@@ -32,6 +46,11 @@ export class EditorStops {
       return stop;
     }))
   }
+
+  /**
+   * Gives error styling to each stop button if appropriate.
+   * @param errors Whether or not to apply error styling, matched by index.
+   */
   markErrorStops(errors: boolean[]) {
     this._stopsDiv.querySelectorAll(".stop").forEach((x, index) => {
       if (errors[index]) {
@@ -42,7 +61,12 @@ export class EditorStops {
       }
     })
   }
-  clientWidth() {
+
+  /**
+   * Returns the width of the stops column in the DOM. Used to calculate the
+   * space available to the editor grid.
+   */
+  clientWidth(): number {
     return this._stopsDiv.getBoundingClientRect().width;
   }
 }

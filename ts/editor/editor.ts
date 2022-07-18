@@ -8,6 +8,10 @@ import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
 import { EditorStops } from "./editor-stops";
 
+/**
+ * Manages the entire editor section of the DOM, and tracks with section is
+ * currently being edited.
+ */
 export class Editor {
   section: TimetableSection | null;
   grid: EditorGrid;
@@ -48,11 +52,17 @@ export class Editor {
     this.grid.draw();
   }
 
+  /**
+   * Called when the window is resized. Allows the grid canvas to redraw itself.
+   */
   resize() {
     this.grid.resetMouseOver();
     this.grid.draw();
   }
 
+  /**
+   * Clears the entire editor. Called when a timetable is unloaded?
+   */
   clear() {
     if (this.section != null) {
       this.section.changed = null;
@@ -65,6 +75,11 @@ export class Editor {
     this.grid.draw();
   }
 
+  /**
+   * Sets a section to be edited.
+   * @param section The timetable section to edit.
+   * @param network The network object to retrieve stop names from.
+   */
   setSection(section: TimetableSection, network: Network) {
     if (this.section != null) {
       this.section.changed = null;
@@ -81,6 +96,10 @@ export class Editor {
     this._validationRequestCallback(section);
   }
 
+  /**
+   * Makes the validation results visible on the timetable section itself.
+   * @param results The validation results.
+   */
   applyValidationOverlay(results: ValidationResults) {
     const section = this.section;
     if (section == null) { return; }
@@ -92,6 +111,12 @@ export class Editor {
       x == null ? section.height : x));
   }
 
+  /**
+   * Called when any edit is made to the timetable section. Redraws the grid,
+   * updates the service buttons, and requests the section to be validated if
+   * no further changes occur within 500ms.
+   * @returns
+   */
   private onChanged() {
     // Section changed event came from this.section, so this should never be an
     // issue.
@@ -111,16 +136,29 @@ export class Editor {
     }, 500);
   }
 
+  /**
+   * Called when a service button is clicked. Selects the column.
+   * @param index The x-coordinate of the service.
+   */
   private onServiceClicked(index: number) {
     if (this.section == null) { return; }
     this.grid.select(index, 0, index, this.section.height - 1);
   }
 
+  /**
+   * Called when a stop button is clicked. Selects the row.
+   * @param index The y-coordinate of the stop.
+   */
   private onStopClicked(index: number) {
     if (this.section == null || this.section.width == 0) { return; }
     this.grid.select(0, index, this.section.width - 1, index);
   }
 
+  /**
+   * Called when a scroll event occurs. Scrolls the editor sideways, rather than
+   * vertically.
+   * @param e The scroll event.
+   */
   private onScrollWheel(e: Event) {
     e = window.event || e;
 
@@ -132,10 +170,17 @@ export class Editor {
     e.preventDefault();
   };
 
+  /**
+   * Returns the size of the entire editor grid. Used to calculate the space
+   * available to the editor grid.
+   */
   clientSize() {
     return this._editorDiv.getBoundingClientRect();
   }
 
+  /**
+   * Returns the scroll coordinates (in px) of the editor.
+   */
   scrollPos() {
     return { x: this._editorDiv.scrollLeft, y: this._editorDiv.scrollTop };
   }

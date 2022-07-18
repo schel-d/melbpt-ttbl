@@ -5,12 +5,27 @@ import { TimetableSection } from "./timetable-section";
 import { Service } from "./timetable-service";
 import { ValidationResults } from "./timetable-validation-results";
 
+/**
+ * Validates each section in the timetable and returns an array of validation
+ * results objects, one for each section.
+ * @param timetable The timetable to validate.
+ * @param network The network information to validate against.
+ */
 export function validateTimetable(timetable: Timetable,
   network: Network): ValidationResults[] {
 
   return timetable.sections.map(s =>
     validateSection(s, network, timetable.lineID));
 }
+
+/**
+ * Validates a timetable section, which involves determining if any errors are
+ * present, and also provides back a mapping of specific directions and
+ * next day thresholds for each service.
+ * @param section The timetable section to validate.
+ * @param network The network information to validate against.
+ * @param lineID The line relevant to this timetable section.
+ */
 export function validateSection(section: TimetableSection,
   network: Network, lineID: number): ValidationResults {
 
@@ -21,6 +36,12 @@ export function validateSection(section: TimetableSection,
 
   return results;
 }
+
+/**
+ * Reports any rows with missing values to the given results object.
+ * @param section The section to validate.
+ * @param results The results object to report to.
+ */
 function checkMissingVals(section: TimetableSection,
   results: ValidationResults) {
 
@@ -32,6 +53,18 @@ function checkMissingVals(section: TimetableSection,
     }
   }
 }
+
+/**
+ * Reports any duplicated services to the given results object. "Duplicated"
+ * meaning the column contents are identical, and both have the same "next day"
+ * setting.
+ *
+ * Todo: maybe duplicated services should be a warning, not an error, however
+ * it is extremely unlikely that two identical services would ever run on the
+ * same day on any train system in the world... surely...
+ * @param section The section to validate.
+ * @param results The results object to report to.
+ */
 function checkDuplicateServices(section: TimetableSection,
   results: ValidationResults) {
 
@@ -48,6 +81,15 @@ function checkDuplicateServices(section: TimetableSection,
     }
   }
 }
+
+/**
+ * Reports service specific direction and next day thresholds to the given
+ * results object.
+ * @param section The section to validate.
+ * @param network The network object to validate against.
+ * @param lineID The line ID of the line relevant to this timetable.
+ * @param results The results object to report to.
+ */
 function serviceSmarts(section: TimetableSection, network: Network,
   lineID: number, results: ValidationResults) {
 
@@ -57,7 +99,7 @@ function serviceSmarts(section: TimetableSection, network: Network,
     const service = section.service(x);
 
     // Todo: Validating number ranges with regex? Really!? I mean it works...
-    // but it feels like a terrible idea somehow...
+    // but it feels like a terrible idea anyway...
     const timesRegex = /^((2[0-3]|[01][0-9]):[0-5][0-9]|-)$/;
 
     if (service.times.every(t => t == "" || timesRegex.test(t))) {
@@ -91,6 +133,7 @@ function serviceSmarts(section: TimetableSection, network: Network,
     }
   }
 }
+
 /**
  * Returns the (specific) direction this service runs in, by matching it to one
  * of the available options for this line in the network object. If nothing
@@ -135,6 +178,12 @@ function matchDirection(stops: number[], service: Service,
   }
 }
 
+/**
+ * Returns the icon name that matches the given specific direction, if an icon
+ * is deemed appropriate, otherwise null.
+ * @param direction The specific direction of the service to get an icon for.
+ * @param line The line the service operates on.
+ */
 function directionIcon(direction: string, line: Line): string | null {
   if (line.routeType === "city-loop") {
     return direction.endsWith("-via-loop") ?
@@ -149,6 +198,15 @@ function directionIcon(direction: string, line: Line): string | null {
   return null;
 }
 
+/**
+ * Determines at what point the service transitions to the next day, "0" if it
+ * is entirely on the next day (via the "next day" setting), or the height of
+ * the grid if it never crossed to the next day. This function can also return
+ * null in the case where the service appears to cross to the next day multiple
+ * times. Services cannot span over more than 2 days, and it's more likely that
+ * the timetable is incorrect anyhow.
+ * @param service The service to determine the threshold on.
+ */
 function nextDayThreshold(service: Service): number | null {
   const times = [];
   let fillValue = 0;

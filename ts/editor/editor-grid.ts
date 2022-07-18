@@ -3,16 +3,34 @@ import { Editor } from "./editor";
 import { getCanvas, getDiv } from "../dom-utils";
 import { HtmlIDs } from "../main";
 
+/**
+ * The height of a row in the editor, in px.
+ */
 export const editorRowSize = 20;
+
+/**
+ * The width of a column in the editor, in px.
+ */
 export const editorColSize = 48;
 
-// Todo: just center the text vertically too?
+/**
+ * The offset applied to center the text in the cell.
+ * Todo: just calculate this at runtime using font metrics too?
+ */
 const textOffsetY = 14;
 
+/**
+ * (x, y) coordinates for a cell.
+ */
 type CellCoordinates = {
   x: number,
   y: number
 };
+
+/**
+ * Rectangular coordication for a selection. Note that startX is not necessarily
+ * lower than or equal to endX, and likewise for the y-coordinates.
+ */
 type SelectionCoordinates = {
   startX: number,
   startY: number,
@@ -20,6 +38,10 @@ type SelectionCoordinates = {
   endY: number
 };
 
+/**
+ * Manages the editor grid, including the canvas where the timetable is drawn
+ * to.
+ */
 export class EditorGrid {
   private _editor: Editor;
   private _grid: HTMLDivElement;
@@ -75,6 +97,9 @@ export class EditorGrid {
     });
   }
 
+  /**
+   * Clears the selection and mouse over highlight.
+   */
   resetEvents() {
     this._selected = null;
     this._dragging = false;
@@ -90,6 +115,11 @@ export class EditorGrid {
     this._mouseOver = null;
   }
 
+  /**
+   * Draws the timetable, the selection, and the mouse over highlight. Must be
+   * called any time a change is made to any of those three, or the canvas is
+   * scrolled.
+   */
   draw() {
     const section = this._editor.section;
     const cols = section?.width ?? 0;
@@ -183,7 +213,11 @@ export class EditorGrid {
     }
   }
 
-  relativeCoords(e: MouseEvent) {
+  /**
+   * Returns the coordinates of the cell this mouse event occurred in.
+   * @param e The mouse event.
+   */
+  relativeCoords(e: MouseEvent): CellCoordinates {
     const bounds = this._grid.getBoundingClientRect();
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
@@ -193,7 +227,12 @@ export class EditorGrid {
     };
   };
 
-  onMouseMove(e: MouseEvent) {
+  /**
+   * Called when a mouse move event occurs. Handles dragging and the mouse over
+   * highlight.
+   * @param e The event.
+   */
+  private onMouseMove(e: MouseEvent) {
     this._mouseOver = this.relativeCoords(e);
     if (this._dragging) {
       if (e.buttons != 1) {
@@ -207,14 +246,25 @@ export class EditorGrid {
     this.draw();
   };
 
-  calculateDpiRatio() {
+  /**
+   * Uses `devicePixelRatio` and `backingStorePixelRatio` to scale the timetable
+   * appropriately for high DPI displays.
+   * @returns
+   */
+  private calculateDpiRatio() {
     const dpr = window.devicePixelRatio || 1;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const bsr = (this._context as any).backingStorePixelRatio || 1;
     return dpr / bsr;
   };
 
-  getOnScreenCells(rows: number, cols: number) {
+  /**
+   * Returns the coordinates of the cells that are on screen, given the size
+   * of the timetable section.
+   * @param rows The number of rows in the timetable section.
+   * @param cols The number of columns in the timetable section.
+   */
+  private getOnScreenCells(rows: number, cols: number) {
     const editorSize = this._editor.clientSize();
     const editorScroll = this._editor.scrollPos();
     const gridWidth = editorSize.width - this._editor.stops.clientWidth();
@@ -229,12 +279,20 @@ export class EditorGrid {
     return { x1: x1, x2: x2, y1: y1, y2: y2, width: width, height: height };
   };
 
+  /**
+   * Returns the coordinates of the selection, or null if nothing is selected.
+   */
   get selected(): SelectionCoordinates | null {
     if (this._selected == null) {
       return null;
     }
     return { ...this._selected };
   }
+
+  /**
+   * Returns the coordinates of the selection, using (x1, y1, x2, y2) notation,
+   * or null if nothing is selected. In these results `x1 <= x2` and `y1 <= y2`.
+   */
   get selectedRange() {
     if (this._selected == null) {
       return null;
@@ -246,6 +304,14 @@ export class EditorGrid {
       y2: Math.max(this._selected.startY, this._selected.endY)
     };
   }
+
+  /**
+   * Selects a certain area in the timetable section.
+   * @param startX The start x-coordinate.
+   * @param startY The start y-coordinate.
+   * @param endX The end x-coordinate (for multi-cell selection).
+   * @param endY The end y-coordinate (for multi-cell selection).
+   */
   select(startX: number, startY: number, endX?: number, endY?: number) {
     this._selected = {
       startX: startX,
@@ -255,11 +321,20 @@ export class EditorGrid {
     };
     this.draw();
   }
+
+  /**
+   * Clears the selection.
+   */
   clearSelection() {
     this._selected = null;
     this.draw();
   }
 
+  /**
+   * Upon timetable validation, the next day thresholds can be provided to show
+   * a blue tint on the times that cross into the next day.
+   * @param val The array of next day threshold values.
+   */
   setNextDayThresholds(val: number[]) {
     this._nextDayThresholds = val;
     this.draw();
