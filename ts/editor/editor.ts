@@ -1,6 +1,8 @@
 import { Network } from "../data/network";
 import { TimetableSection } from "../data/timetable-section";
 import { ValidationResults } from "../data/timetable-validation";
+import { getHtmlOther } from "../dom-utils";
+import { HtmlIDs } from "../main";
 import { clamp } from "../utils";
 import { EditorGrid } from "./editor-grid";
 import { EditorServices } from "./editor-services";
@@ -13,23 +15,20 @@ export class Editor {
   services: EditorServices;
 
   private _editorDiv: HTMLDivElement;
+
   private _validationTimeoutID: number | null;
+  private _validationRequestCallback: (section: TimetableSection) => void;
 
-  requestValidation: (() => void) | null;
-
-  constructor(editorID: string, gridID: string, canvasID: string,
-    stopsID: string, servicesID: string) {
-
-    this._editorDiv = document.getElementById(editorID) as HTMLDivElement;
-    this.grid = new EditorGrid(this, gridID, canvasID);
-    this.stops = new EditorStops(stopsID);
-    this.services = new EditorServices(servicesID);
-
+  constructor(validationRequestCallback: (section: TimetableSection) => void) {
     this.section = null;
-  }
+    this.grid = new EditorGrid(this);
+    this.stops = new EditorStops();
+    this.services = new EditorServices();
 
-  init() {
-    this.grid.init();
+    this._editorDiv = getHtmlOther(HtmlIDs.editor) as HTMLDivElement;
+    this._validationTimeoutID = null;
+
+    this._validationRequestCallback = validationRequestCallback;
 
     this._editorDiv.addEventListener("scroll", () => {
       this.grid.resetMouseOver();
@@ -79,18 +78,25 @@ export class Editor {
     this.grid.resetEvents();
     this.grid.draw();
 
-    this.requestValidation();
+    this._validationRequestCallback(section);
   }
 
   applyValidationOverlay(results: ValidationResults) {
+    const section = this.section;
+    if (section == null) { return; }
+
     this.stops.markErrorStops(results.stopErrors.map(e => e != null));
     this.services.markErrorServices(results.serviceErrors.map(e => e != null));
     this.services.markServiceDirectionIcons(results.directionsIcons);
     this.grid.setNextDayThresholds(results.nextDayThresholds.map(x =>
-      x == null ? this.section.height : x));
+      x == null ? section.height : x));
   }
 
   private onChanged() {
+    // Section changed event came from this.section, so this should never be an
+    // issue.
+    if (this.section == null) { return; }
+
     this.grid.draw();
     this.services.setServices(this.section.map(s => s.nextDay));
 
@@ -100,16 +106,18 @@ export class Editor {
     }
 
     this._validationTimeoutID = setTimeout(() => {
-      if (this.requestValidation != null) { this.requestValidation(); }
+      if (this.section == null) { return; }
+      this._validationRequestCallback(this.section);
     }, 500);
   }
 
   private onServiceClicked(index: number) {
+    if (this.section == null) { return; }
     this.grid.select(index, 0, index, this.section.height - 1);
   }
 
   private onStopClicked(index: number) {
-    if (this.section.width == 0) { return; }
+    if (this.section == null || this.section.width == 0) { return; }
     this.grid.select(0, index, this.section.width - 1, index);
   }
 

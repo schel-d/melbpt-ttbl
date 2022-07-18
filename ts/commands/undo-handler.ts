@@ -1,5 +1,5 @@
 import { createToast } from "../components/toast";
-import { AppContext } from "../main";
+import { AppContext } from "../app-context";
 import { CommandHandler, keyFilter } from "./command-handler";
 
 export class UndoHandler extends CommandHandler {

@@ -1,12 +1,17 @@
+import { getDiv } from "../dom-utils";
+import { HtmlIDs } from "../main";
+
 export class EditorServices {
   private _servicesDiv: HTMLDivElement;
   private _currNextDay: boolean[];
 
-  serviceClicked: (index: number) => void;
+  serviceClicked: ((index: number) => void) | null;
 
-  constructor(servicesID: string) {
-    this._servicesDiv = document.getElementById(servicesID) as HTMLDivElement;
+  constructor() {
+    this._servicesDiv = getDiv(HtmlIDs.editorServices);
     this._currNextDay = [];
+
+    this.serviceClicked = null;
   }
 
   clear() {
@@ -71,7 +76,11 @@ export class EditorServices {
 
     service.addEventListener("click", () => {
       if (this.serviceClicked != null) {
-        const serviceDivs = Array.from(service.parentElement.children);
+        const parent = service.parentElement;
+        if (parent == null) {
+          throw new Error("Clicked service button had no parent");
+        }
+        const serviceDivs = Array.from(parent.children);
         const serviceIndex = serviceDivs.indexOf(service);
         this.serviceClicked(serviceIndex);
       }

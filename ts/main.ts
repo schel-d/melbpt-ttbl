@@ -1,138 +1,91 @@
-import { Editor } from "./editor/editor";
-import { Header } from "./components/header";
-import { Network } from "./data/network";
+import { loadNetwork, Network } from "./data/network";
 import { CommandListener } from "./commands/command-listener";
+import { AppContext } from "./app-context";
 import { StatusScreens } from "./components/status-screens";
-import { NewTimetableDialog } from "./components/new-timetable-dialog";
-import { PasteIssuesDialog } from "./components/paste-issues-dialog";
-import { Timetable } from "./data/timetable";
-import { DOWPresets } from "./data/dow";
-import { Validator } from "./validator";
-import { exportTimetable } from "./data/export";
 
-export class AppContext {
-  network: Network | null;
-  timetable: Timetable | null;
+/**
+ * The domain name of a running instance of melbpt-api from which to query for
+ * network information (lines and stops).
+ */
+export const apiDomain = "api.trainquery.com";
 
-  editor: Editor;
-  validator: Validator;
-  header: Header;
-  status: StatusScreens;
-  newTimetableDialog: NewTimetableDialog;
-  pasteIssuesDialog: PasteIssuesDialog;
+/**
+ * The name of the second bundled javascript file, created for the validation
+ * worker to allow timetable validation to occur off the main thread.
+ */
+export const validationWorkerScriptName = "validation-worker.js";
 
-  constructor() {
-    this.network = null;
-    this.timetable = null;
+/**
+ * A singleton object containing the html IDs for each element in the DOM that
+ * will be accessed by the script. This provides one central place to update if
+ * ID names are changed.
+ */
+export class HtmlIDs {
+  static readonly editor = "editor";
+  static readonly editorGrid = "grid";
+  static readonly editorGridCanvas = "grid-canvas";
+  static readonly editorStops = "stops";
+  static readonly editorServices = "services";
 
-    this.editor = new Editor("editor", "grid", "grid-canvas", "stops",
-      "services");
+  static readonly headerNewTimetableButton = "new-timetable-button";
+  static readonly headerImportButton = "import-button";
+  static readonly headerExportButton = "export-button";
+  static readonly headerTabs = "tabs";
 
-    this.validator = new Validator("validation-worker.js");
+  static readonly status = "status";
+  static readonly statusLoading = "status-loading";
+  static readonly statusReady = "status-ready";
 
-    this.header = new Header("new-timetable-button", "import-button",
-      "export-button", "tabs", (a, b) => this.tabClicked(a, b));
+  static readonly newTimetableDialog = "new-timetable-dialog";
+  static readonly newTimetableCancelButton = "new-timetable-dialog-cancel";
+  static readonly newTimetableSubmitButton = "new-timetable-dialog-submit";
+  static readonly newTimetableLinesSelect = "new-timetable-dialog-lines";
+  static readonly newTimetableWDRsSelect = "new-timetable-dialog-wdrs";
+  static readonly newTimetableIdInput = "new-timetable-dialog-id";
+  static readonly newTimetableErrorText = "new-timetable-dialog-error";
 
-    this.status = new StatusScreens("status", this.editor, this.header);
+  static readonly pasteIssuesDialog = "paste-issues-dialog";
+  static readonly pasteIssuesCancelButton = "paste-issues-dialog-cancel";
+  static readonly pasteIssuesSubmitButton = "paste-issues-dialog-submit";
+  static readonly pasteIssuesDuplicates = "paste-issues-dialog-duplicates";
 
-    this.newTimetableDialog = new NewTimetableDialog("new-timetable-dialog",
-      (a, b, c) => this.newTimetableDialogSubmitted(a, b, c));
+  static readonly footerError = "footer-error";
 
-    this.pasteIssuesDialog = new PasteIssuesDialog("paste-issues-dialog");
-  }
-  init(network: Network) {
-    this.network = network;
-
-    this.validator.init(this.network);
-
-    this.editor.init();
-    this.editor.requestValidation = () => {
-      this.validator.requestValidation(this.editor.section,
-        this.timetable.lineID);
-    }
-    window.addEventListener("resize", () => this.editor.resize());
-
-    this.validator.onResults = (results) => {
-      const error = results.overallError();
-      const footerP = document.querySelector("#footer p");
-      if (error == null) {
-        footerP.classList.remove("error");
-        footerP.textContent = "Valid timetable";
-      }
-      else {
-        footerP.classList.add("error");
-        footerP.textContent = error;
-      }
-
-      this.editor.applyValidationOverlay(results);
-    }
-
-    this.newTimetableDialog.init(this.network);
-    this.pasteIssuesDialog.init();
-
-    this.header.newTimetableButton.addEventListener("click", () => {
-      const result = this.timetable == null || !this.timetable.hasContent() ||
-        confirm("Create a new timetable? This one won't be saved anywhere.");
-
-      if (result) {
-        this.newTimetableDialog.show();
-      }
-    });
-
-    this.header.importButton.addEventListener("click", () => {
-      alert("Import not available at the moment.");
-      // openImportDialog(this.network, (timetable) => {
-      //   this.editTimetable(timetable);
-      // });
-    });
-
-    this.header.exportButton.addEventListener("click", () => {
-      try {
-        exportTimetable(this.timetable, this.network);
-      }
-      catch (ex) {
-        alert(ex);
-      }
-    });
-
-    this.status.ready();
-  }
-
-  newTimetableDialogSubmitted(lineID: number, dowPresetIndex: number,
-    timetableID: string) {
-
-    // Setup the new timetable object.
-    const timetableIDNum = parseInt(timetableID, 36);
-    const dows = DOWPresets[dowPresetIndex];
-    const timetable = new Timetable(timetableIDNum, lineID, dows, this.network);
-    this.editTimetable(timetable);
-  }
-
-  private editTimetable(timetable: Timetable) {
-    this.timetable = timetable;
-
-    // Update the header buttons and create the tabs for the timetable sections.
-    this.status.editing(this.timetable);
-    const timetableSection = this.timetable.getTimetableSection(
-      this.timetable.generalDirs[0], this.timetable.dows[0]);
-    this.status.editingSection(timetableSection, true, this.network);
-  }
-
-  tabClicked(generalDir: string, dow: string) {
-    const timetableSection = this.timetable.getTimetableSection(generalDir,
-      dow);
-    this.status.editingSection(timetableSection, false, this.network);
+  /**
+   * Returns the HTML ID for a select in the paste issues dialog, which are
+   * dynamically created upon opening the dialog, depending on how many are
+   * needed, and for which rows.
+   * @param rowIndex The row index, which is used to uniquely identify the
+   * select in future.
+   */
+  static pasteIssuesDialogSelect(rowIndex: number): string {
+    return `paste-issues-dialog-duplicate-${rowIndex}`;
   }
 }
 
-const network = new Network();
-const appContext = new AppContext();
-const commandListener = new CommandListener();
+// == ENTRY POINT FOR MAIN THREAD SCRIPT ==
+// Todo: make sure loading screen is shown (instead of relying on HTML document
+// to be in correct state by default)?
+const status = new StatusScreens();
 
-network.load().then(() => {
-  appContext.init(network);
+// Load the network information from the API.
+loadNetwork(apiDomain).then((network: Network) => {
+  // Once loaded, initialize the web app.
+  const appContext = new AppContext(network, status);
 
-  commandListener.init(appContext);
+  // Only now, will we start listening for keyboard events.
+  const commandListener = new CommandListener(appContext);
   document.addEventListener("keydown", (e) => commandListener.onDocKeyEvent(e));
   document.addEventListener("paste", (e) => commandListener.onPaste(e));
+
+  // Make sure the editor can respond to window resizes.
+  window.addEventListener("resize", () => appContext.editor.resize());
+
+  // Warn the user before leaving if they're editing a timetable so they don't
+  // lose their work.
+  window.onbeforeunload = () => {
+    if (appContext.timetable != null && appContext.timetable.hasContent()) {
+      return true;
+    }
+  };
 });

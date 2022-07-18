@@ -101,7 +101,7 @@ function serviceSmarts(section: TimetableSection, network: Network,
  * retrieved from network.directionsForLine(lineID).
  */
 function matchDirection(stops: number[], service: Service,
-  directions: Direction[]): string {
+  directions: Direction[]): string | null {
 
   // Build a list of all the stops that aren't dashes on this service.
   const servicedStops = stops.filter((_s, index) =>
@@ -134,7 +134,7 @@ function matchDirection(stops: number[], service: Service,
   }
 }
 
-function directionIcon(direction: string, line: Line): string {
+function directionIcon(direction: string, line: Line): string | null {
   if (line.routeType === "city-loop") {
     return direction.endsWith("-via-loop") ?
       `${line.routeLoopPortal}-via-loop` : `${line.routeLoopPortal}-direct`;
@@ -209,9 +209,13 @@ export class ValidationResults {
       && this.directions.every(e => e != null);
   }
   overallError(): string | null {
-    let error: string = null;
-    if (error == null) { error = this.stopErrors.find(e => e != null); }
-    if (error == null) { error = this.serviceErrors.find(e => e != null); }
+    let error: string | null = null;
+    if (error == null) {
+      error = this.stopErrors.find(e => e != null) ?? null;
+    }
+    if (error == null) {
+      error = this.serviceErrors.find(e => e != null) ?? null;
+    }
 
     if (error == null) { return null; }
 

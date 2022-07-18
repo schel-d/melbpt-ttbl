@@ -1,9 +1,9 @@
-import { validateDOW } from "./dow";
+import { validateWDR } from "./week-day-range";
 import { Service, TimetableData } from "./timetable-data";
 
 export class TimetableSection {
   generalDir: string;
-  dow: string;
+  wdr: string;
   stops: number[];
   undoFrames: { actionName: string, before: TimetableData }[];
   redoFrames: { actionName: string, after: TimetableData }[];
@@ -12,13 +12,15 @@ export class TimetableSection {
 
   changed: (() => void) | null;
 
-  constructor(generalDir: string, dow: string, stops: number[]) {
+  constructor(generalDir: string, wdr: string, stops: number[]) {
     this.generalDir = generalDir;
-    this.dow = validateDOW(dow);
-    this._data = new TimetableData();
+    this.wdr = validateWDR(wdr);
     this.stops = stops;
+
+    this._data = new TimetableData();
     this.undoFrames = [];
     this.redoFrames = [];
+    this.changed = null;
   }
 
   edit(actionName: string, func: (data: TimetableData) => void) {
@@ -35,7 +37,7 @@ export class TimetableSection {
     if (this.changed) { this.changed(); }
   }
 
-  undo(): string {
+  undo(): string | null {
     const undoFrame = this.undoFrames.pop();
     if (undoFrame == null) { return null; }
 
@@ -48,7 +50,7 @@ export class TimetableSection {
     if (this.changed) { this.changed(); }
     return undoFrame.actionName;
   }
-  redo(): string {
+  redo(): string | null {
     const redoFrame = this.redoFrames.pop();
     if (redoFrame == null) { return null; }
 
@@ -81,7 +83,7 @@ export class TimetableSection {
   toJSON() {
     return {
       generalDir: this.generalDir,
-      dow: this.dow,
+      wdr: this.wdr,
       stops: this.stops,
       data: this._data.toJSON()
     };
@@ -89,7 +91,7 @@ export class TimetableSection {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static fromJSON(json: any): TimetableSection {
     // Todo: Use zod to validate incoming json?
-    const section = new TimetableSection(json.generalDir, json.dow, json.stops);
+    const section = new TimetableSection(json.generalDir, json.wdr, json.stops);
     section._data = TimetableData.fromJSON(json.data);
     return section;
   }

@@ -1,4 +1,4 @@
-import { DuplicatesList, PasteIssuesDialog }
+import { Duplicate, PasteIssuesDialog }
   from "../components/paste-issues-dialog";
 import { standardizeTimeString } from "../utils";
 
@@ -64,17 +64,25 @@ function extractRows(text: string, stopNames: string[]): Row[] {
       const stop = stopNames.find(s => matchesStopName(header, s));
 
       // Return the stop and times, and split the times into an array as well.
+      const startOfTimesindex = timesOnlyRegex.exec(x)?.index;
+      if (startOfTimesindex == null) {
+        // Should never happen, but needed to keep typescript happy :)
+        throw new Error("Row that was believed to be timetable was not in " +
+          "correct format");
+      }
       return {
         stop: stop,
-        times: x.substring(timesOnlyRegex.exec(x).index).trim().split(" "),
+        times: x.substring(startOfTimesindex).trim().split(" "),
         header: header
       };
     })
 
     // Finally, remove any rows that did not match a stop on this route.
-    .filter(x => x.stop != null);
+    .filter(x => x.stop != null)
 
-  return rows;
+  // Last filter removes possibility of stop property being null, however TS
+  // doesn't know that, so manually overriding the type here.
+  return rows as Row[];
 }
 
 /**
@@ -95,7 +103,7 @@ function clarifyRows(rows: Row[], stopNames: string[],
 
   // Keep track of missing rows and duplicates during the next step.
   const missingRows: string[] = [];
-  const duplicates: DuplicatesList = [];
+  const duplicates: Duplicate[] = [];
 
   // For each stop in the timetable section...
   const clarifiedRows: ClarifiedRows = {};
@@ -155,14 +163,17 @@ function contentify(rows: ClarifiedRows): string[][] {
   // Get the length of the largest row of times, since we want to create a
   // rectangular 2d array as the result, despite the fact that the given rows
   // are likely jagged.
-  const timesCount = Math.max(...Object.keys(rows).map(k => rows[parseInt(k)])
-    .filter(x => x != null).map(x => x.length));
+  const rowValues = Object.keys(rows).map(k => rows[parseInt(k)]);
+  const nonNullRowValues = rowValues.filter(x => x != null) as string[][];
+  const timesCount = Math.max(...nonNullRowValues.map(x => x.length));
 
   const stopsCount = Object.keys(rows).length;
 
   const result: string[][] = [];
 
   for (let y = 0; y < stopsCount; y++) {
+    const row = rows[y];
+
     // For each time for this stop...
     for (let x = 0; x < timesCount; x++) {
       // If this service's column in the array hasn't been made yet, make it.
@@ -170,7 +181,7 @@ function contentify(rows: ClarifiedRows): string[][] {
         result[x] = [];
       }
 
-      if (rows[y] == null || rows[y].length <= x) {
+      if (row == null || row.length <= x) {
         // If there were no times for this stop, or we've run out by this
         // service, then leave it blank (many timetables have dashes missing and
         // are therefore jagged).
@@ -178,7 +189,7 @@ function contentify(rows: ClarifiedRows): string[][] {
       }
       else {
         // Otherwise add it to the timetable in 24-hour time.
-        result[x][y] = formatTime(rows[y][x]);
+        result[x][y] = formatTime(row[x]);
       }
     }
   }

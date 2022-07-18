@@ -1,6 +1,6 @@
 import { CommandHandler } from "./command-handler";
 import { SelectArrowsHandler } from "./select-arrows-handler";
-import { AppContext } from "../main";
+import { AppContext } from "../app-context";
 import { TabHandler } from "./tab-handler";
 import { extractContent } from "./extract-content";
 import { createToast } from "../components/toast";
@@ -19,7 +19,8 @@ export class CommandListener {
   private _appContext: AppContext;
   private _handlers: CommandHandler[];
 
-  constructor() {
+  constructor(appContext: AppContext) {
+    this._appContext = appContext;
     this._handlers = [
       new SelectArrowsHandler(),
       new TabHandler(),
@@ -34,19 +35,16 @@ export class CommandListener {
       new NextDayHandler()
     ];
   }
-  init(appContext: AppContext) {
-    this._appContext = appContext;
-  }
 
   onKey(char: string, key: string, ctrl: boolean, alt: boolean,
     shift: boolean): boolean {
 
     const handler = this._handlers.find(h => h.acceptedFilters.some(f => {
-      if (f.char != undefined && f.char != char) { return false; }
-      if (f.key != undefined && f.key != key) { return false; }
-      if (f.ctrl != undefined && f.ctrl != ctrl) { return false; }
-      if (f.alt != undefined && f.alt != alt) { return false; }
-      if (f.shift != undefined && f.shift != shift && f.char == undefined) {
+      if (f.char != null && f.char != char) { return false; }
+      if (f.key != null && f.key != key) { return false; }
+      if (f.ctrl != null && f.ctrl != ctrl) { return false; }
+      if (f.alt != null && f.alt != alt) { return false; }
+      if (f.shift != null && f.shift != shift && f.char == null) {
         return false;
       }
       return true;
@@ -88,7 +86,10 @@ export class CommandListener {
 
     if (section == null || ntd.isOpen() || pid.isOpen()) { return; }
 
-    const text = e.clipboardData.getData("text");
+    // If there was no text copied to the clipboard, don't handle it at all.
+    const text = e.clipboardData?.getData("text") ?? "";
+    if (text.length == 0) { return; }
+
     e.preventDefault();
 
     // Try to extract timetable content from the pasted text based on the stop

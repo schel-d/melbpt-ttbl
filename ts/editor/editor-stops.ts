@@ -1,10 +1,14 @@
+import { getDiv } from "../dom-utils";
+import { HtmlIDs } from "../main";
+
 export class EditorStops {
   private _stopsDiv: HTMLDivElement;
 
-  stopClicked: (index: number) => void;
+  stopClicked: ((index: number) => void) | null;
 
-  constructor(stopsID: string) {
-    this._stopsDiv = document.getElementById(stopsID) as HTMLDivElement;
+  constructor() {
+    this._stopsDiv = getDiv(HtmlIDs.editorStops);
+    this.stopClicked = null;
   }
 
   clear() {

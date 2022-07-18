@@ -47,6 +47,13 @@ export function exportTimetable(timetable: Timetable, network: Network) {
     for (const directionID of possibleDirections) {
       const direction = line.directions.find(d => d.id === directionID);
 
+      // This should never happen, since the possible directions come from
+      // choosing one for each service from the list of direction on this line.
+      if (direction == null) {
+        throw new Error(`Validation assumed some services ran in direction ` +
+          `"${directionID}" which is impossible for this line.`);
+      }
+
       // Generate the section and append it to the file.
       output += writeSection(direction, section, network, results);
     }
@@ -87,13 +94,17 @@ function writeSection(direction: Direction, section: TimetableSection,
   // Couple each service with it's next day threshold from the validation
   // results.
   let columns = section.map((s, i) => {
-    return { service: s, nextDayThreshold: results.nextDayThresholds[i] };
+    const threshold = results.nextDayThresholds[i]
+    if (threshold == null) {
+      throw new Error(`Validation failed to calculate next day thresholds ` +
+        `for some services.`);
+    }
+    return { service: s, nextDayThreshold: threshold };
   });
 
   // Filter to find the services running in this direction as detected in
   // the validation results.
-  columns = columns.filter((_s, i) =>
-    results.directions[i] === direction.id);
+  columns = columns.filter((_s, i) => results.directions[i] === direction.id);
 
   // For each service...
   for (const column of columns) {
@@ -114,7 +125,7 @@ function writeSection(direction: Direction, section: TimetableSection,
     }
   }
 
-  return `\n[${direction.id}, ${section.dow}]\n${lines.join("\n")}\n`;
+  return `\n[${direction.id}, ${section.wdr}]\n${lines.join("\n")}\n`;
 }
 
 /**

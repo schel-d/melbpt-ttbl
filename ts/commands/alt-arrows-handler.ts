@@ -1,4 +1,4 @@
-import { AppContext } from "../main";
+import { AppContext } from "../app-context";
 import { range } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 
@@ -18,7 +18,7 @@ export class AltArrowsHandler extends CommandHandler {
 
     // If there are no services in the timetable or nothing is selected, do
     // nothing.
-    if (section == null || section.width == 0 || grid.selected == null) {
+    if (section == null || section.width == 0 || grid.selectedRange == null) {
       return;
     }
 

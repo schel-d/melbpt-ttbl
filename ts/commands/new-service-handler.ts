@@ -1,5 +1,5 @@
 import { Service } from "../data/timetable-data";
-import { AppContext } from "../main";
+import { AppContext } from "../app-context";
 import { repeat } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 

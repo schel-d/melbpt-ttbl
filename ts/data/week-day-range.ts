@@ -1,4 +1,4 @@
-export const DOWPresets = [
+export const WDRPresets = [
   ["MTWT___", "____F__", "_____S_", "______S"],
   ["MTWTF__", "_____S_", "______S"],
   ["MTWTFSS"],
@@ -6,7 +6,7 @@ export const DOWPresets = [
   ["M______", "_TWTF__", "_____S_", "______S"],
   ["M______", "_T_____", "__W____", "___T___", "____F__", "_____S_", "______S"]
 ]
-const DOWNames: { [key: string]: string } = {
+const WDRNames: { [key: string]: string } = {
   "M______": "Mon",
   "_T_____": "Tue",
   "__W____": "Wed",
@@ -21,16 +21,16 @@ const DOWNames: { [key: string]: string } = {
   "_TWTF__": "Tue-Fri",
 }
 
-export function nameDOW(dow: string) {
-  if (dow in DOWNames) {
-    return DOWNames[dow];
+export function nameWDR(wdr: string) {
+  if (wdr in WDRNames) {
+    return WDRNames[wdr];
   }
-  throw new Error(`Days of week value "${dow}" is invalid or not supported`)
+  throw new Error(`Week day range value "${wdr}" is invalid or not supported`)
 }
-export function validateDOW(dow: string) {
+export function validateWDR(wdr: string) {
   const daysRegex = /^(M|_)(T|_)(W|_)(T|_)(F|_)(S|_)(S|_)$/;
-  if (!daysRegex.test(dow)) {
-    throw new Error(`Invalid days of week value: "${dow}"`);
+  if (!daysRegex.test(wdr)) {
+    throw new Error(`Invalid week day range value: "${wdr}"`);
   }
-  return dow;
+  return wdr;
 }

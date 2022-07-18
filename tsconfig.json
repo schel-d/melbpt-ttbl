@@ -3,6 +3,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "target": "ES2017",
+    "strict": true,
     "lib": ["ES2017", "DOM"]
   }
 }

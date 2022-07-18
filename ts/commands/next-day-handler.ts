@@ -1,4 +1,4 @@
-import { AppContext } from "../main";
+import { AppContext } from "../app-context";
 import { range } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 

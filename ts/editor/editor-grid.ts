@@ -1,9 +1,24 @@
 import { css } from "./editor-grid-css";
 import { Editor } from "./editor";
+import { getCanvas, getDiv } from "../dom-utils";
+import { HtmlIDs } from "../main";
 
-export const ROW_SIZE = 20;
-export const COL_SIZE = 48;
-const TEXT_OFFSET_Y = 14;
+export const editorRowSize = 20;
+export const editorColSize = 48;
+
+// Todo: just center the text vertically too?
+const textOffsetY = 14;
+
+type CellCoordinates = {
+  x: number,
+  y: number
+};
+type SelectionCoordinates = {
+  startX: number,
+  startY: number,
+  endX: number,
+  endY: number
+};
 
 export class EditorGrid {
   private _editor: Editor;
@@ -11,31 +26,28 @@ export class EditorGrid {
   private _canvas: HTMLCanvasElement;
   private _context: CanvasRenderingContext2D;
 
-  private _mouseOver: { x: number, y: number } | null;
-  private _selected: { startX: number, startY: number, endX: number, endY: number } | null;
+  private _mouseOver: CellCoordinates | null;
+  private _selected: SelectionCoordinates | null;
   private _dragging: boolean;
 
   private _nextDayThresholds: number[];
 
-  constructor(editor: Editor, gridID: string, canvasID: string) {
+  constructor(editor: Editor) {
     this._editor = editor;
-    this._grid = document.getElementById(gridID) as HTMLDivElement;
-    this._canvas = document.getElementById(canvasID) as HTMLCanvasElement;
-    this._context = this._canvas.getContext("2d");
-    this.resetEvents();
-  }
+    this._grid = getDiv(HtmlIDs.editorGrid);
+    this._canvas = getCanvas(HtmlIDs.editorGridCanvas);
 
-  resetEvents() {
+    const canvasContext = this._canvas.getContext("2d");
+    if (canvasContext == null) {
+      throw new Error("This browser doesn't seem to support 2d canvas.");
+    }
+    this._context = canvasContext;
+
     this._selected = null;
     this._dragging = false;
-    this.resetMouseOver();
-  }
-
-  resetMouseOver() {
     this._mouseOver = null;
-  }
+    this._nextDayThresholds = [];
 
-  init() {
     this._canvas.addEventListener("mousedown", (e) => {
       const m = this.relativeCoords(e);
       this._selected = { startX: m.x, startY: m.y, endX: m.x, endY: m.y };
@@ -43,10 +55,15 @@ export class EditorGrid {
       this.draw();
     });
     this._canvas.addEventListener("mouseup", (e) => {
-      const m = this.relativeCoords(e);
-      this._selected.endX = m.x;
-      this._selected.endY = m.y;
       this._dragging = false;
+
+      // Selected should never be null here, but just in case.
+      if (this._selected != null) {
+        const m = this.relativeCoords(e);
+        this._selected.endX = m.x;
+        this._selected.endY = m.y;
+      }
+
       this.draw();
     });
 
@@ -56,6 +73,21 @@ export class EditorGrid {
       this._mouseOver = null;
       this.draw();
     });
+  }
+
+  resetEvents() {
+    this._selected = null;
+    this._dragging = false;
+    this.resetMouseOver();
+  }
+
+  /**
+   * Clears the mouse over highlight. This exists separately to
+   * {@link resetEvents} as sometimes clearing the mouse over is warranted
+   * without also clearing the selection.
+   */
+  resetMouseOver() {
+    this._mouseOver = null;
   }
 
   draw() {
@@ -68,25 +100,25 @@ export class EditorGrid {
 
     // Set the container holding the canvas to the full size (makes the
     // scrollbar work properly)
-    this._grid.style.width = COL_SIZE * cols + "px";
-    this._grid.style.height = ROW_SIZE * rows + "px";
+    this._grid.style.width = editorColSize * cols + "px";
+    this._grid.style.height = editorRowSize * rows + "px";
 
     // Make the canvas big enough to fit only the cells actually on screen
     // Shift the canvas within it's parent so when it's scrolled, it still
     // appears on screen despite its smaller size
-    this._canvas.width = COL_SIZE * cells.width * dpiRatio;
-    this._canvas.height = ROW_SIZE * cells.height * dpiRatio;
-    this._canvas.style.width = COL_SIZE * cells.width + "px";
-    this._canvas.style.height = ROW_SIZE * cells.height + "px";
-    this._canvas.style.left = COL_SIZE * cells.x1 + "px";
-    this._canvas.style.top = ROW_SIZE * cells.y1 + "px";
+    this._canvas.width = editorColSize * cells.width * dpiRatio;
+    this._canvas.height = editorRowSize * cells.height * dpiRatio;
+    this._canvas.style.width = editorColSize * cells.width + "px";
+    this._canvas.style.height = editorRowSize * cells.height + "px";
+    this._canvas.style.left = editorColSize * cells.x1 + "px";
+    this._canvas.style.top = editorRowSize * cells.y1 + "px";
 
     // Clear the canvas, and transform the coordinate space to account for the
     // scrolling
     this._context.clearRect(0, 0, this._canvas.width, this._canvas.height);
     this._context.translate(
-      -cells.x1 * COL_SIZE * dpiRatio,
-      -cells.y1 * ROW_SIZE * dpiRatio
+      -cells.x1 * editorColSize * dpiRatio,
+      -cells.y1 * editorRowSize * dpiRatio
     );
     this._context.scale(dpiRatio, dpiRatio);
 
@@ -99,10 +131,10 @@ export class EditorGrid {
         continue;
       }
       this._context.fillRect(
-        cells.x1 * COL_SIZE,
-        y * ROW_SIZE,
-        cells.width * COL_SIZE,
-        ROW_SIZE
+        cells.x1 * editorColSize,
+        y * editorRowSize,
+        cells.width * editorColSize,
+        editorRowSize
       );
     }
 
@@ -117,8 +149,8 @@ export class EditorGrid {
         const textWidth = this._context.measureText(str).width;
         this._context.fillText(
           str,
-          x * COL_SIZE + (COL_SIZE - textWidth) / 2,
-          y * ROW_SIZE + TEXT_OFFSET_Y
+          x * editorColSize + (editorColSize - textWidth) / 2,
+          y * editorRowSize + textOffsetY
         );
       }
     }
@@ -127,10 +159,10 @@ export class EditorGrid {
     this._context.fillStyle = css.hoverHighlight;
     if (this._mouseOver != null) {
       this._context.fillRect(
-        this._mouseOver.x * COL_SIZE,
-        this._mouseOver.y * ROW_SIZE,
-        COL_SIZE,
-        ROW_SIZE
+        this._mouseOver.x * editorColSize,
+        this._mouseOver.y * editorRowSize,
+        editorColSize,
+        editorRowSize
       );
     }
 
@@ -143,10 +175,10 @@ export class EditorGrid {
       const y1 = Math.min(this._selected.startY, this._selected.endY);
       const h = Math.max(this._selected.startY, this._selected.endY) - y1 + 1;
       this._context.strokeRect(
-        x1 * COL_SIZE,
-        y1 * ROW_SIZE,
-        w * COL_SIZE,
-        h * ROW_SIZE
+        x1 * editorColSize,
+        y1 * editorRowSize,
+        w * editorColSize,
+        h * editorRowSize
       );
     }
   }
@@ -156,8 +188,8 @@ export class EditorGrid {
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
     return {
-      x: Math.floor(x / COL_SIZE),
-      y: Math.floor(y / ROW_SIZE),
+      x: Math.floor(x / editorColSize),
+      y: Math.floor(y / editorRowSize),
     };
   };
 
@@ -167,7 +199,7 @@ export class EditorGrid {
       if (e.buttons != 1) {
         this._dragging = false;
       }
-      else {
+      else if (this._selected != null) {
         this._selected.endX = this._mouseOver.x;
         this._selected.endY = this._mouseOver.y;
       }
@@ -188,16 +220,16 @@ export class EditorGrid {
     const gridWidth = editorSize.width - this._editor.stops.clientWidth();
     const gridHeight = editorSize.height - this._editor.services.clientHeight();
 
-    const y1 = Math.max(0, Math.floor(editorScroll.y / ROW_SIZE));
-    const y2 = Math.min(rows, y1 + Math.ceil(gridHeight / ROW_SIZE) + 1);
+    const y1 = Math.max(0, Math.floor(editorScroll.y / editorRowSize));
+    const y2 = Math.min(rows, y1 + Math.ceil(gridHeight / editorRowSize) + 1);
     const height = y2 - y1;
-    const x1 = Math.max(0, Math.floor(editorScroll.x / COL_SIZE));
-    const x2 = Math.min(cols, x1 + Math.ceil(gridWidth / COL_SIZE) + 1);
+    const x1 = Math.max(0, Math.floor(editorScroll.x / editorColSize));
+    const x2 = Math.min(cols, x1 + Math.ceil(gridWidth / editorColSize) + 1);
     const width = x2 - x1;
     return { x1: x1, x2: x2, y1: y1, y2: y2, width: width, height: height };
   };
 
-  get selected() {
+  get selected(): SelectionCoordinates | null {
     if (this._selected == null) {
       return null;
     }

@@ -108,11 +108,18 @@ function getUpDirectionIDs(routeType: string, directions: string[]): string[] {
  */
 function getUpStopLists(lineID: number, network: Network): number[][] {
   const line = network.lines.find(l => l.id === lineID);
-  const upDirections = getUpDirectionIDs(line.routeType,
-    line.directions.map(d => d.id));
+  if (line == null) { throw new Error(`No line with id=${lineID}`); }
 
-  const stopLists = upDirections.map(d =>
-    [...line.directions.find(x => x.id === d).stops])
+  const directionIDs = line.directions.map(d => d.id);
+  const upDirections = getUpDirectionIDs(line.routeType, directionIDs);
+
+  const stopLists = upDirections.map(d => {
+    const direction = line.directions.find(x => x.id === d);
+    if (direction == null) {
+      throw new Error(`Expected an up direction called "${d}" on this line`)
+    }
+    return [...direction.stops];
+  });
 
   return stopLists;
 }

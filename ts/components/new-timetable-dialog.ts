@@ -1,8 +1,11 @@
-import { DOWPresets, nameDOW } from "../data/dow";
-import { Network } from "../data/network";
+import { WDRPresets, nameWDR } from "../data/week-day-range";
+import { Line, Network } from "../data/network";
+import { getButton, getInput, getParagraph, getSelect } from "../dom-utils";
+import { HtmlIDs } from "../main";
+import { getErrorMessage } from "../utils";
 
 export type NewTimetableDialogCallback =
-  (lineID: number, dowPresetIndex: number, timetableID: string) => void
+  (lineID: number, wdrPresetIndex: number, timetableID: string) => void
 
 export class NewTimetableDialog {
   // Typescript does not have up to date dialog type information, so this is
@@ -13,79 +16,79 @@ export class NewTimetableDialog {
   private _cancelButton: HTMLButtonElement;
   private _submitButton: HTMLButtonElement;
   private _linesSelect: HTMLSelectElement;
-  private _dowsSelect: HTMLSelectElement;
+  private _wdrsSelect: HTMLSelectElement;
   private _idInput: HTMLInputElement;
   private _errorText: HTMLParagraphElement;
 
-  private submitted: NewTimetableDialogCallback;
+  private _submittedCallback: NewTimetableDialogCallback | null;
 
-  constructor(htmlID: string, submitted: NewTimetableDialogCallback) {
-    this._dialog = document.getElementById(htmlID);
-    this._cancelButton =
-      document.getElementById(`${htmlID}-cancel`) as HTMLButtonElement;
-    this._submitButton =
-      document.getElementById(`${htmlID}-submit`) as HTMLButtonElement;
-    this._linesSelect =
-      document.getElementById(`${htmlID}-lines`) as HTMLSelectElement;
-    this._dowsSelect =
-      document.getElementById(`${htmlID}-dows`) as HTMLSelectElement;
-    this._idInput =
-      document.getElementById(`${htmlID}-id`) as HTMLInputElement;
-    this._errorText =
-      document.getElementById(`${htmlID}-error`) as HTMLParagraphElement;
+  constructor(network: Network) {
+    this._dialog = document.getElementById(HtmlIDs.newTimetableDialog);
 
-    this.submitted = submitted;
-  }
+    this._cancelButton = getButton(HtmlIDs.newTimetableCancelButton);
+    this._submitButton = getButton(HtmlIDs.newTimetableSubmitButton);
+    this._linesSelect = getSelect(HtmlIDs.newTimetableLinesSelect);
+    this._wdrsSelect = getSelect(HtmlIDs.newTimetableWDRsSelect);
+    this._idInput = getInput(HtmlIDs.newTimetableIdInput);
+    this._errorText = getParagraph(HtmlIDs.newTimetableErrorText);
 
-  init(network: Network) {
-    // Sort lines by name alphabetical order, and add an option for each to the
-    // lines select.
-    const lines = [...network.lines]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map(line => new Option(line.name, line.id.toString()));
-    this._linesSelect.replaceChildren(...lines);
+    this._submittedCallback = null;
 
-    // Add each DOW (days of week) present to the select. They are referenced by
-    // index.
-    const dows = DOWPresets.map((preset, index) => new Option(
-      preset.map(d => nameDOW(d)).join(", "),
-      index.toString()))
-    this._dowsSelect.replaceChildren(...dows);
+    this.populateInputs(network);
 
     // Close the dialog if the close button is clicked. Note that pressing ESC
     // also closes the dialog, so it cannot be assumed this will run.
-    this._cancelButton.addEventListener("click", () => {
-      this._dialog.close();
-    });
+    this._cancelButton.addEventListener("click", () => this._dialog.close());
 
     // Retrieve the values, run the callback, and close the dialog when the
     // submit button is pressed. If any error occurs, display the error and do
     // not close the dialog.
-    this._submitButton.addEventListener("click", () => {
-      const lineIDStr = this._linesSelect.value;
-      const dowPresetIndexStr = this._dowsSelect.value;
-      const timetableID = this._idInput.value;
-
-      const lineIDNum = parseInt(lineIDStr);
-      const dowPresetIndex = parseInt(dowPresetIndexStr);
-
-      try {
-        this.submitted(lineIDNum, dowPresetIndex, timetableID)
-        this._dialog.close();
-        this._errorText.textContent = "";
-      }
-      catch (ex) {
-        this._errorText.textContent = ex.message;
-      }
-    });
+    this._submitButton.addEventListener("click", () => this.onSubmitClick());
   }
 
-  show() {
+  show(submittedCallback: NewTimetableDialogCallback) {
+    this._submittedCallback = submittedCallback;
     this._dialog.showModal();
     this._errorText.textContent = "";
   }
 
   isOpen() {
     return this._dialog.open == true;
+  }
+
+  private populateInputs(network: Network) {
+    // Sort lines by name alphabetical order, and add an option for each to the
+    // lines select.
+    const alphabetically = (a: Line, b: Line) => a.name.localeCompare(b.name);
+    const toOption = (line: Line) => new Option(line.name, line.id.toString());
+    const lineOptions = [...network.lines].sort(alphabetically).map(toOption);
+    this._linesSelect.replaceChildren(...lineOptions);
+
+    // Add each week day range preset to the select. They are referenced by
+    // index.
+    const wdrs = WDRPresets.map((preset, index) =>
+      new Option(preset.map(d => nameWDR(d)).join(", "), index.toString())
+    );
+    this._wdrsSelect.replaceChildren(...wdrs);
+  }
+
+  private onSubmitClick() {
+    const lineIDStr = this._linesSelect.value;
+    const wdrPresetIndexStr = this._wdrsSelect.value;
+    const timetableID = this._idInput.value;
+
+    const lineIDNum = parseInt(lineIDStr);
+    const wdrPresetIndex = parseInt(wdrPresetIndexStr);
+
+    try {
+      if (this._submittedCallback != null) {
+        this._submittedCallback(lineIDNum, wdrPresetIndex, timetableID)
+      }
+      this._dialog.close();
+      this._errorText.textContent = "";
+    }
+    catch (ex) {
+      this._errorText.textContent = getErrorMessage(ex);
+    }
   }
 }
