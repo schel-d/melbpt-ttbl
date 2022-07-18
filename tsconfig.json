@@ -4,6 +4,8 @@
     "esModuleInterop": true,
     "target": "ES2017",
     "strict": true,
-    "lib": ["ES2017", "DOM"]
+    "lib": ["ES2017", "DOM"],
+    "moduleResolution": "node",
+    "noImplicitAny": true
   }
 }

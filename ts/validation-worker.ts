@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { Network } from "./data/network";
 import { TimetableSection } from "./data/timetable-section";
 import { validateSection } from "./data/timetable-validation";
@@ -29,7 +30,7 @@ onmessage = (e) => {
   // Parse the timetable from JSON, validate the section, then post the results
   // back to the main thread.
   const section = TimetableSection.fromJSON(e.data.section);
-  const lineID = e.data.lineID;
+  const lineID = z.number().parse(e.data.lineID);
   const results = validateSection(section, network, lineID);
   postMessage(results.toJSON());
 };

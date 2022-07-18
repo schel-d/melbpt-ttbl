@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { parseMinuteOfDay, range, repeat } from "../utils";
 import { Direction, Line, Network } from "./network";
 import { Timetable } from "./timetable";
@@ -183,12 +184,12 @@ export class ValidationResults {
   directions: (string | null)[];
   directionsIcons: (string | null)[];
 
-  constructor(width: number, height: number) {
-    this.stopErrors = repeat(null, height);
-    this.serviceErrors = repeat(null, width);
-    this.nextDayThresholds = repeat(null, width);
-    this.directions = repeat(null, width);
-    this.directionsIcons = repeat(null, width);
+  constructor(serviceCount: number, stopCount: number) {
+    this.stopErrors = repeat(null, stopCount);
+    this.serviceErrors = repeat(null, serviceCount);
+    this.nextDayThresholds = repeat(null, serviceCount);
+    this.directions = repeat(null, serviceCount);
+    this.directionsIcons = repeat(null, serviceCount);
   }
   reportStopError(index: number, error: string) {
     this.stopErrors[index] = error;
@@ -227,7 +228,7 @@ export class ValidationResults {
     return `${error} + ${othersCount} other errors`;
   }
 
-  toJSON() {
+  toJSON(): ValidationResultsJson {
     return {
       stopErrors: this.stopErrors,
       serviceErrors: this.serviceErrors,
@@ -235,13 +236,26 @@ export class ValidationResults {
       directionsIcons: this.directionsIcons
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any) {
-    const results = new ValidationResults(json.serviceErrors.length, json.stopErrors.length);
-    results.stopErrors = json.stopErrors;
-    results.serviceErrors = json.serviceErrors;
-    results.nextDayThresholds = json.nextDayThresholds;
-    results.directionsIcons = json.directionsIcons;
+  static fromJSON(json: unknown) {
+    const parsedJson = ValidationResultsJson.parse(json);
+
+    const serviceCount = parsedJson.serviceErrors.length;
+    const stopCount = parsedJson.stopErrors.length;
+    const results = new ValidationResults(serviceCount, stopCount);
+
+    results.stopErrors = parsedJson.stopErrors;
+    results.serviceErrors = parsedJson.serviceErrors;
+    results.nextDayThresholds = parsedJson.nextDayThresholds;
+    results.directionsIcons = parsedJson.directionsIcons;
+
     return results;
   }
 }
+
+export const ValidationResultsJson = z.object({
+  stopErrors: z.string().nullable().array(),
+  serviceErrors: z.string().nullable().array(),
+  nextDayThresholds: z.number().nullable().array(),
+  directionsIcons: z.string().nullable().array()
+});
+export type ValidationResultsJson = z.infer<typeof ValidationResultsJson>;

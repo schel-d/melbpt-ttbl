@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export class TimetableData {
   private _services: Service[];
 
@@ -58,18 +60,19 @@ export class TimetableData {
     return this._services.length;
   }
 
-  toJSON() {
+  toJSON(): TimetableDataJson {
     return {
-      services: this._services
+      services: this._services.map(x => x.toJSON())
     };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any) {
-    // Todo: Use zod to validate incoming json?
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new TimetableData(json.services.map((x: any) => Service.fromJSON(x)));
+  static fromJSON(json: unknown) {
+    const parsedJson = TimetableDataJson.parse(json);
+    return new TimetableData(parsedJson.services.map((x: ServiceJson) =>
+      Service.fromJSON(x)
+    ));
   }
 }
+
 
 export class Service {
   times: string[];
@@ -82,9 +85,24 @@ export class Service {
   clone() {
     return new Service([...this.times], this.nextDay);
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any) {
-    // Todo: Use zod to validate incoming json?
-    return new Service(json.times, json.nextDay);
+  toJSON(): ServiceJson {
+    return {
+      times: this.times,
+      nextDay: this.nextDay
+    };
+  }
+  static fromJSON(json: unknown) {
+    const parsedJson = ServiceJson.parse(json);
+    return new Service(parsedJson.times, parsedJson.nextDay);
   }
 }
+
+const ServiceJson = z.object({
+  times: z.string().array(),
+  nextDay: z.boolean()
+});
+export const TimetableDataJson = z.object({
+  services: ServiceJson.array()
+});
+export type ServiceJson = z.infer<typeof ServiceJson>;
+export type TimetableDataJson = z.infer<typeof TimetableDataJson>;

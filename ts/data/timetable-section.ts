@@ -1,5 +1,6 @@
 import { validateWDR } from "./week-day-range";
-import { Service, TimetableData } from "./timetable-data";
+import { Service, TimetableData, TimetableDataJson } from "./timetable-data";
+import { z } from "zod";
 
 export class TimetableSection {
   generalDir: string;
@@ -80,7 +81,7 @@ export class TimetableSection {
     return this._data.filter(func);
   }
 
-  toJSON() {
+  toJSON(): TimetableSectionJson {
     return {
       generalDir: this.generalDir,
       wdr: this.wdr,
@@ -88,11 +89,12 @@ export class TimetableSection {
       data: this._data.toJSON()
     };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any): TimetableSection {
-    // Todo: Use zod to validate incoming json?
-    const section = new TimetableSection(json.generalDir, json.wdr, json.stops);
-    section._data = TimetableData.fromJSON(json.data);
+  static fromJSON(json: unknown): TimetableSection {
+    const parsedJson = TimetableSectionJson.parse(json);
+    const section = new TimetableSection(
+      parsedJson.generalDir, parsedJson.wdr, parsedJson.stops
+    );
+    section._data = TimetableData.fromJSON(parsedJson.data);
     return section;
   }
 
@@ -103,3 +105,11 @@ export class TimetableSection {
     return this.stops.length;
   }
 }
+
+const TimetableSectionJson = z.object({
+  generalDir: z.string(),
+  wdr: z.string(),
+  stops: z.number().array(),
+  data: TimetableDataJson
+});
+export type TimetableSectionJson = z.infer<typeof TimetableSectionJson>;

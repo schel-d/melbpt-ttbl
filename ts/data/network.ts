@@ -1,36 +1,46 @@
-export type Stop = {
-  id: number,
-  name: string,
-  platforms: {
-    id: string,
-    name: string
-  }[],
-  urlName: string
-};
-export type Line = {
-  id: number,
-  name: string,
-  color: string,
-  service: string,
-  routeType: string,
-  routeLoopPortal?: string,
-  directions: Direction[]
-};
-export type Direction = {
-  id: string,
-  name: string,
-  stops: number[]
-}
-export type NetworkApiV1Schema = {
-  hash: string,
-  stops: Stop[],
-  lines: Line[]
-}
+import { z } from "zod";
+
+const Stop = z.object({
+  id: z.number(),
+  name: z.string(),
+  platforms: z.object({
+    id: z.string(),
+    name: z.string()
+  }).array(),
+  urlName: z.string()
+});
+
+const Line = z.object({
+  id: z.number(),
+  name: z.string(),
+  color: z.enum(["red", "yellow", "green", "cyan", "blue", "purple", "pink", "grey"]),
+  service: z.enum(["suburban", "regional"]),
+  routeType: z.enum(["linear", "city-loop", "branch"]),
+  routeLoopPortal: z.enum(["richmond", "jolimont", "north-melbourne"]).optional(),
+
+  directions: z.object({
+    id: z.string(),
+    name: z.string(),
+    stops: z.number().array()
+  }).array()
+
+});
+
+const NetworkJson = z.object({
+  hash: z.string(),
+  stops: Stop.array(),
+  lines: Line.array(),
+});
+
+export type NetworkJson = z.infer<typeof NetworkJson>;
+export type Stop = z.infer<typeof Stop>;
+export type Line = z.infer<typeof Line>;
+export type Direction = z.infer<typeof Line.shape.directions.element>;
 
 export class Network {
-  private _json: NetworkApiV1Schema;
+  private _json: NetworkJson;
 
-  constructor(json: NetworkApiV1Schema) {
+  constructor(json: NetworkJson) {
     this._json = json;
   }
 
@@ -61,15 +71,12 @@ export class Network {
     return this.line(lineID).directions;
   }
 
-  toJSON() {
-    return {
-      json: this._json
-    };
+  toJSON(): NetworkJson {
+    return this._json;
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static fromJSON(json: any) {
-    // Todo: Use zod to validate incoming json?
-    return new Network(json.json);
+  static fromJSON(json: unknown) {
+    const parsedJson = NetworkJson.parse(json);
+    return new Network(parsedJson);
   }
 }
 
@@ -80,8 +87,13 @@ export async function loadNetwork(domain: string): Promise<Network> {
     throw new Error(`"${domain}" did not respond.`);
   }
 
-  // Todo: Use zod to validate incoming json?
-  const json = await response.json() as NetworkApiV1Schema;
+  const json = await response.json();
 
-  return new Network(json);
+  try {
+    const parsedJson = NetworkJson.parse(json);
+    return new Network(parsedJson);
+  }
+  catch (ex) {
+    throw new Error("The API responded in an unexpected format");
+  }
 }
