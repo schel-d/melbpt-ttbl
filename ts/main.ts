@@ -28,7 +28,7 @@ export class HtmlIDs {
   static readonly editorServices = "services";
 
   static readonly headerNewTimetableButton = "new-timetable-button";
-  static readonly headerImportButton = "import-button";
+  // static readonly headerImportButton = "import-button";
   static readonly headerExportButton = "export-button";
   static readonly headerTabs = "tabs";
 

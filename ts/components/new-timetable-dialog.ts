@@ -70,6 +70,18 @@ export class NewTimetableDialog {
       new Option(preset.map(d => nameWDR(d)).join(", "), index.toString())
     );
     this._wdrsSelect.replaceChildren(...wdrs);
+
+    const setIDPlaceholder = (lineID: number) => {
+      const line = network.line(lineID);
+      this._idInput.placeholder = `${lineID.toString(36)}... (${line.name}` +
+        " line)";
+    }
+    this._linesSelect.addEventListener("change", () => {
+      const lineID = parseInt(this._linesSelect.value);
+      setIDPlaceholder(lineID);
+    });
+
+    setIDPlaceholder(parseInt(this._linesSelect.value));
   }
 
   private onSubmitClick() {

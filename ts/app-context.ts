@@ -49,7 +49,7 @@ export class AppContext {
     this.editor = new Editor((a) => this.onValidationRequest(a));
     this.header = new Header(
       () => this.onNewButtonClicked(),
-      () => this.onImportButtonClicked(),
+      // () => this.onImportButtonClicked(),
       () => this.onExportButtonClicked()
     );
     this.newTimetableDialog = new NewTimetableDialog(network);
@@ -74,17 +74,15 @@ export class AppContext {
     }
   }
 
-  /**
-   * Called when the "Import" button is clicked. Initiates the import process,
-   * and once a timetable is parsed, sets the UI ready to edit.
-   */
-  private onImportButtonClicked() {
-    alert("Importing timetables is not implemented yet.");
-
-    // openImportDialog(this.network, (timetable) => {
-    //   this.editTimetable(timetable);
-    // });
-  }
+  // /**
+  //  * Called when the "Import" button is clicked. Initiates the import process,
+  //  * and once a timetable is parsed, sets the UI ready to edit.
+  //  */
+  // private onImportButtonClicked() {
+  //   openImportDialog(this.network, (timetable) => {
+  //     this.editTimetable(timetable);
+  //   });
+  // }
 
   /**
    * Called when the "Export" button is clicked. Triggers the browser to

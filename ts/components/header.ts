@@ -11,20 +11,20 @@ const generalDirNames: { [key: string]: string } = {
 
 export class Header {
   private _newButton: HTMLButtonElement;
-  private _importButton: HTMLButtonElement;
+  // private _importButton: HTMLButtonElement;
   private _exportButton: HTMLButtonElement;
   private tabs: HTMLDivElement;
 
   constructor(
     newButtonCallback: () => void,
-    importButtonCallback: () => void,
+    // importButtonCallback: () => void,
     exportButtonCallback: () => void) {
 
     this._newButton = getButton(HtmlIDs.headerNewTimetableButton);
     this._newButton.addEventListener("click", () => newButtonCallback());
 
-    this._importButton = getButton(HtmlIDs.headerImportButton);
-    this._importButton.addEventListener("click", () => importButtonCallback());
+    // this._importButton = getButton(HtmlIDs.headerImportButton);
+    // this._importButton.addEventListener("click", () => importButtonCallback());
 
     this._exportButton = getButton(HtmlIDs.headerExportButton);
     this._exportButton.addEventListener("click", () => exportButtonCallback());
@@ -34,7 +34,7 @@ export class Header {
 
   ready() {
     this._newButton.disabled = false;
-    this._importButton.disabled = false;
+    // this._importButton.disabled = false;
     this._exportButton.disabled = true;
 
     this.tabs.replaceChildren();
@@ -42,7 +42,7 @@ export class Header {
 
   editing(generalDirs: string[], wdrs: string[], tabCallback: HeaderTabCallback) {
     this._newButton.disabled = false;
-    this._importButton.disabled = false;
+    // this._importButton.disabled = false;
     this._exportButton.disabled = false;
 
     this.tabs.replaceChildren(
