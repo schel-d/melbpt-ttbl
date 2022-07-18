@@ -1,6 +1,6 @@
 import { Network } from "../data/network";
 import { TimetableSection } from "../data/timetable-section";
-import { ValidationResults } from "../data/timetable-validation";
+import { ValidationResults } from "../data/timetable-validation-results";
 import { getHtmlOther } from "../dom-utils";
 import { HtmlIDs } from "../main";
 import { clamp } from "../utils";

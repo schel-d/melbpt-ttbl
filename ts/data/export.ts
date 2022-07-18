@@ -1,7 +1,8 @@
 import { Direction, Network } from "./network";
 import { Timetable } from "./timetable";
 import { TimetableSection } from "./timetable-section";
-import { validateTimetable, ValidationResults } from "./timetable-validation";
+import { validateTimetable } from "./timetable-validation";
+import { ValidationResults } from "./timetable-validation-results";
 
 /**
  * Triggers the browser to download a .ttbl file with the contents of the

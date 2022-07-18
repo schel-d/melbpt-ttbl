@@ -9,10 +9,10 @@ import { WDRPresets } from "./data/week-day-range";
 import { Validator } from "./validator";
 import { exportTimetable } from "./data/export";
 import { TimetableSection } from "./data/timetable-section";
-import { ValidationResults } from "./data/timetable-validation";
 import { getErrorMessage } from "./utils";
 import { getParagraph } from "./dom-utils";
 import { HtmlIDs } from "./main";
+import { ValidationResults } from "./data/timetable-validation-results";
 
 /**
  * Responsible for initializing and managing high-level interactions between the

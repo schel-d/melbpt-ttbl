@@ -1,6 +1,6 @@
 import { Network } from "./data/network";
 import { TimetableSection } from "./data/timetable-section";
-import { ValidationResults } from "./data/timetable-validation";
+import { ValidationResults } from "./data/timetable-validation-results";
 import { validationWorkerScriptName } from "./main";
 
 /**
