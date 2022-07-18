@@ -2,15 +2,28 @@ import { Row } from "../commands/extract-content";
 import { getButton, getDiv, getSelect } from "../dom-utils";
 import { HtmlIDs } from "../main";
 
+/**
+ * The callback calls when the paste issues dialog is submitted.
+ */
 export type PasteIssuesDialogCallback =
   (choices: { rowIndex: number, option: Row }[]) => void
 
+/**
+ * Represents a single stop (single row in the final timetable) having multiple
+ * options to decide between in the pasted timetable content.
+ */
 export type Duplicate = {
   stopName: string,
   rowIndex: number,
   options: Row[]
 }
 
+/**
+ * Manages the paste issues dialog, which is designed to resolve situations
+ * where the pasted timetable content has multiple row variants for a single
+ * stop. This class ensures the dialog is populated correctly and interfaces
+ * with the UI to retrieve the user input when it is submitted.
+ */
 export class PasteIssuesDialog {
   // Typescript does not have up to date dialog type information, so this is
   // needed to be able to call showModal().
@@ -41,22 +54,13 @@ export class PasteIssuesDialog {
     this._submitButton.addEventListener("click", () => this.onSubmitClick());
   }
 
-  private onSubmitClick() {
-    if (this.duplicates == null || this.submittedCallback == null) { return; }
-
-    // When the user clicks submit, for each duplicated stop, find the chosen
-    // option of its dedicated select in the dialog.
-    const choices = this.duplicates.map(d => {
-      const select = getSelect(HtmlIDs.pasteIssuesDialogSelect(d.rowIndex));
-      const option = d.options[parseInt(select.value)];
-      return { rowIndex: d.rowIndex, option: option };
-    });
-
-    // Call the callback providing the choice back.
-    this.submittedCallback(choices);
-    this._dialog.close();
-  }
-
+  /**
+   * Populates the paste issues dialog with the options for each duplicate row,
+   * and shows the dialog.
+   * @param duplicates The list of duplicated rows, which each option to decide
+   * between.
+   * @param submittedCallback The callback to run when the dialog is submitted.
+   */
   show(duplicates: Duplicate[], submittedCallback: PasteIssuesDialogCallback) {
     // Save the callback and duplicates information for when the submit button
     // is clicked.
@@ -101,7 +105,30 @@ export class PasteIssuesDialog {
     this._dialog.showModal();
   }
 
-  isOpen() {
+  /**
+   * Returns true when the dialog is open.
+   */
+  isOpen(): boolean {
     return this._dialog.open == true;
+  }
+
+  /**
+   * Runs when the submit button is clicked. Retrieves the users choices from
+   * each select and calls the callback, providing those choices.
+   */
+  private onSubmitClick() {
+    if (this.duplicates == null || this.submittedCallback == null) { return; }
+
+    // When the user clicks submit, for each duplicated stop, find the chosen
+    // option of its dedicated select in the dialog.
+    const choices = this.duplicates.map(d => {
+      const select = getSelect(HtmlIDs.pasteIssuesDialogSelect(d.rowIndex));
+      const option = d.options[parseInt(select.value)];
+      return { rowIndex: d.rowIndex, option: option };
+    });
+
+    // Call the callback providing the choice back.
+    this.submittedCallback(choices);
+    this._dialog.close();
   }
 }

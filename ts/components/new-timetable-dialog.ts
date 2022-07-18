@@ -4,9 +4,16 @@ import { getButton, getInput, getParagraph, getSelect } from "../dom-utils";
 import { HtmlIDs } from "../main";
 import { getErrorMessage } from "../utils";
 
+/**
+ * The callback called when the new timetable dialog is submitted.
+ */
 export type NewTimetableDialogCallback =
   (lineID: number, wdrPresetIndex: number, timetableID: string) => void
 
+/**
+ * Mananges the new timetable dialog, ensuring it is populated correctly and
+ * interfacing with the UI to retrieve the user input when it is submitted.
+ */
 export class NewTimetableDialog {
   // Typescript does not have up to date dialog type information, so this is
   // needed to be able to call showModal().
@@ -46,16 +53,28 @@ export class NewTimetableDialog {
     this._submitButton.addEventListener("click", () => this.onSubmitClick());
   }
 
+  /**
+   * Shows the new timetable dialog.
+   * @param submittedCallback Function to call when it is submitted.
+   */
   show(submittedCallback: NewTimetableDialogCallback) {
     this._submittedCallback = submittedCallback;
     this._dialog.showModal();
     this._errorText.textContent = "";
   }
 
-  isOpen() {
+  /**
+   * Returns true if the dialog is currently open.
+   */
+  isOpen(): boolean {
     return this._dialog.open == true;
   }
 
+  /**
+   * Sets up the selects with their line names and week day range options in
+   * the new timetable dialog.
+   * @param network The network object to get lines information from.
+   */
   private populateInputs(network: Network) {
     // Sort lines by name alphabetical order, and add an option for each to the
     // lines select.
@@ -84,6 +103,10 @@ export class NewTimetableDialog {
     setIDPlaceholder(parseInt(this._linesSelect.value));
   }
 
+  /**
+   * Runs when the submit button is clicked. Retrieves the user input from DOM
+   * and calls the callback given in the {@link show} function.
+   */
   private onSubmitClick() {
     const lineIDStr = this._linesSelect.value;
     const wdrPresetIndexStr = this._wdrsSelect.value;

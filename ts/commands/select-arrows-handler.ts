@@ -3,8 +3,19 @@ import { AppContext } from "../app-context";
 import { clamp } from "../utils";
 import { CommandHandler, keyFilter } from "./command-handler";
 
+// Imported purely for the @link below, otherwise VSCode doesn't do it properly.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { AltArrowsHandler } from "./alt-arrows-handler";
+
+/**
+ * Responsible for the arrow keys, including where ctrl or shift is pressed (not
+ * alt though, that's the {@link AltArrowsHandler}'s job). These modify the
+ * current selection coordinates.
+ */
 export class SelectArrowsHandler extends CommandHandler {
   constructor() {
+    // Request all the arrows keys, regardless of whether ctrl or shift are
+    // pressed. Note that alt is not requested.
     super([
       keyFilter({ key: "ArrowUp", ctrl: "*", shift: "*" }),
       keyFilter({ key: "ArrowDown", ctrl: "*", shift: "*" }),
@@ -14,7 +25,7 @@ export class SelectArrowsHandler extends CommandHandler {
   }
 
   handle(_char: string, key: string, ctrl: boolean, _alt: boolean,
-    shift: boolean, appContext: AppContext): void {
+    shift: boolean, appContext: AppContext) {
 
     const section = appContext.editor.section;
     const grid = appContext.editor.grid;
@@ -51,6 +62,17 @@ export class SelectArrowsHandler extends CommandHandler {
     grid.select(coords.x, coords.y, coords.x, coords.y);
   }
 
+  /**
+   * Returns the coordinates with the offsets added. If {@link ctrl} is true,
+   * the coordinates jump to the end. The {@link section} is given so these
+   * coordinates can be clamped to the size of the section.
+   * @param section The timetable section to retrieve the width and height from.
+   * @param x The current x coordinate.
+   * @param y The current y coordinate.
+   * @param offsetX The amount to add to the x coordinate. May be negative.
+   * @param offsetY The amount to add to the y coordinate. May be negative.
+   * @param ctrl Whether or not ctrl is pressed (causes a jump to the end).
+   */
   private coordsFromOffset(section: TimetableSection, x: number, y: number,
     offsetX: number, offsetY: number, ctrl: boolean): { x: number, y: number } {
 

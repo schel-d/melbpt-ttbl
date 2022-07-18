@@ -3,15 +3,26 @@ import { EditorGrid } from "../editor/editor-grid";
 import { AppContext } from "../app-context";
 import { CommandHandler, keyFilter } from "./command-handler";
 
+/**
+ * Responsible for the tab key, which selects the current entire column, the
+ * next/previous entire column, or the next/previous entire row, depending on
+ * context.
+ *
+ * Todo: reconsider whether tab is the right key for this, because it kinda
+ * feels right, but it causes major accessibility issues for people who rely on
+ * tab to get around the page. Then again, I doubt anyone other than me will
+ * every use this thing so... ¯\_(ツ)_/¯
+ */
 export class TabHandler extends CommandHandler {
   constructor() {
+    // Request Tab and Shift+Tab.
     super([
       keyFilter({ key: "Tab", shift: "*" })
     ]);
   }
 
   handle(_char: string, _key: string, _ctrl: boolean, _alt: boolean,
-    shift: boolean, appContext: AppContext): void {
+    shift: boolean, appContext: AppContext) {
 
     const section = appContext.editor.section;
     const grid = appContext.editor.grid;
@@ -59,9 +70,22 @@ export class TabHandler extends CommandHandler {
     this.selectCol(grid, section, startX);
   }
 
+  /**
+   * Helper function to select the entire column, given just a x-coordinate.
+   * @param grid The grid to edit the selection on.
+   * @param section The section to retrieve the section's height from.
+   * @param x The x-coordinate of the column to select.
+   */
   private selectCol(grid: EditorGrid, section: TimetableSection, x: number) {
     grid.select(x, 0, x, section.height - 1);
   }
+
+  /**
+   * Helper function to select the entire row, given just a y-coordinate.
+   * @param grid The grid to edit the selection on.
+   * @param section The section to retrieve the section's width from.
+   * @param y The y-coordinate of the row to select.
+   */
   private selectRow(grid: EditorGrid, section: TimetableSection, y: number) {
     grid.select(0, y, section.width - 1, y);
   }

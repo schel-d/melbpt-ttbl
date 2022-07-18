@@ -1,3 +1,8 @@
+/**
+ * Creates a little "toast" notification along the bottom of the editor, which
+ * animates and deletes itself after 10 seconds.
+ * @param message The message to display on the toast.
+ */
 export function createToast(message: string) {
   const toasts = document.getElementById("toasts") as HTMLDivElement;
 

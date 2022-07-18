@@ -2,6 +2,9 @@ import { nameWDR } from "../data/week-day-range";
 import { getButton, getDiv } from "../dom-utils";
 import { HtmlIDs } from "../main";
 
+/**
+ * The callback function called when a timetable section's tab is clicked.
+ */
 export type HeaderTabCallback = (direction: string, wdr: string) => void;
 
 const generalDirNames: { [key: string]: string } = {
@@ -9,6 +12,10 @@ const generalDirNames: { [key: string]: string } = {
   "down": "Down"
 };
 
+/**
+ * Responsible for managing the header element, and it's child controls, such as
+ * the "New Timetable"/"Export" buttons and tabs for each timetable section.
+ */
 export class Header {
   private _newButton: HTMLButtonElement;
   // private _importButton: HTMLButtonElement;
@@ -32,6 +39,11 @@ export class Header {
     this.tabs = getDiv(HtmlIDs.headerTabs);
   }
 
+  /**
+   * Enables the "New Timetable" button, among other actions, to set the UI into
+   * the correct state for when the network object has finished downloading and
+   * the webapp is ready to use, but no timetable is open.
+   */
   ready() {
     this._newButton.disabled = false;
     // this._importButton.disabled = false;
@@ -40,6 +52,13 @@ export class Header {
     this.tabs.replaceChildren();
   }
 
+  /**
+   * Sets up the timetable section tabs, among other actions, to set the UI into
+   * the correct state for editing the now loaded/created timetable.
+   * @param generalDirs
+   * @param wdrs
+   * @param tabCallback
+   */
   editing(generalDirs: string[], wdrs: string[], tabCallback: HeaderTabCallback) {
     this._newButton.disabled = false;
     // this._importButton.disabled = false;
@@ -50,6 +69,13 @@ export class Header {
     );
   }
 
+  /**
+   * Manually set a tab as selected. Used when the timetable is initially loaded
+   * to set the first tab's button to appear selected.
+   * @param generalDir The general direction of the timetable section that was
+   * selected.
+   * @param wdr The week day range of the timetable section that was selected.
+   */
   selectTab(generalDir: string, wdr: string) {
     const radioSelector = `#tab-group-${generalDir} input[value="${wdr}"]`;
     const radio = document.querySelector(radioSelector) as HTMLInputElement;
@@ -57,6 +83,13 @@ export class Header {
   }
 }
 
+/**
+ * Helper function to create a group of tabs for a single general direction, to
+ * be displayed in the header.
+ * @param generalDir The general direction to generate tabs for.
+ * @param wdrs The list of week day ranges. One tab will be generated for each.
+ * @param tabCallback The function to run when a tab is clicked.
+ */
 function createTabGroup(
   generalDir: string,
   wdrs: string[],
@@ -81,6 +114,13 @@ function createTabGroup(
   return tabGroup;
 }
 
+/**
+ * Helper function to create a tab button.
+ * @param generalDir The general direction group this tab belongs to (passed to
+ * callback).
+ * @param wdr The week day range this tab represents.
+ * @param tabCallback The function to run when this tabs is clicked.
+ */
 function createTab(
   generalDir: string,
   wdr: string,
