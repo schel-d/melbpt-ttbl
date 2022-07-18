@@ -56,8 +56,8 @@ function serviceSmarts(section: TimetableSection, network: Network,
   for (const x of range(0, section.width)) {
     const service = section.service(x);
 
-    // Todo: Validating number ranges with regex? Really!? I mean it's not wrong
-    // but it feels off...
+    // Todo: Validating number ranges with regex? Really!? I mean it works...
+    // but it feels like a terrible idea somehow...
     const timesRegex = /^((2[0-3]|[01][0-9]):[0-5][0-9]|-)$/;
 
     if (service.times.every(t => t == "" || timesRegex.test(t))) {
