@@ -2,8 +2,8 @@ import { z } from "zod";
 import { parseMinuteOfDay, range, repeat } from "../utils";
 import { Direction, Line, Network } from "./network";
 import { Timetable } from "./timetable";
-import { Service } from "./timetable-data";
 import { TimetableSection } from "./timetable-section";
+import { Service } from "./timetable-service";
 
 export function validateTimetable(timetable: Timetable,
   network: Network): ValidationResults[] {

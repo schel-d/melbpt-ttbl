@@ -13,7 +13,7 @@ import { TextEntryHandler } from "./text-entry-handler";
 import { NewServiceHandler } from "./new-service-handler";
 import { SpaceHandler } from "./space-handler";
 import { NextDayHandler } from "./next-day-handler";
-import { Service } from "../data/timetable-data";
+import { Service } from "../data/timetable-service";
 
 /**
  * The controller for all keyboard commands in the webapp, including paste,
