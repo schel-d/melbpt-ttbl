@@ -4,7 +4,7 @@ import { ValidationResults } from "../data/timetable-validation-results";
 import { getHtmlOther } from "../dom-utils";
 import { HtmlIDs } from "../main";
 import { clamp } from "../utils";
-import { EditorGrid } from "./editor-grid";
+import { EditorGrid, editorColSize } from "./editor-grid";
 import { EditorServices } from "./editor-services";
 import { EditorStops } from "./editor-stops";
 
@@ -88,6 +88,8 @@ export class Editor {
     this.section = section;
     this.stops.setStops(section.stops.map(s => network.stopName(s)));
     this.services.setServices(this.section.map(s => s.nextDay));
+
+    this._editorDiv.scrollLeft = 0;
 
     this.section.changed = () => this.onChanged();
     this.grid.resetEvents();
@@ -183,5 +185,22 @@ export class Editor {
    */
   scrollPos() {
     return { x: this._editorDiv.scrollLeft, y: this._editorDiv.scrollTop };
+  }
+
+  /**
+   * Scrolls as far to the right as possible. Used when new content is pasted.
+   */
+  scrollToEnd() {
+    const maxWidth = (this.section?.width ?? 0) * editorColSize;
+    this._editorDiv.scrollLeft = maxWidth;
+  }
+
+  /**
+   * Force the editor to make sure it isn't scrolled too far to the right.
+   * Avoids a visual glitch when deleting a lot of services.
+   */
+  refreshScroll() {
+    const maxWidth = (this.section?.width ?? 0) * editorColSize;
+    this._editorDiv.scrollLeft = Math.min(this._editorDiv.scrollLeft, maxWidth);
   }
 }

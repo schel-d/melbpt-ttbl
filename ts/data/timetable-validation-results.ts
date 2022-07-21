@@ -167,7 +167,7 @@ export class ValidationResults {
 export const ValidationResultsJson = z.object({
   stopErrors: z.string().nullable().array(),
   serviceErrors: z.string().nullable().array(),
-  nextDayThresholds: z.number().nullable().array(),
+  nextDayThresholds: z.number().int().nullable().array(),
   directionsIcons: z.string().nullable().array()
 });
 

@@ -29,5 +29,8 @@ export class NewServiceHandler extends CommandHandler {
     section.edit("Add empty service", data => {
       data.addServices([new Service(repeat("", section.height), false)]);
     });
+
+    // Scroll to show the new service.
+    appContext.editor.scrollToEnd();
   }
 }

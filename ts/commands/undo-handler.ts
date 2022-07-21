@@ -46,5 +46,9 @@ export class UndoHandler extends CommandHandler {
         createToast("Cannot undo any further");
       }
     }
+
+    // Now the section could be shorter, so make sure the editor isn't scrolled
+    // to far to the right.
+    appContext.editor.refreshScroll();
   }
 }

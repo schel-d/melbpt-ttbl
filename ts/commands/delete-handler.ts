@@ -36,6 +36,10 @@ export class DeleteHandler extends CommandHandler {
 
       // Everything that was selected is now gone, so clear the selection.
       grid.clearSelection();
+
+      // Now that the section will be shorter, make sure the editor isn't
+      // scrolled to far to the right.
+      appContext.editor.refreshScroll();
     }
     else {
       // Otherwise, just clear the text from every selected cell.

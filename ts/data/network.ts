@@ -4,7 +4,7 @@ import { z } from "zod";
  * The Zod schema to parse the json for each stop in the network.
  */
 const Stop = z.object({
-  id: z.number(),
+  id: z.number().int(),
   name: z.string(),
   platforms: z.object({
     id: z.string(),
@@ -17,7 +17,7 @@ const Stop = z.object({
  * The Zod schema to parse the json for each line in the network.
  */
 const Line = z.object({
-  id: z.number(),
+  id: z.number().int(),
   name: z.string(),
   color: z.enum(["red", "yellow", "green", "cyan", "blue", "purple", "pink", "grey"]),
   service: z.enum(["suburban", "regional"]),
@@ -27,7 +27,7 @@ const Line = z.object({
   directions: z.object({
     id: z.string(),
     name: z.string(),
-    stops: z.number().array()
+    stops: z.number().int().array()
   }).array()
 });
 

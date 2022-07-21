@@ -119,6 +119,9 @@ export class CommandListener {
           `missing from the pasted content.`);
       }
     });
+
+    // Scroll to show the newly pasted content.
+    this._appContext.editor.scrollToEnd();
   }
 
   /**

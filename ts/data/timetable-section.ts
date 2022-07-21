@@ -183,7 +183,7 @@ export class TimetableSection {
 const TimetableSectionJson = z.object({
   generalDir: z.string(),
   wdr: z.string(),
-  stops: z.number().array(),
+  stops: z.number().int().array(),
   data: TimetableDataJson
 });
 
