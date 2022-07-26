@@ -114,11 +114,10 @@ function writeSection(direction: Direction, section: TimetableSection,
       // Find the corresponding cell in the section.
       const stop = direction.stops[y];
       const cell = column.service.times[section.stops.indexOf(stop)];
+      const isNextDay = section.stops.indexOf(stop) < column.nextDayThreshold;
 
       // If this time falls on the next day, prefix it with a ">" symbol.
-      const text = (cell === "-" || parseInt(y) < column.nextDayThreshold)
-        ? cell
-        : ">" + cell;
+      const text = (cell === "-" || isNextDay) ? cell : ">" + cell;
 
       // Add the text to the line for this stop, using consistant padding to
       // ensure a nicely aligned table of values.
